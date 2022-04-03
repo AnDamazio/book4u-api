@@ -1,7 +1,15 @@
-import { IsString, IsNotEmpty, IsEmail, IsPhoneNumber } from 'class-validator';
-
+import {
+  IsString,
+  IsNotEmpty,
+  IsEmail,
+  IsPhoneNumber,
+  Length,
+  Validate,
+} from 'class-validator';
+import { IsCpf } from '../validations/cpf-validation';
 export class CreatePersonalDataDto {
   @IsString()
+  @Validate(IsCpf)
   @IsNotEmpty()
   cpf: string;
 
@@ -18,6 +26,7 @@ export class CreatePersonalDataDto {
   email: string;
 
   @IsString()
+  @Length(8)
   @IsNotEmpty()
   password: string;
 }

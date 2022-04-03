@@ -1,7 +1,6 @@
-import { PersonalData } from './personal-data.entity';
-
+import { CreatePersonalDataDto } from '../dtos';
 export class User {
   firstName: string;
   lastName: string;
-  personalData: PersonalData;
+  personalData: CreatePersonalDataDto;
 }

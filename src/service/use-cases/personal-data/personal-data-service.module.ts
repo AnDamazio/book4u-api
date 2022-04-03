@@ -1,7 +1,7 @@
-import { Module } from "@nestjs/common";
-import { DataServicesModule } from "../../data-services/data-services.module"
-import { PersonalDataFactoryService } from "./personal-data-factory.service";
-import { PersonalDataServices } from "./personal-data-services.service";
+import { Module } from '@nestjs/common';
+import { DataServicesModule } from '../../data-services/data-services.module';
+import { PersonalDataFactoryService } from './personal-data-factory.service';
+import { PersonalDataServices } from './personal-data-services.service';
 
 @Module({
   imports: [DataServicesModule],

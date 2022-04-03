@@ -1,2 +1,2 @@
-export * from "./user.model";
-export * from "./personal-data.model";
+export * from './user.model';
+export * from './personal-data.model';

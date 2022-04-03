@@ -1,6 +1,12 @@
-import { PersonalData } from '../entities/personal-data.entity';
-import { IsString, IsInstance, IsNotEmpty } from 'class-validator';
-
+import {
+  IsString,
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsObject,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import { CreatePersonalDataDto } from './personal-data.dto';
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
@@ -10,7 +16,10 @@ export class CreateUserDto {
   @IsNotEmpty()
   lastName: string;
 
-  @IsInstance(PersonalData)
   @IsNotEmpty()
-  personalData: PersonalData;
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CreatePersonalDataDto)
+  personalData: CreatePersonalDataDto;
 }
