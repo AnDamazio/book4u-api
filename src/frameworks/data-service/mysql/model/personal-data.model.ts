@@ -1,20 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
 
 @Entity()
+@Unique(['cpf'])
+@Unique(['email'])
+@Unique(['rg'])
 export class PersonalData {
   @PrimaryGeneratedColumn()
   id!: string;
 
-  @Column()
+  @Column({ name: 'email' })
   email!: string;
 
   @Column()
   password!: string;
 
-  @Column()
+  @Column({ name: 'cpf' })
   cpf!: string;
 
-  @Column()
+  @Column({ name: 'rg' })
   rg!: string;
 
   @Column()
