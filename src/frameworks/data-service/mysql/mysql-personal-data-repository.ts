@@ -21,10 +21,9 @@ export class MysqlPersonalDataRepository<T>
       console.log(email);
       const userData = await this._repository
         .createQueryBuilder('personal_data')
-        .innerJoinAndSelect('personal_data', 'user')
+        .leftJoinAndSelect('personal_data.user', 'user')
         .where('personal_data.email = :email', { email: email })
         .getOne();
-      console.log(userData);
       return userData;
     } catch (error) {
       console.log(error);

@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Unique,
+  OneToOne,
+} from 'typeorm';
+import { User } from './user.model';
 
 @Entity()
 @Unique(['cpf'])
@@ -22,4 +29,7 @@ export class PersonalData {
 
   @Column()
   cellphone!: string;
+
+  @OneToOne(() => User, (user) => user.personalData)
+  user: User;
 }
