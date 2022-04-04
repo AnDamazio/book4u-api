@@ -1,5 +1,9 @@
-import { Repository } from 'typeorm';
-import { CreateUserDto, IUserRepository } from 'src/core';
+import { createQueryBuilder, Repository } from 'typeorm';
+import { IUserRepository } from 'src/core';
+import { CreateUserDto } from 'src/core';
+import { UserServices } from 'src/service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { PersonalData } from './model';
 
 export class MysqlUserRepository<T> implements IUserRepository<T> {
   private _repository: Repository<T>;
@@ -8,11 +12,11 @@ export class MysqlUserRepository<T> implements IUserRepository<T> {
     this._repository = repository;
   }
 
-  getAll(): Promise<T[]> {
+  findAll(): Promise<T[]> {
     return this._repository.find();
   }
 
-  getOne(id: number): Promise<T> {
+  findOneById(id: number): Promise<T> {
     return this._repository.findOne();
   }
 

@@ -6,9 +6,14 @@ import { UserServices } from './service';
 import { DataServicesModule } from './service/data-services';
 import { PersonalDataServicesModule } from './service/use-cases/personal-data/personal-data-service.module';
 import { UserServicesModule } from './service/use-cases/user/user-services.module';
-
+import { AuthModule } from './frameworks/auth/auth.module';
 @Module({
-  imports: [DataServicesModule, UserServicesModule, PersonalDataServicesModule],
+  imports: [
+    DataServicesModule,
+    UserServicesModule,
+    PersonalDataServicesModule,
+    AuthModule,
+  ],
   controllers: [AppController, UserController],
   providers: [AppService, UserServices],
 })

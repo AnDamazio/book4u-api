@@ -1,10 +1,17 @@
 import { PersonalDataServices } from '../service/use-cases/personal-data/personal-data-services.service';
 import { PersonalDataFactoryService } from '../service/use-cases/personal-data/personal-data-factory.service';
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { CreateUserDto, CreateUserResponseDto } from '../core/dtos';
 import { UserServices } from 'src/service/use-cases/user/user-services.service';
 import { UserFactoryService } from 'src/service/use-cases/user';
-import { validate } from 'class-validator';
+import { LocalAuthGuard } from 'src/frameworks/auth/local-auth.guard';
 
 @Controller('api/user')
 export class UserController {
@@ -46,5 +53,11 @@ export class UserController {
     const users = await this.userServices.getAllUsers();
     console.log(users);
     return users;
+  }
+
+  @UseGuards(LocalAuthGuard)
+  @Post('auth/login')
+  async login(@Request() req) {
+    return req.user;
   }
 }

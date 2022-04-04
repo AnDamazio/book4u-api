@@ -19,4 +19,9 @@ export class PersonalDataServices {
     );
     return this.dataServices.personalData.create(personalData);
   }
+
+  findByEmail(email: string): Promise<PersonalData> {
+    const personal_data = this.dataServices.personalData.findOneByEmail(email);
+    return personal_data;
+  }
 }

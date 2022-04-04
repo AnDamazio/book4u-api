@@ -12,11 +12,11 @@ export class UserServices {
   ) {}
 
   getAllUsers(): Promise<User[]> {
-    return this.dataServices.user.getAll();
+    return this.dataServices.user.findAll();
   }
 
   getUserById(id: any): Promise<User> {
-    return this.dataServices.user.getOne(id);
+    return this.dataServices.user.findOneById(id);
   }
 
   createUser(createUserDto: CreateUserDto): Promise<User> {
