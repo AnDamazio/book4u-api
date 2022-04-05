@@ -7,6 +7,7 @@ import {
   Get,
   UseGuards,
   Request,
+  Param,
 } from '@nestjs/common';
 import { CreateUserDto, CreateUserResponseDto } from '../core/dtos';
 import { UserServices } from 'src/service/use-cases/user/user-services.service';
@@ -14,7 +15,7 @@ import { UserFactoryService } from 'src/service/use-cases/user';
 import { LocalAuthGuard } from 'src/frameworks/auth/local-auth.guard';
 
 @Controller('api/user')
-export class UserController {
+export class UserController { 
   constructor(
     private userServices: UserServices,
     private userFactoryService: UserFactoryService,
@@ -48,9 +49,16 @@ export class UserController {
     return createUserResponse;
   }
 
-  @Get('listar')
+  @Get('list')
   async userList() {
     const users = await this.userServices.getAllUsers();
+    console.log(users);
+    return users;
+  }
+
+  @Get('list/:id')
+  async listUser() {
+    const users = await this.userServices.getUserById(2);
     console.log(users);
     return users;
   }

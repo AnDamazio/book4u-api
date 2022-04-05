@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { describe, expect, test } from '@jest/globals'
 
 describe('AppController', () => {
   let appController: AppController;

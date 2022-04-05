@@ -1,8 +1,4 @@
-import {
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-  ValidationArguments,
-} from 'class-validator';
+import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments,} from "class-validator/cjs";
 import { cpf } from 'cpf-cnpj-validator';
 
 @ValidatorConstraint({ name: 'isCpf', async: false })
