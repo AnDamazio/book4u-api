@@ -1,9 +1,5 @@
-import { createQueryBuilder, Repository } from 'typeorm';
-import { IUserRepository } from 'src/core';
-import { CreateUserDto } from 'src/core';
-import { UserServices } from 'src/service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { PersonalData } from './model';
+import { Repository } from 'typeorm';
+import { CreateUserDto, IUserRepository } from 'src/core';
 
 export class MysqlUserRepository<T> implements IUserRepository<T> {
   private _repository: Repository<T>;

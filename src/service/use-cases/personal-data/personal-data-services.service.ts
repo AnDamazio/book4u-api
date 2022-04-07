@@ -11,13 +11,13 @@ export class PersonalDataServices {
     private personalDataFactoryService: PersonalDataFactoryService,
   ) {}
 
-  createPersonalData(
+  async createPersonalData(
     createPersonalDataDto: CreatePersonalDataDto,
   ): Promise<PersonalData> {
     const personalData = this.personalDataFactoryService.createNewPersonalData(
       createPersonalDataDto,
     );
-    return this.dataServices.personalData.create(personalData);
+    return this.dataServices.personalData.create(await personalData);
   }
 
   findByEmail(email: string): Promise<PersonalData> {

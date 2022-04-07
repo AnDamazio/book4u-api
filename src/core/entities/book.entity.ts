@@ -1,10 +1,10 @@
-import { CreateAuthorDto } from "../dtos";
+import { CreateAuthorDto } from '../dtos';
 
 export class Book {
-    name: string;
-    pagesQuantity: number;
-    synopsis: string;
-    status: string;
-    condition: string;
-    author: CreateAuthorDto
+  name: string;
+  pagesQuantity: number;
+  synopsis: string;
+  status: string;
+  condition: string;
+  author: CreateAuthorDto;
 }

@@ -17,18 +17,20 @@ export class MysqlDataServices
   book: MysqlBookRepository<Book>;
   author: MysqlAuthorRepository<Author>;
 
-
   constructor(
     @InjectRepository(User) private UserRepository: Repository<User>,
-    @InjectRepository(PersonalData) private PersonalDataRepository: Repository<PersonalData>,
+    @InjectRepository(PersonalData)
+    private PersonalDataRepository: Repository<PersonalData>,
     @InjectRepository(Author) private AuthorRepository: Repository<Author>,
-    @InjectRepository(Book) private BookRepository: Repository<Book>
+    @InjectRepository(Book) private BookRepository: Repository<Book>,
   ) {}
 
   onApplicationBootstrap() {
     this.user = new MysqlUserRepository<User>(this.UserRepository);
-    this.personalData = new MysqlPersonalDataRepository<PersonalData>(this.PersonalDataRepository);
-    this.author = new MysqlAuthorRepository<Author>(this.AuthorRepository)
-    this.book = new MysqlBookRepository<Book>(this.BookRepository)
+    this.personalData = new MysqlPersonalDataRepository<PersonalData>(
+      this.PersonalDataRepository,
+    );
+    this.author = new MysqlAuthorRepository<Author>(this.AuthorRepository);
+    this.book = new MysqlBookRepository<Book>(this.BookRepository);
   }
 }

@@ -1,3 +1,3 @@
 export class Author {
-    name: string
+  name: string;
 }

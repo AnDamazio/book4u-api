@@ -15,10 +15,6 @@ export class AuthorServices {
     return this.dataServices.author.findAll();
   }
 
-  /* getUserById(id: any): Promise<Author> {
-    return this.dataServices.user.findOneById(id);
-  } */
-
   createAuthor(createAuthorDto: CreateAuthorDto): Promise<Author> {
     const author = this.authorFactoryService.createNewAuthor(createAuthorDto);
     return this.dataServices.author.create(author);
