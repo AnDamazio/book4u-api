@@ -5,7 +5,7 @@ import {
   IsPhoneNumber,
   Length,
   Validate,
-} from 'class-validator';
+} from 'class-validator/cjs';
 import { IsCpf } from '../validations/cpf-validation';
 export class CreatePersonalDataDto {
   @IsString()
