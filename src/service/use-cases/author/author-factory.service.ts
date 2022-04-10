@@ -5,8 +5,8 @@ import { Author } from 'src/core/entities/author.entity';
 @Injectable()
 export class AuthorFactoryService {
   createNewAuthor(createAuthorDto: CreateAuthorDto) {
-    const newAutor = new Author();
-    newAutor.name = createAuthorDto.name;
-    return newAutor;
+    const newAuthor = new Author();
+    newAuthor.name = createAuthorDto.name;
+    return newAuthor;
   }
 }

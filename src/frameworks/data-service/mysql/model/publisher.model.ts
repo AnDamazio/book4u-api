@@ -1,21 +1,21 @@
+import { Book } from './book.model';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
+  Entity,
   OneToMany,
+  PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { Book } from './book.model';
 
 @Entity()
 @Unique(['name'])
-export class Author {
+export class Publisher {
   @PrimaryGeneratedColumn()
   id!: string;
 
   @Column({ name: 'name' })
-  name: string;
+  name!: string;
 
-  @OneToMany(() => Book, (book) => book.author)
+  @OneToMany(() => Book, (book) => book.publisher)
   book: Book[];
 }

@@ -1,5 +1,5 @@
-export abstract class IAuthorRepository<T> {
-  abstract create(author: T): Promise<T>;
+export abstract class IPublisherRepository<T> {
+  abstract create(publisher: T): Promise<T>;
 
   abstract findAll(): Promise<T[]>;
 

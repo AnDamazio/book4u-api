@@ -7,10 +7,11 @@ import { DataServicesModule } from './service/data-services';
 import { PersonalDataServicesModule } from './service/use-cases/personal-data/personal-data-service.module';
 import { UserServicesModule } from './service/use-cases/user/user-services.module';
 import { AuthModule } from './frameworks/auth/auth.module';
-import { BookController } from './controllers/book.controller'
-import { BookServices } from './service/use-cases/book/book-services.service'
-import { BookServicesModule } from './service/use-cases/book/book-services.module'
+import { BookController } from './controllers/book.controller';
+import { BookServices } from './service/use-cases/book/book-services.service';
+import { BookServicesModule } from './service/use-cases/book/book-services.module';
 import { AuthorServicesModule } from './service/use-cases/author';
+import { PublisherServicesModule } from './service/use-cases/publisher/publisher-services.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuthorServicesModule } from './service/use-cases/author';
     PersonalDataServicesModule,
     AuthorServicesModule,
     BookServicesModule,
+    PublisherServicesModule,
     AuthModule,
   ],
   controllers: [AppController, UserController, BookController],
