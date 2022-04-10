@@ -8,7 +8,9 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateAuthorDto } from './author.dto';
+import { CreateLanguageDto } from './language.dto';
 import { CreatePublisherDto } from './publisher.dto';
+
 export class CreateBookDto {
   @IsString()
   @IsNotEmpty()
@@ -41,6 +43,10 @@ export class CreateBookDto {
   @IsNotEmptyObject()
   @IsObject()
   @ValidateNested()
+
+  @Type(() => CreateLanguageDto)
+  language: CreateLanguageDto;
+  
   @Type(() => CreatePublisherDto)
   publisher: CreatePublisherDto;
 }

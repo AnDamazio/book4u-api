@@ -11,14 +11,9 @@ export class PublisherServices {
     private publisherFactoryService: PublisherFactoryService,
   ) {}
 
-  async createPublisher(
-    createPublisherDto: CreatePublisherDto,
-  ): Promise<Publisher> {
-    if (
-      await this.dataServices.publisher.checkIfExists(createPublisherDto.name)
-    ) {
-      const publisher =
-        this.publisherFactoryService.createNewPublisher(createPublisherDto);
+  async createPublisher(createPublisherDto: CreatePublisherDto,): Promise<Publisher> {
+    if (await this.dataServices.publisher.checkIfExists(createPublisherDto.name)) {
+      const publisher = this.publisherFactoryService.createNewPublisher(createPublisherDto);
       return this.dataServices.publisher.create(publisher);
     } else {
       return this.dataServices.publisher.findOneByName(createPublisherDto.name);

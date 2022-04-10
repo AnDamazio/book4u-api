@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Author } from '../../../core/entities';
 import { IDataServices } from '../../../core/abstracts';
-import { CreateAuthorDto, CreatePublisherDto } from '../../../core/dtos';
+import { CreateAuthorDto } from '../../../core/dtos';
 import { AuthorFactoryService } from './author-factory.service';
 
 @Injectable()

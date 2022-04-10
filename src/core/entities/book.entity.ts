@@ -1,4 +1,4 @@
-import { CreateAuthorDto, CreatePublisherDto } from '../dtos';
+import { CreateAuthorDto, CreatePublisherDto, CreateLanguageDto } from '../dtos';
 
 export class Book {
   name: string;
@@ -7,5 +7,6 @@ export class Book {
   status: string;
   condition: string;
   author: CreateAuthorDto;
+  language: CreateLanguageDto;
   publisher: CreatePublisherDto;
 }
