@@ -11,6 +11,7 @@ import { BookController } from './controllers/book.controller'
 import { BookServices } from './service/use-cases/book/book-services.service'
 import { BookServicesModule } from './service/use-cases/book/book-services.module'
 import { AuthorServicesModule } from './service/use-cases/author';
+import { LanguageServicesModule } from './service/use-cases/language';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AuthorServicesModule } from './service/use-cases/author';
     AuthorServicesModule,
     BookServicesModule,
     AuthModule,
+    LanguageServicesModule
   ],
   controllers: [AppController, UserController, BookController],
   providers: [AppService, UserServices, BookServices],

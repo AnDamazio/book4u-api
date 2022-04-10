@@ -1,4 +1,4 @@
-import { Condition, Status } from 'src/core';
+import { Condition, Status } from '../../../../core/enums'
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,6 +7,8 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { Author } from './author.model';
+import { Language } from './language.model';
+
 @Entity()
 export class Book {
   @PrimaryGeneratedColumn()
@@ -30,4 +32,8 @@ export class Book {
   @ManyToOne(() => Author, (author) => author.book)
   @JoinColumn()
   author!: Author;
+
+  @ManyToOne(() => Language, (language) => language.book)
+  @JoinColumn()
+  language!: Language;
 }

@@ -12,6 +12,7 @@ export class BookFactoryService {
     newBook.status = createBookDto.status
     newBook.condition = createBookDto.condition
     newBook.author = createBookDto.author
+    newBook.language = createBookDto.language
     return newBook;
   
 }}

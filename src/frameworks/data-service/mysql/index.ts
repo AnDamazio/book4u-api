@@ -5,3 +5,4 @@ export * from './mysql-personal-data-repository';
 export * from './mysql-user-repository';
 export * from './mysql-author.repository';
 export * from './myql-book.repository';
+export * from './mysql-language.repository'
