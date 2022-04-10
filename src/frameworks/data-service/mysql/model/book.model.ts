@@ -7,6 +7,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { Author } from './author.model';
+import { Publisher } from './publisher.model';
 @Entity()
 export class Book {
   @PrimaryGeneratedColumn()
@@ -30,4 +31,7 @@ export class Book {
   @ManyToOne(() => Author, (author) => author.book)
   @JoinColumn()
   author!: Author;
+
+  @ManyToOne(() => Publisher, (publisher) => publisher.book)
+  publisher!: Publisher;
 }

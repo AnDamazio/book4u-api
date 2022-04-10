@@ -15,10 +15,6 @@ export class BookServices {
     return this.bookServices.book.findAll();
   }
 
-/*   getBookById(id: any): Promise<Book> {
-    return this.bookServices.book.findOneById(id);
-  } */
-
   createBook(createBookDto: CreateBookDto): Promise<Book> {
     const book = this.bookFactoryService.createNewBook(createBookDto);
     return this.bookServices.book.create(book);

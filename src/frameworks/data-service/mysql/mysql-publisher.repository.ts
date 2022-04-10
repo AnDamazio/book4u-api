@@ -1,19 +1,19 @@
-import { IAuthorRepository } from 'src/core';
 import { Repository } from 'typeorm';
+import { IPublisherRepository } from 'src/core';
 
-export class MysqlAuthorRepository<T> implements IAuthorRepository<T> {
+export class MysqlPublisherRepository<T> implements IPublisherRepository<T> {
   private _repository: Repository<T>;
 
   constructor(repository: Repository<T>) {
     this._repository = repository;
   }
 
-  findAll(): Promise<T[]> {
-    return this._repository.find();
+  create(publisher): Promise<T> {
+    return this._repository.save(publisher);
   }
 
-  create(author): Promise<T> {
-    return this._repository.save(author);
+  findAll(): Promise<T[]> {
+    return this._repository.find();
   }
 
   findOneByName(name: string): Promise<T> {
@@ -21,7 +21,7 @@ export class MysqlAuthorRepository<T> implements IAuthorRepository<T> {
   }
 
   async checkIfExists(name: string): Promise<boolean> {
-    if ((await this.findOneByName(name)) === undefined) {
+    if (this.findOneByName(name) === undefined) {
       return true;
     } else {
       return false;
