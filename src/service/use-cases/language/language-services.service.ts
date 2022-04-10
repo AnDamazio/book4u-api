@@ -11,12 +11,12 @@ export class LanguageServices {
     private languageFactoryService: LanguageFactoryService,
   ) {}
 
-  getAllLanguages(): Promise<Language[]> {
-    return this.dataServices.language.findAll();
+  async getAllLanguages(): Promise<Language[]> {
+    return await this.dataServices.language.findAll();
   }
 
-  createLanguage(createLanguageDto: CreateLanguageDto): Promise<Language> {
-    if (this.dataServices.language.checkIfExists(createLanguageDto.name)) {
+  async createLanguage(createLanguageDto: CreateLanguageDto): Promise<Language> {
+    if ( await this.dataServices.language.checkIfExists(createLanguageDto.name)) {
       const language = this.languageFactoryService.createNewLanguage(createLanguageDto);
       return this.dataServices.language.create(language);
     } 

@@ -5,3 +5,5 @@ export * from './author.dto';
 export * from './create-book-response.dto';
 export * from './book.dto';
 export * from './language.dto';
+export * from './publisher.dto';
+export * from './create-publisher-response.dto';

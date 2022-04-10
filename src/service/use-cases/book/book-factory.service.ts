@@ -13,6 +13,7 @@ export class BookFactoryService {
     newBook.condition = createBookDto.condition
     newBook.author = createBookDto.author
     newBook.language = createBookDto.language
+    newBook.publisher = createBookDto.publisher;
     return newBook;
-  
-}}
+  }
+}

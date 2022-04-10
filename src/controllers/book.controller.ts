@@ -1,8 +1,13 @@
-import { AuthorServices } from '../service/use-cases/author/author-services.service';
-import { AuthorFactoryService } from '../service/use-cases/author/author-factory.service';
-import { BookServices } from '../service/use-cases/book/book-services.service';
-import { BookFactoryService } from '../service/use-cases/book/book-factory.service';
+import {
+  AuthorServices,
+  AuthorFactoryService,
+} from '../service/use-cases/author/';
+import { BookServices, BookFactoryService } from '../service/use-cases/book/';
 import { Controller, Post, Body, Get } from '@nestjs/common';
+import {
+  PublisherFactoryService,
+  PublisherServices,
+} from 'src/service/use-cases/publisher';
 import { CreateBookDto, CreateBookResponseDto } from '../core/dtos';
 import { LanguageFactoryService, LanguageServices } from 'src/service/use-cases/language';
 
@@ -14,10 +19,12 @@ export class BookController {
     private authorServices: AuthorServices,
     private authorFactoryService: AuthorFactoryService,
     private languageFactoryService: LanguageFactoryService,
-    private languageServices: LanguageServices
+    private languageServices: LanguageServices,
+    private publisherFactoryService: PublisherFactoryService,
+    private publisherServices: PublisherServices,
   ) {}
 
-  @Post('')
+  @Post()
   async createBook(@Body() bookDto: CreateBookDto) {
     const createBookResponse = new CreateBookResponseDto();
     try {
@@ -29,11 +36,15 @@ export class BookController {
       const createdLanguage = await this.languageServices.createLanguage(language);
       bookDto.language = createdLanguage;
 
+      const publisher = this.publisherFactoryService.createNewPublisher(bookDto.publisher);
+      const createdPublisher = await this.publisherServices.createPublisher(publisher);
+      bookDto.publisher = createdPublisher;
+
       const book = this.bookFactoryService.createNewBook(bookDto);
       const createdBook = await this.bookServices.createBook(book);
-
       createBookResponse.success = true;
       createBookResponse.createdBook = createdBook;
+
     } catch (error) {
       console.log(error);
       createBookResponse.success = false;
@@ -44,7 +55,6 @@ export class BookController {
   @Get('list')
   async userList() {
     const books = await this.bookServices.getAllBooks();
-    console.log(books);
     return books;
   }
 }
