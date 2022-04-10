@@ -9,6 +9,8 @@ import { MysqlAuthorRepository } from './mysql-author.repository';
 import { MysqlBookRepository } from './myql-book.repository';
 import { MysqlLanguageRepository } from './mysql-language.repository';
 import { MysqlPublisherRepository } from './mysql-publisher.repository';
+import { Category } from './model/category.model';
+import { MysqlCategoryRepository } from './mysql-category.repository';
 
 @Injectable()
 export class MysqlDataServices
@@ -20,6 +22,7 @@ export class MysqlDataServices
   author: MysqlAuthorRepository<Author>;
   language: MysqlLanguageRepository<Language>;
   publisher: MysqlPublisherRepository<Publisher>;
+  category: MysqlCategoryRepository<Category>;
 
   constructor(
     @InjectRepository(User) private UserRepository: Repository<User>,
@@ -27,7 +30,8 @@ export class MysqlDataServices
     @InjectRepository(Author) private AuthorRepository: Repository<Author>,
     @InjectRepository(Book) private BookRepository: Repository<Book>,
     @InjectRepository(Language) private LanguageRepository: Repository<Language>,
-    @InjectRepository(Publisher)private PublisherRepository: Repository<Publisher>,
+    @InjectRepository(Publisher) private PublisherRepository: Repository<Publisher>,
+    @InjectRepository(Category) private CategoryRepository: Repository<Category>,
   ) {}
 
   onApplicationBootstrap() {
@@ -37,5 +41,6 @@ export class MysqlDataServices
     this.book = new MysqlBookRepository<Book>(this.BookRepository);
     this.language = new MysqlLanguageRepository<Language>(this.LanguageRepository);
     this.publisher = new MysqlPublisherRepository<Publisher>(this.PublisherRepository);
+    this.category = new MysqlCategoryRepository<Category>(this.CategoryRepository,);
   }
 }

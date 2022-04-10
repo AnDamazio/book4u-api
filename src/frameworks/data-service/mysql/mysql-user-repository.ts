@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { CreateUserDto, IUserRepository } from 'src/core';
+import { IUserRepository } from 'src/core';
 
 export class MysqlUserRepository<T> implements IUserRepository<T> {
   private _repository: Repository<T>;
