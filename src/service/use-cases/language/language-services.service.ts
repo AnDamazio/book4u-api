@@ -15,10 +15,19 @@ export class LanguageServices {
     return await this.dataServices.language.findAll();
   }
 
-  async createLanguage(createLanguageDto: CreateLanguageDto): Promise<Language> {
-    if ( await this.dataServices.language.checkIfExists(createLanguageDto.name)) {
-      const language = this.languageFactoryService.createNewLanguage(createLanguageDto);
+  async createLanguage(
+    createLanguageDto: CreateLanguageDto,
+  ): Promise<Language> {
+    if (
+      await this.dataServices.language.checkIfExists(createLanguageDto.name)
+    ) {
+      const language =
+        this.languageFactoryService.createNewLanguage(createLanguageDto);
       return this.dataServices.language.create(language);
-    } 
+    } else {
+      return await this.dataServices.language.findOneByName(
+        createLanguageDto.name,
+      );
     }
+  }
 }

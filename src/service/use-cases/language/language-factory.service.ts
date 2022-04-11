@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateLanguageDto } from '../../../core/dtos';
 import { Language } from 'src/core/entities/language.entity';
 
-
 @Injectable()
 export class LanguageFactoryService {
   createNewLanguage(createLanguageDto: CreateLanguageDto) {

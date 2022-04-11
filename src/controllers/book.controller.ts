@@ -9,7 +9,10 @@ import {
   PublisherServices,
 } from 'src/service/use-cases/publisher';
 import { CreateBookDto, CreateBookResponseDto } from '../core/dtos';
-import { LanguageFactoryService, LanguageServices } from 'src/service/use-cases/language';
+import {
+  LanguageFactoryService,
+  LanguageServices,
+} from 'src/service/use-cases/language';
 
 @Controller('api/book')
 export class BookController {
@@ -32,19 +35,28 @@ export class BookController {
       const createdAuthor = await this.authorServices.createAuthor(author);
       bookDto.author = createdAuthor;
 
-      const language = this.languageFactoryService.createNewLanguage(bookDto.language);
-      const createdLanguage = await this.languageServices.createLanguage(language);
+      const language = this.languageFactoryService.createNewLanguage(
+        bookDto.language,
+      );
+      const createdLanguage = await this.languageServices.createLanguage(
+        language,
+      );
       bookDto.language = createdLanguage;
 
-      const publisher = this.publisherFactoryService.createNewPublisher(bookDto.publisher);
-      const createdPublisher = await this.publisherServices.createPublisher(publisher);
+      const publisher = this.publisherFactoryService.createNewPublisher(
+        bookDto.publisher,
+      );
+      const createdPublisher = await this.publisherServices.createPublisher(
+        publisher,
+      );
+      console.log(publisher);
+      console.log(createdLanguage);
       bookDto.publisher = createdPublisher;
 
       const book = this.bookFactoryService.createNewBook(bookDto);
       const createdBook = await this.bookServices.createBook(book);
       createBookResponse.success = true;
       createBookResponse.createdBook = createdBook;
-
     } catch (error) {
       console.log(error);
       createBookResponse.success = false;
