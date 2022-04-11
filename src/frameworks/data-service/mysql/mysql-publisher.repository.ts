@@ -21,7 +21,7 @@ export class MysqlPublisherRepository<T> implements IPublisherRepository<T> {
   }
 
   async checkIfExists(name: string): Promise<boolean> {
-    if (this.findOneByName(name) === undefined) {
+    if ((await this.findOneByName(name)) === undefined) {
       return true;
     } else {
       return false;
