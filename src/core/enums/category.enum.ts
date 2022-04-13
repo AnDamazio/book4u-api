@@ -1,4 +1,4 @@
-export enum Category {
+export enum EnumCategory {
   FICCAO = 'Ficção',
   FANTASIA = 'Fantasia',
   FICCAO_CIENTIFICA = 'Ficção científica',

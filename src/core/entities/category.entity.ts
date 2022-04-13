@@ -1,3 +1,3 @@
-export class Entity {
-  name: string;
+export class Category {
+  name: string
 }

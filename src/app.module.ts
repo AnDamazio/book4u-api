@@ -13,6 +13,7 @@ import { BookServicesModule } from './service/use-cases/book/book-services.modul
 import { AuthorServicesModule } from './service/use-cases/author';
 import { LanguageServicesModule } from './service/use-cases/language';
 import { PublisherServicesModule } from './service/use-cases/publisher/publisher-services.module';
+import { CategoryServicesModule } from './service/use-cases/category';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { PublisherServicesModule } from './service/use-cases/publisher/publisher
     BookServicesModule,
     PublisherServicesModule,
     AuthModule,
-    LanguageServicesModule
+    LanguageServicesModule,
+    CategoryServicesModule
   ],
   controllers: [AppController, UserController, BookController],
   providers: [AppService, UserServices, BookServices],

@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Author } from './author.model';
 import { Language } from './language.model';
@@ -43,6 +44,7 @@ export class Book {
   @ManyToOne(() => Publisher, (publisher) => publisher.book)
   publisher!: Publisher;
 
-  @ManyToMany(() => Category, (category) => category.book)
+  @ManyToMany(() => Category, (category) => category.book, { cascade: true })
+  @JoinTable()
   category!: Category;
 }
