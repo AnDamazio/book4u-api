@@ -23,14 +23,14 @@ import 'dotenv/config';
       Publisher,
       Category,
       Language,
-      Category
+      Category,
     ]),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: '',
+      password: 'damazioRoot19@',
       database: 'clean_teste',
       entities: [__dirname + '/../**/*.model{.ts,.js}'],
       synchronize: true,

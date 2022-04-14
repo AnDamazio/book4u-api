@@ -1,4 +1,4 @@
-import { Condition, Status } from '../../../../core/enums'
+import { Condition, Status } from '../../../../core/enums';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -40,11 +40,11 @@ export class Book {
   @ManyToOne(() => Language, (language) => language.book)
   @JoinColumn()
   language!: Language;
-  
+
   @ManyToOne(() => Publisher, (publisher) => publisher.book)
   publisher!: Publisher;
 
-  @ManyToMany(() => Category, (category) => category.book, { cascade: true })
+  @ManyToMany(() => Category)
   @JoinTable()
-  category!: Category;
+  category!: Category[];
 }

@@ -15,12 +15,13 @@ export class CategoryServices {
     return this.dataServices.category.findAll();
   }
 
-  async createCategory(createCategoryDto: CreateCategoryDto): Promise<Category> {
-    if (await this.dataServices.category.checkIfExists(createCategoryDto.name)) {
-      const category = this.categoryFactoryService.createNewCategory(createCategoryDto);
-      return this.dataServices.category.create(category.name);
+  async getCategory(
+    createCategoryDto: CreateCategoryDto[],
+  ): Promise<Category[]> {
+    if (await this.dataServices.category.checkIfExists(createCategoryDto)) {
+      return [new Error('Erro')];
     } else {
-      return this.dataServices.author.findOneByName(createCategoryDto.name);
+      return this.dataServices.category.findOneByName(createCategoryDto);
     }
   }
 }

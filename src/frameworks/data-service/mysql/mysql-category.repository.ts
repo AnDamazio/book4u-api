@@ -1,6 +1,5 @@
 import { ICategoryRepository } from 'src/core';
-import { EntityManager, Repository } from 'typeorm';
-import { Category } from './model/category.model'
+import { Repository } from 'typeorm';
 
 export class MysqlCategoryRepository<T> implements ICategoryRepository<T> {
   private _repository: Repository<T>;
@@ -13,12 +12,17 @@ export class MysqlCategoryRepository<T> implements ICategoryRepository<T> {
     return this._repository.find();
   }
 
-  create(category): Promise<T>{
-    return this._repository.save(category)
+  create(category): Promise<T> {
+    return this._repository.save(category);
   }
 
-  findOneByName(name: string): Promise<T> {
-    return this._repository.findOne({ where: { name: name } });
+  async findOneByName(category): Promise<T[]> {
+    const categories = Promise.all(
+      await category.map(async (obj) => {
+        return await this._repository.find({ where: { name: obj.name } });
+      }),
+    );
+    return categories;
   }
 
   async checkIfExists(name: string): Promise<boolean> {

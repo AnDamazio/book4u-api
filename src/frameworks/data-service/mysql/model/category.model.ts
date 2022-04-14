@@ -5,7 +5,7 @@ import {
   Unique,
   ManyToMany,
 } from 'typeorm';
-import { EnumCategory } from './../../../../core/enums'
+import { EnumCategory } from './../../../../core/enums';
 import { Book } from './book.model';
 
 @Entity()
@@ -14,11 +14,6 @@ export class Category {
   @PrimaryGeneratedColumn()
   id!: string;
 
-  @Column({ type: "enum",
-  enum: EnumCategory
-  })
+  @Column({ type: 'enum', enum: EnumCategory })
   name!: string;
-
-  @ManyToMany(() => Book, (book) => book.category)
-  book!: Book[];
 }

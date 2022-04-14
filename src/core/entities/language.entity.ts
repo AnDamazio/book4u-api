@@ -1,3 +1,3 @@
-export class Language{
-    name: string;
+export class Language {
+  name: string;
 }

@@ -44,13 +44,12 @@ export class CreateBookDto {
   @IsNotEmptyObject()
   @IsObject()
   @ValidateNested()
-
   @Type(() => CreateLanguageDto)
   language: CreateLanguageDto;
-  
+
   @Type(() => CreatePublisherDto)
   publisher: CreatePublisherDto;
 
   @Type(() => CreateCategoryDto)
-  category: CreateCategoryDto;
+  category: CreateCategoryDto[];
 }

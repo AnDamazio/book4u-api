@@ -1,3 +1,3 @@
 export class Category {
-  name: string
+  name: string;
 }

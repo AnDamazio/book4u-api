@@ -3,7 +3,7 @@ export abstract class ICategoryRepository<T> {
 
   abstract create(category: string): Promise<T>;
 
-   abstract findOneByName(name: string): Promise<T>;
+  abstract findOneByName(category): Promise<T[]>;
 
-  abstract checkIfExists(name: string): Promise<boolean>;
+  abstract checkIfExists(category): Promise<boolean>;
 }

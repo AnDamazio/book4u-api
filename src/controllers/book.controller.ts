@@ -15,9 +15,8 @@ import {
 } from 'src/service/use-cases/language';
 import {
   CategoryFactoryService,
-  CategoryServices
-} from 'src/service/use-cases/category'
-
+  CategoryServices,
+} from 'src/service/use-cases/category';
 
 @Controller('api/book')
 export class BookController {
@@ -58,20 +57,15 @@ export class BookController {
       );
       bookDto.publisher = createdPublisher;
 
-      const category = this.categoryFactoryService.createNewCategory(
-        bookDto.category
+      const category = await this.categoryServices.getCategory(
+        bookDto.category,
       );
-      console.log(category)
-      const createdCategory = await this.categoryServices.createCategory(
-        category
-      );
-      bookDto.category = createdCategory;
 
+      bookDto.category = category;
 
-      console.log(publisher);
+      console.log(category);
       console.log(createdLanguage);
-      console.log(createdCategory)
-      
+
       const book = this.bookFactoryService.createNewBook(bookDto);
       const createdBook = await this.bookServices.createBook(book);
       createBookResponse.success = true;

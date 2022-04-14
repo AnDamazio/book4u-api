@@ -5,14 +5,14 @@ import { Book } from 'src/core/entities/book.entity';
 @Injectable()
 export class BookFactoryService {
   createNewBook(createBookDto: CreateBookDto) {
-    const newBook = new Book()
-    newBook.name = createBookDto.name
-    newBook.pagesQuantity = createBookDto.pagesQuantity
-    newBook.synopsis = createBookDto.synopsis
-    newBook.status = createBookDto.status
-    newBook.condition = createBookDto.condition
-    newBook.author = createBookDto.author
-    newBook.language = createBookDto.language
+    const newBook = new Book();
+    newBook.name = createBookDto.name;
+    newBook.pagesQuantity = createBookDto.pagesQuantity;
+    newBook.synopsis = createBookDto.synopsis;
+    newBook.status = createBookDto.status;
+    newBook.condition = createBookDto.condition;
+    newBook.author = createBookDto.author;
+    newBook.language = createBookDto.language;
     newBook.publisher = createBookDto.publisher;
     newBook.category = createBookDto.category;
     return newBook;
