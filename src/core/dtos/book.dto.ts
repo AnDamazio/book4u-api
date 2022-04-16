@@ -47,9 +47,17 @@ export class CreateBookDto {
   @Type(() => CreateLanguageDto)
   language: CreateLanguageDto;
 
+  @IsNotEmpty()
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
   @Type(() => CreatePublisherDto)
   publisher: CreatePublisherDto;
 
+  @IsNotEmpty()
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
   @Type(() => CreateCategoryDto)
   category: CreateCategoryDto[];
 }

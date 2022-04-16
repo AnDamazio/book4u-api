@@ -1,5 +1,6 @@
 import { ICategoryRepository } from 'src/core';
 import { Repository } from 'typeorm';
+import { Category } from './model';
 
 export class MysqlCategoryRepository<T> implements ICategoryRepository<T> {
   private _repository: Repository<T>;
