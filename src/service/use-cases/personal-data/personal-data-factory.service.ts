@@ -19,6 +19,7 @@ export class PersonalDataFactoryService {
     newPersonalData.cpf = createPersonalDataDto.cpf;
     newPersonalData.rg = createPersonalDataDto.rg;
     newPersonalData.cellphone = createPersonalDataDto.cellphone;
+    newPersonalData.telephone = createPersonalDataDto.telephone;
 
     return newPersonalData;
   }

@@ -16,6 +16,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   lastName: string;
 
+  @IsString()
+  profileImage: string;
+
   @IsNotEmpty()
   @IsNotEmptyObject()
   @IsObject()

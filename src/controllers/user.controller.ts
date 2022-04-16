@@ -1,10 +1,11 @@
 import { PersonalDataServices } from '../service/use-cases/personal-data/personal-data-services.service';
 import { PersonalDataFactoryService } from '../service/use-cases/personal-data/personal-data-factory.service';
-import { Controller, Post, Body, Request, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Request, UseGuards, Param, UseInterceptors, UploadedFile, Put } from '@nestjs/common';
 import { CreateUserDto, CreateUserResponseDto } from '../core/dtos';
 import { UserServices } from 'src/service/use-cases/user/user-services.service';
 import { UserFactoryService } from 'src/service/use-cases/user';
 import { LocalAuthGuard } from 'src/frameworks/auth/local-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('api/user')
 export class UserController {
@@ -43,5 +44,18 @@ export class UserController {
   @Post('auth/login')
   async login(@Request() req) {
     return req.user;
+  }
+
+  @Put(':id')
+  @UseInterceptors(FileInterceptor('profileImage'))
+  async setProfilePic(@Param('id') id: any, @UploadedFile() file: Express.Multer.File) {
+    const createUserResponse = new CreateUserResponseDto();
+    try {
+      const fileName = Date.now() + "_" + file.originalname
+      const createdProfilePic = await this.userServices.setProfilePic(id, fileName)
+      createUserResponse.createdUser = createdProfilePic;
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
