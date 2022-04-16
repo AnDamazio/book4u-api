@@ -1,4 +1,4 @@
-import { Condition, Status } from '../../../../core/enums'
+import { Condition, Status } from '../../../../core/enums';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Author } from './author.model';
 import { Language } from './language.model';
@@ -39,10 +40,11 @@ export class Book {
   @ManyToOne(() => Language, (language) => language.book)
   @JoinColumn()
   language!: Language;
-  
+
   @ManyToOne(() => Publisher, (publisher) => publisher.book)
   publisher!: Publisher;
 
-  @ManyToMany(() => Category, (category) => category.book)
-  category!: Category;
+  @ManyToMany(() => Category)
+  @JoinTable()
+  category!: Category[];
 }

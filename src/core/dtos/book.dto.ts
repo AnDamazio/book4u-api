@@ -10,6 +10,7 @@ import { Type } from 'class-transformer';
 import { CreateAuthorDto } from './author.dto';
 import { CreateLanguageDto } from './language.dto';
 import { CreatePublisherDto } from './publisher.dto';
+import { CreateCategoryDto } from './category.dto';
 
 export class CreateBookDto {
   @IsString()
@@ -43,10 +44,20 @@ export class CreateBookDto {
   @IsNotEmptyObject()
   @IsObject()
   @ValidateNested()
-
   @Type(() => CreateLanguageDto)
   language: CreateLanguageDto;
-  
+
+  @IsNotEmpty()
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
   @Type(() => CreatePublisherDto)
   publisher: CreatePublisherDto;
+
+  @IsNotEmpty()
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CreateCategoryDto)
+  category: CreateCategoryDto[];
 }
