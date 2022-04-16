@@ -5,6 +5,7 @@ import {
   IsPhoneNumber,
   Length,
   Validate,
+  IsMobilePhone
 } from 'class-validator/cjs';
 import { IsCpf } from '../validations/cpf-validation';
 export class CreatePersonalDataDto {
@@ -17,9 +18,13 @@ export class CreatePersonalDataDto {
   @IsNotEmpty()
   rg: string;
 
-  @IsPhoneNumber('BR')
+  @IsMobilePhone()
   @IsNotEmpty()
   cellphone: string;
+
+  @IsPhoneNumber('BR')
+  @IsNotEmpty()
+  telephone: string;
 
   @IsEmail()
   @IsNotEmpty()

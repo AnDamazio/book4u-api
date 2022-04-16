@@ -11,6 +11,8 @@ import { User } from './user.model';
 @Unique(['cpf'])
 @Unique(['email'])
 @Unique(['rg'])
+@Unique(['cellphone'])
+@Unique(['telephone'])
 export class PersonalData {
   @PrimaryGeneratedColumn()
   id!: string;
@@ -29,6 +31,9 @@ export class PersonalData {
 
   @Column()
   cellphone!: string;
+
+  @Column()
+  telephone!: string;
 
   @OneToOne(() => User, (user) => user.personalData)
   user: User;

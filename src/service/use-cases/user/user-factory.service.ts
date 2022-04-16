@@ -8,6 +8,7 @@ export class UserFactoryService {
     const newUser = new User();
     newUser.firstName = createUserDto.firstName;
     newUser.lastName = createUserDto.lastName;
+    newUser.profileImage = createUserDto.profileImage;
     newUser.personalData = createUserDto.personalData;
 
     return newUser;

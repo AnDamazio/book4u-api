@@ -18,6 +18,9 @@ export class User {
   @Column()
   lastName!: string;
 
+  @Column()
+  profileImage: string;
+
   @OneToOne(() => PersonalData)
   @JoinColumn()
   personalData!: PersonalData;

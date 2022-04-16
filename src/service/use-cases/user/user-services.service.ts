@@ -23,4 +23,17 @@ export class UserServices {
     const user = this.userFactoryService.createNewUser(createUserDto);
     return this.dataServices.user.create(user);
   }
-}
+
+  async setProfilePic(id: number, fileName: string): Promise<User> {
+    const userFound = await this.dataServices.user.findOneById(id);
+    if (userFound) {
+      userFound.profileImage = fileName;
+      return this.dataServices.user.updateUser(id, userFound);
+    } else {
+      return 
+    }
+  } 
+
+  }
+    
+
