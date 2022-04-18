@@ -6,6 +6,8 @@ import { UserServices } from 'src/service/use-cases/user/user-services.service';
 import { UserFactoryService } from 'src/service/use-cases/user';
 import { LocalAuthGuard } from 'src/frameworks/auth/local-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ref, uploadBytes, deleteObject } from 'firebase/storage'
+import { storage } from '../firebase'
 
 @Controller('api/user')
 export class UserController {
@@ -48,14 +50,15 @@ export class UserController {
 
   @Put(':id')
   @UseInterceptors(FileInterceptor('profileImage'))
-  async setProfilePic(@Param('id') id: any, @UploadedFile() file: Express.Multer.File) {
+  async setProfilePic(@Param() id: number, @UploadedFile() file: Express.Multer.File) {
     const createUserResponse = new CreateUserResponseDto();
-    try {
       const fileName = Date.now() + "_" + file.originalname
-      const createdProfilePic = await this.userServices.setProfilePic(id, fileName)
-      createUserResponse.createdUser = createdProfilePic;
-    } catch (error) {
-      console.log(error)
-    }
+      const fileRef = ref(storage, fileName)
+       uploadBytes(fileRef, file.buffer).then(
+        async (snapshot) => {
+         const createdProfilePic = await this.userServices.setProfilePic(id, fileName)
+         return createUserResponse.createdUser = createdProfilePic;
+        }
+      ).catch(error => console.log(error)) 
   }
 }
