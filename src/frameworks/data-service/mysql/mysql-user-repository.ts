@@ -1,5 +1,5 @@
-import { Repository, UpdateResult } from 'typeorm';
-import { IUserRepository, User } from 'src/core';
+import { Repository } from 'typeorm';
+import { IUserRepository } from 'src/core';
 
 export class MysqlUserRepository<T> implements IUserRepository<T> {
   private _repository: Repository<T>;
@@ -13,7 +13,7 @@ export class MysqlUserRepository<T> implements IUserRepository<T> {
   }
 
   findOneById(id: number): Promise<T> {
-    return this._repository.findOne();
+    return this._repository.findOne(id);
   }
 
   create(user): Promise<T> {
@@ -24,8 +24,4 @@ export class MysqlUserRepository<T> implements IUserRepository<T> {
     return await this._repository.update(id, fileName)
   }
 
-  async updateUser(id: number, user): Promise<any> {
-    const updateUser = await this._repository.update(id, user)
-    return updateUser
-  }
 }

@@ -31,7 +31,7 @@ import 'dotenv/config';
       port: 3306,
       username: 'root',
       password: '',
-      database: 'clean_teste',
+      database: 'book4uapi',
       entities: [__dirname + '/../**/*.model{.ts,.js}'],
       synchronize: true,
     }),

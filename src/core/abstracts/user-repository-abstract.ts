@@ -7,6 +7,4 @@ export abstract class IUserRepository<T> {
 
   abstract setProfilePic(id: number, fileName: any): Promise<any>
 
-  abstract updateUser(id: number, user: any): Promise<any>
-
 }
