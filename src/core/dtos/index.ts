@@ -8,3 +8,4 @@ export * from './language.dto'
 export * from './publisher.dto';
 export * from './create-publisher-response.dto';
 export * from './category.dto'
+export * from './user-situation.dto'

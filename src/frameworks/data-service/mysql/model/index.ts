@@ -5,3 +5,4 @@ export * from './book.model';
 export * from './language.model'
 export * from './publisher.model';
 export * from './category.model';
+export * from './user-situation.model'

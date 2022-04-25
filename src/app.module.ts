@@ -14,6 +14,7 @@ import { AuthorServicesModule } from './service/use-cases/author';
 import { LanguageServicesModule } from './service/use-cases/language';
 import { PublisherServicesModule } from './service/use-cases/publisher/publisher-services.module';
 import { CategoryServicesModule } from './service/use-cases/category';
+import { UserSituationServicesModule } from './service/use-cases/userSituation';
 
 @Module({
   imports: [
@@ -25,9 +26,10 @@ import { CategoryServicesModule } from './service/use-cases/category';
     PublisherServicesModule,
     AuthModule,
     LanguageServicesModule,
-    CategoryServicesModule
+    CategoryServicesModule,
+    UserSituationServicesModule
   ],
   controllers: [AppController, UserController, BookController],
   providers: [AppService, UserServices, BookServices],
 })
-export class AppModule {}
+export class AppModule { }
