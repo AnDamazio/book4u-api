@@ -1,7 +1,7 @@
 import { MysqlPersonalDataRepository } from './mysql-personal-data-repository';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, PersonalData, Author, Book, Language, Publisher } from './model';
+import { User, PersonalData, Author, Book, Language, Publisher, UserSituation } from './model';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { IDataServices } from 'src/core';
 import { MysqlUserRepository } from './mysql-user-repository';
@@ -11,11 +11,11 @@ import { MysqlLanguageRepository } from './mysql-language.repository';
 import { MysqlPublisherRepository } from './mysql-publisher.repository';
 import { Category } from './model/category.model';
 import { MysqlCategoryRepository } from './mysql-category.repository';
+import { MysqlUserSituationRepository } from './mysql-user-situation.repository'
 
 @Injectable()
 export class MysqlDataServices
-  implements IDataServices, OnApplicationBootstrap
-{
+  implements IDataServices, OnApplicationBootstrap {
   user: MysqlUserRepository<User>;
   personalData: MysqlPersonalDataRepository<PersonalData>;
   book: MysqlBookRepository<Book>;
@@ -23,6 +23,7 @@ export class MysqlDataServices
   language: MysqlLanguageRepository<Language>;
   publisher: MysqlPublisherRepository<Publisher>;
   category: MysqlCategoryRepository<Category>;
+  userSituation: MysqlUserSituationRepository<UserSituation>;
 
   constructor(
     @InjectRepository(User) private UserRepository: Repository<User>,
@@ -36,7 +37,9 @@ export class MysqlDataServices
     private PublisherRepository: Repository<Publisher>,
     @InjectRepository(Category)
     private CategoryRepository: Repository<Category>,
-  ) {}
+    @InjectRepository(UserSituation)
+    private UserSituationRepository: Repository<UserSituation>,
+  ) { }
 
   onApplicationBootstrap() {
     this.user = new MysqlUserRepository<User>(this.UserRepository);
@@ -54,5 +57,8 @@ export class MysqlDataServices
     this.category = new MysqlCategoryRepository<Category>(
       this.CategoryRepository,
     );
+    this.userSituation = new MysqlUserSituationRepository<UserSituation>(
+      this.UserSituationRepository,
+    )
   }
 }

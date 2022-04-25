@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { IUserRepository } from 'src/core';
 
 export class MysqlUserRepository<T> implements IUserRepository<T> {
@@ -13,7 +13,7 @@ export class MysqlUserRepository<T> implements IUserRepository<T> {
   }
 
   findOneById(id: number): Promise<T> {
-    return this._repository.findOne(id);
+    return this._repository.findOne({ relations: ['userSituation'], where: { id: id } })
   }
 
   create(user): Promise<T> {
@@ -24,4 +24,15 @@ export class MysqlUserRepository<T> implements IUserRepository<T> {
     return await this._repository.update(id, fileName)
   }
 
+  async getIdFromUser(user: T): Promise<T> {
+    return await this._repository.getId(user);
+  }
+
+  async findOneByNRegister(registerNumber: string): Promise<T> {
+    return await this._repository.findOne({ relations: ['userSituation'], where: { registerNumber: registerNumber } })
+  }
+
+  async updateSituationUser(id: number, newUser: T): Promise<UpdateResult> {
+    return await this._repository.update(id, newUser)
+  }
 }

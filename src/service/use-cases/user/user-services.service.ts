@@ -9,7 +9,7 @@ export class UserServices {
   constructor(
     private dataServices: IDataServices,
     private userFactoryService: UserFactoryService,
-  ) {}
+  ) { }
 
   getAllUsers(): Promise<User[]> {
     return this.dataServices.user.findAll();
@@ -30,7 +30,32 @@ export class UserServices {
       findedUser.profileImage = fileName;
       return this.dataServices.user.setProfilePic(id, findedUser);
     } else {
-      return 
+      return
     }
-  } 
   }
+
+  async getUserByNRegister(registerNumber: string): Promise<User> {
+    const findedUser = await this.dataServices.user.findOneByNRegister(registerNumber);
+    if (findedUser) {
+      return findedUser
+    } else {
+      return
+    }
+  }
+
+  async setSituationUser(id: number, enumSituation: "PENDENTE" | "CONFIRMADO"): Promise<any | Error> {
+    const findedUser = await this.dataServices.user.findOneById(id)
+    if (findedUser) {
+      const userSituation = await this.dataServices.userSituation.findOneByName(enumSituation)
+      findedUser.userSituation = userSituation;
+      return this.dataServices.user.updateSituationUser(id, findedUser)
+    } else {
+      return Error("Erro ao atualizar situação de usuário")
+    }
+  }
+
+  async getIdFromUser(user: User): Promise<User> {
+    return await this.dataServices.user.getIdFromUser(user)
+  }
+
+}

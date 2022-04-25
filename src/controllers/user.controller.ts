@@ -1,13 +1,28 @@
 import { PersonalDataServices } from '../service/use-cases/personal-data/personal-data-services.service';
 import { PersonalDataFactoryService } from '../service/use-cases/personal-data/personal-data-factory.service';
-import { Controller, Post, Body, Request, UseGuards, Param, UseInterceptors, UploadedFile, Put } from '@nestjs/common';
-import { CreateUserDto, CreateUserResponseDto } from '../core/dtos';
+import { UserSituationFactoryService } from 'src/service/use-cases/userSituation';
+import { UserSituationServices } from 'src/service/use-cases/userSituation';
+import {
+  Controller,
+  Post,
+  Body,
+  Request,
+  UseGuards,
+  Param,
+  UseInterceptors,
+  UploadedFile,
+  Put,
+} from '@nestjs/common';
+import { CreateUserDto, CreateUserResponseDto, UserSituationDto } from '../core/dtos';
 import { UserServices } from 'src/service/use-cases/user/user-services.service';
 import { UserFactoryService } from 'src/service/use-cases/user';
 import { LocalAuthGuard } from 'src/frameworks/auth/local-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ref, uploadBytes, deleteObject } from 'firebase/storage'
-import { storage } from '../firebase'
+import { ref, uploadBytes, deleteObject } from 'firebase/storage';
+import { storage } from '../firebase';
+import * as nodemailer from 'nodemailer'
+import { SMTP_CONFIG } from '../smtp/smtp-config'
+import { EnumUserSituation } from 'src/core';
 
 @Controller('api/user')
 export class UserController {
@@ -16,30 +31,71 @@ export class UserController {
     private userFactoryService: UserFactoryService,
     private personalDataServices: PersonalDataServices,
     private personalDataFactoryService: PersonalDataFactoryService,
-  ) {}
+    private userSituationServices: UserSituationServices,
+    private userSituationFactoryService: UserSituationFactoryService
+  ) { }
 
   @Post()
   async createUser(@Body() userDto: CreateUserDto) {
+    const transport = nodemailer.createTransport({
+      service: SMTP_CONFIG.service,
+      host: SMTP_CONFIG.host,
+      port: SMTP_CONFIG.port,
+      secure: false,
+      auth: {
+        user: SMTP_CONFIG.user,
+        pass: SMTP_CONFIG.pass
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    })
+
     const createUserResponse = new CreateUserResponseDto();
-    try {
-      const personalData =
-        this.personalDataFactoryService.createNewPersonalData(
-          userDto.personalData,
+    {
+      try {
+        const personalData =
+          this.personalDataFactoryService.createNewPersonalData(
+            userDto.personalData,
+          );
+        const createdPersonalData =
+          await this.personalDataServices.createPersonalData(await personalData);
+        userDto.personalData = createdPersonalData;
+        const userSituation = this.userSituationFactoryService.createnewUserSituation(
+          userDto.userSituation
         );
-      const createdPersonalData =
-        await this.personalDataServices.createPersonalData(await personalData);
-      userDto.personalData = createdPersonalData;
-      const user = this.userFactoryService.createNewUser(userDto);
-      const createdUser = await this.userServices.createUser(user);
+        const createdUserSituation = await this.userSituationServices.createUserSituation(userSituation);
+        userDto.userSituation = createdUserSituation;
 
-      createUserResponse.success = true;
-      createUserResponse.createdUser = createdUser;
-    } catch (error) {
-      console.log(error);
-      createUserResponse.success = false;
+        const user = this.userFactoryService.createNewUser(userDto);
+        function generateNewNumber() {
+          const nGenerated = String(Math.floor(Math.random() * 3000) + 1)
+          if (nGenerated.length == 4) {
+            user.registerNumber = nGenerated
+          } else {
+            generateNewNumber()
+          }
+        }
+        generateNewNumber()
+
+        const createdUser = await this.userServices.createUser(user);
+        createUserResponse.createdUser = createdUser;
+
+        transport.sendMail({
+          text: `Obrigado por se cadastrar no Book4U, SEJA BEM VINDO! Aqui está seu código de verificação ${user.registerNumber}`,
+          subject: `Confirmação de cadastro`,
+          from: SMTP_CONFIG.user,
+          to: createdPersonalData.email,
+        }).then(
+          (param) => console.log(param)
+        ).catch(error => console.log(error))
+
+      } catch (error) {
+        console.log(error);
+        createUserResponse.success = false;
+      }
+      return createUserResponse;
     }
-
-    return createUserResponse;
   }
 
   @UseGuards(LocalAuthGuard)
@@ -50,15 +106,44 @@ export class UserController {
 
   @Put(':id')
   @UseInterceptors(FileInterceptor('profileImage'))
-  async setProfilePic(@Param() id: number, @UploadedFile() file: Express.Multer.File) {
+  async setProfilePic(
+    @Param('id') id: number,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const userFound = this.userServices.getUserById(id)
     const createUserResponse = new CreateUserResponseDto();
-      const fileName = Date.now() + "_" + file.originalname
-      const fileRef = ref(storage, fileName)
-       uploadBytes(fileRef, file.buffer).then(
-        async (snapshot) => {
-         const createdProfilePic = await this.userServices.setProfilePic(id, fileName)
-         return createUserResponse.createdUser = createdProfilePic;
-        }
-      ).catch(error => console.log(error)) 
+    if ((await userFound).profileImage != "") {
+      const userPic = (await userFound).profileImage
+      const fileRef = ref(storage, userPic)
+      deleteObject(fileRef)
+        .then()
+        .catch(error => console.log(error))
+    }
+    const fileName = Date.now() + '_' + file.originalname;
+    const fileRef = ref(storage, fileName);
+    uploadBytes(fileRef, file.buffer)
+      .then(async () => {
+        const createdProfilePic = await this.userServices.setProfilePic(
+          id,
+          fileName,
+        );
+        return (createUserResponse.createdUser = createdProfilePic);
+      })
+      .catch((error) => console.log(error));
+  }
+
+
+  @Put('confirmRegistration/:rNumber')
+  async confirmRegistration(@Param('rNumber') rNumber: string) {
+    const userFound = await this.userServices.getUserByNRegister(rNumber)
+    const getIdFromUser = await this.userServices.getIdFromUser(userFound)
+    const createUserResponse = new CreateUserResponseDto();
+    if (userFound.registerNumber == rNumber) {
+      const newUserSituation = await this.userServices.setSituationUser(Number(getIdFromUser), userFound.userSituation.name = "CONFIRMADO")
+      return createUserResponse.createdUser = newUserSituation
+    } else {
+      return console.log("Erro ao alterar dado de situação de usuário para confirmado")
+    }
   }
 }
+

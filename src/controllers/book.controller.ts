@@ -31,7 +31,7 @@ export class BookController {
     private publisherServices: PublisherServices,
     private categoryFactoryService: CategoryFactoryService,
     private categoryServices: CategoryServices,
-  ) {}
+  ) { }
 
   @Post()
   async createBook(@Body() bookDto: CreateBookDto) {
@@ -60,9 +60,7 @@ export class BookController {
       const category = await this.categoryServices.getCategory(
         bookDto.category,
       );
-
       bookDto.category = category;
-
       console.log(category);
       console.log(createdLanguage);
 

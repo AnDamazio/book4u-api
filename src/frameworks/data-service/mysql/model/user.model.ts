@@ -4,8 +4,10 @@ import {
   Column,
   OneToOne,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 import { PersonalData } from './personal-data.model';
+import { UserSituation } from './user-situation.model';
 
 @Entity()
 export class User {
@@ -21,7 +23,14 @@ export class User {
   @Column()
   profileImage: string;
 
+  @Column()
+  registerNumber: string;
+
   @OneToOne(() => PersonalData)
   @JoinColumn()
   personalData!: PersonalData;
+
+  @ManyToOne(() => UserSituation, (userSituation) => userSituation.user)
+  @JoinColumn()
+  userSituation!: UserSituation;
 }
