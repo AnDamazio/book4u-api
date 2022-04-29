@@ -8,7 +8,7 @@ import { cpf } from 'cpf-cnpj-validator';
 @ValidatorConstraint({ name: 'isCpf', async: false })
 export class IsCpf implements ValidatorConstraintInterface {
   validate(text: string, args: ValidationArguments) {
-    return text.contains('.' || '-') ? false : cpf.isValid(text);
+    return text.includes('.' || '-') ? false : cpf.isValid(text);
   }
 
   defaultMessage(args: ValidationArguments) {
