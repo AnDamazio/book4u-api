@@ -24,6 +24,20 @@ import * as nodemailer from 'nodemailer'
 import { SMTP_CONFIG } from '../smtp/smtp-config'
 import { EnumUserSituation } from 'src/core';
 
+const transport = nodemailer.createTransport({
+  service: SMTP_CONFIG.service,
+  host: SMTP_CONFIG.host,
+  port: SMTP_CONFIG.port,
+  secure: false,
+  auth: {
+    user: SMTP_CONFIG.user,
+    pass: SMTP_CONFIG.pass
+  },
+  tls: {
+    rejectUnauthorized: false
+  }
+})
+
 @Controller('api/user')
 export class UserController {
   constructor(
@@ -37,19 +51,6 @@ export class UserController {
 
   @Post()
   async createUser(@Body() userDto: CreateUserDto) {
-    const transport = nodemailer.createTransport({
-      service: SMTP_CONFIG.service,
-      host: SMTP_CONFIG.host,
-      port: SMTP_CONFIG.port,
-      secure: false,
-      auth: {
-        user: SMTP_CONFIG.user,
-        pass: SMTP_CONFIG.pass
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
-    })
 
     const createUserResponse = new CreateUserResponseDto();
     {
@@ -90,11 +91,11 @@ export class UserController {
           (param) => console.log(param)
         ).catch(error => console.log(error))
 
+        return createUserResponse;
       } catch (error) {
-        console.log(error);
         createUserResponse.success = false;
+        return error
       }
-      return createUserResponse;
     }
   }
 
@@ -141,6 +142,50 @@ export class UserController {
     if (userFound.registerNumber == rNumber) {
       const newUserSituation = await this.userServices.setSituationUser(Number(getIdFromUser), userFound.userSituation.name = "CONFIRMADO")
       return createUserResponse.createdUser = newUserSituation
+    } else {
+      return console.log("Erro ao alterar dado de situação de usuário para confirmado")
+    }
+  }
+
+  @Put('resendRNumber/:email')
+  async resendRNumber(@Param('email') email: string) {
+    const userFound = await this.userServices.findByEmail(email);
+    const createUserResponse = new CreateUserResponseDto();
+    if (userFound) {
+      function generateNewNumber() {
+        const nGenerated = String(Math.floor(Math.random() * 3000) + 1)
+        if (nGenerated.length == 4) {
+          userFound.registerNumber = nGenerated
+        } else {
+          generateNewNumber()
+        }
+      }
+      generateNewNumber()
+      transport.sendMail({
+        text: `Código para mudar a senha: ${userFound.registerNumber}`,
+        subject: `Confirmação de cadastro`,
+        from: SMTP_CONFIG.user,
+        to: userFound.personalData.email,
+      }).then(
+        (param) => console.log(param)
+      ).catch(error => console.log(error))
+      createUserResponse.createdUser = userFound;
+    } else {
+      return Error("Email não encontrado na base de dados")
+    }
+  }
+
+  @Put('exchangePassword/:rNumber')
+  async exchangePassword(@Param('rNumber') rNumber: string, @Body() userDto: CreateUserDto) {
+    const userFound = await this.userServices.getUserByNRegister(rNumber)
+    const getIdFromPersonalData = await this.personalDataServices.getIdFromPersonalData(userFound.personalData)
+    const createUserResponse = new CreateUserResponseDto();
+    if (userFound.registerNumber == rNumber) {
+      const unewUserPassword = userFound.personalData.password = userDto.personalData.password;
+      console.log(unewUserPassword)
+      const newPassword = await this.personalDataServices.exchangePassword(Number(getIdFromPersonalData), userFound.personalData)
+      console.log(newPassword)
+      return createUserResponse.createdUser = newPassword;
     } else {
       return console.log("Erro ao alterar dado de situação de usuário para confirmado")
     }

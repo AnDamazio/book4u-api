@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '../../../core/entities';
 import { IDataServices } from '../../../core/abstracts';
-import { CreateUserDto } from '../../../core/dtos';
+import { CreateUserDto, CreateUserResponseDto } from '../../../core/dtos';
 import { UserFactoryService } from './user-factory.service';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class UserServices {
 
   createUser(createUserDto: CreateUserDto): Promise<User> {
     const user = this.userFactoryService.createNewUser(createUserDto);
-    return this.dataServices.user.create(user);
+    return this.dataServices.user.create(user)
   }
 
   async setProfilePic(id: any, fileName: string): Promise<User> {
@@ -56,6 +56,11 @@ export class UserServices {
 
   async getIdFromUser(user: User): Promise<User> {
     return await this.dataServices.user.getIdFromUser(user)
+  }
+
+  findByEmail(email: string): Promise<User> {
+    const personal_data = this.dataServices.user.findOneByEmail(email);
+    return personal_data;
   }
 
 }

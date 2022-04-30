@@ -11,7 +11,9 @@ export abstract class IUserRepository<T> {
 
   abstract setProfilePic(id: number, fileName: any): Promise<any>
 
-  abstract updateSituationUser(id: number, newUser: T): Promise<UpdateResult>
+  abstract updateSituationUser(id: number, newUser: T): Promise<UpdateResult | Error>
 
   abstract getIdFromUser(user: T): Promise<T>;
+
+  abstract findOneByEmail(email: string): Promise<T>;
 }

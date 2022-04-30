@@ -9,7 +9,7 @@ export class PersonalDataServices {
   constructor(
     private dataServices: IDataServices,
     private personalDataFactoryService: PersonalDataFactoryService,
-  ) {}
+  ) { }
 
   async createPersonalData(
     createPersonalDataDto: CreatePersonalDataDto,
@@ -23,5 +23,17 @@ export class PersonalDataServices {
   findByEmail(email: string): Promise<PersonalData> {
     const personal_data = this.dataServices.personalData.findOneByEmail(email);
     return personal_data;
+  }
+
+  async findPersonalDataById(id: number): Promise<PersonalData> {
+    return await this.dataServices.personalData.findOneById(id)
+  }
+
+  async exchangePassword(id: number, newUserPassword: PersonalData): Promise<any | Error> {
+    return await this.dataServices.personalData.exchangePassword(id, newUserPassword)
+  }
+
+  async getIdFromPersonalData(personalData: PersonalData): Promise<PersonalData> {
+    return await this.dataServices.personalData.getIdFromPersonalData(personalData)
   }
 }
