@@ -3,6 +3,8 @@ import { UserSituation } from '../../../core/entities/user-situation.entity';
 import { IDataServices } from '../../../core/abstracts';
 import { UserSituationDto } from '../../../core/dtos';
 import { UserSituationFactoryService } from './userSituation-factory.service';
+import { EnumUserSituation } from 'src/core';
+
 
 @Injectable()
 export class UserSituationServices {
@@ -22,8 +24,5 @@ export class UserSituationServices {
         } else {
             return await this.dataServices.userSituation.findOneByName(userSituationDto.name)
         }
-
     }
-
-
 }

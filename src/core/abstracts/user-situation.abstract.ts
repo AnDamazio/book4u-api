@@ -6,4 +6,5 @@ export abstract class IUserSituationRepository<T> {
     abstract checkIfExist(situationExist: string): Promise<Boolean>
 
     abstract findOneByName(nameSituation: string): Promise<T>;
+
 }

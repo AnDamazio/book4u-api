@@ -1,5 +1,6 @@
 import { IUserSituationRepository } from 'src/core';
 import { Repository } from 'typeorm';
+import { EnumUserSituation } from 'src/core';
 
 export class MysqlUserSituationRepository<T> implements IUserSituationRepository<T> {
     private _repository: Repository<T>;
@@ -27,6 +28,4 @@ export class MysqlUserSituationRepository<T> implements IUserSituationRepository
             return false
         }
     }
-
-
 }

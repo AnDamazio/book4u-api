@@ -18,7 +18,6 @@ export class MysqlPersonalDataRepository<T>
     try {
       const userData = await this._repository
         .createQueryBuilder('personal_data')
-        .leftJoinAndSelect('personal_data.user', 'user')
         .where('personal_data.email = :email', { email: email })
         .getOne();
       return userData;
@@ -28,7 +27,7 @@ export class MysqlPersonalDataRepository<T>
   }
 
   async findOneById(id: number): Promise<T> {
-    return this._repository.findOne({ relations: ['user'], where: { id: id } })
+    return await this._repository.findOne({ where: { id: id } });
   }
 
   async exchangePassword(id: number, newUserPassword: T): Promise<UpdateResult> {

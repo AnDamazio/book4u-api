@@ -5,11 +5,13 @@ import {
   OneToOne,
   JoinColumn,
   ManyToOne,
+  Unique,
 } from 'typeorm';
 import { PersonalData } from './personal-data.model';
 import { UserSituation } from './user-situation.model';
 
 @Entity()
+@Unique(['registerNumber'])
 export class User {
   @PrimaryGeneratedColumn()
   id!: string;

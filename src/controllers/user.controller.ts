@@ -14,9 +14,9 @@ import {
   Put,
 } from '@nestjs/common';
 import {
+  CreatePersonalDataDto,
   CreateUserDto,
   CreateUserResponseDto,
-  UserSituationDto,
 } from '../core/dtos';
 import { UserServices } from 'src/service/use-cases/user/user-services.service';
 import { UserFactoryService } from 'src/service/use-cases/user';
@@ -26,7 +26,6 @@ import { ref, uploadBytes, deleteObject } from 'firebase/storage';
 import { storage } from '../firebase';
 import * as nodemailer from 'nodemailer';
 import { SMTP_CONFIG } from '../smtp/smtp-config';
-import { EnumUserSituation } from 'src/core';
 
 const transport = nodemailer.createTransport({
   service: SMTP_CONFIG.service,
@@ -100,9 +99,10 @@ export class UserController {
         ).catch(error => console.log(error))
 
         return createUserResponse;
-      } catch (error) {
+      } catch (err) {
         createUserResponse.success = false;
-        return error
+        return err.message
+
       }
     }
   }
@@ -136,9 +136,10 @@ export class UserController {
           id,
           fileName,
         );
-        return (createUserResponse.createdUser = createdProfilePic);
+        createUserResponse.createdUser = createdProfilePic
+        return "Imagem trocada com sucesso!"
       })
-      .catch((error) => console.log(error));
+      .catch((error) => { return (error) });
   }
 
   @Put('confirmRegistration/:rNumber')
@@ -153,16 +154,14 @@ export class UserController {
       );
       return (createUserResponse.createdUser = newUserSituation);
     } else {
-      return console.log(
-        'Erro ao alterar dado de situação de usuário para confirmado',
-      );
+      return ("Código de registro incorreto, tente novamente")
     }
   }
 
   @Put('resendRNumber/:email')
   async resendRNumber(@Param('email') email: string) {
     const userFound = await this.userServices.findByEmail(email);
-    const createUserResponse = new CreateUserResponseDto();
+    const getIdFromUser = await this.userServices.getIdFromUser(userFound);
     if (userFound) {
       function generateNewNumber() {
         const nGenerated = String(Math.floor(Math.random() * 3000) + 1)
@@ -179,27 +178,25 @@ export class UserController {
         from: SMTP_CONFIG.user,
         to: userFound.personalData.email,
       }).then(
-        (param) => console.log(param)
-      ).catch(error => console.log(error))
-      createUserResponse.createdUser = userFound;
+        await this.userServices.updateNRegister(Number(getIdFromUser), userFound)
+      ).catch((error) => { return error })
+      return (`E-mail enviado para o email ${userFound.personalData.email}`)
     } else {
-      return Error("Email não encontrado na base de dados")
+      return "Usuário não encontrado"
     }
+
   }
 
-  @Put('exchangePassword/:rNumber')
-  async exchangePassword(@Param('rNumber') rNumber: string, @Body() userDto: CreateUserDto) {
-    const userFound = await this.userServices.getUserByNRegister(rNumber)
-    const getIdFromPersonalData = await this.personalDataServices.getIdFromPersonalData(userFound.personalData)
-    const createUserResponse = new CreateUserResponseDto();
-    if (userFound.registerNumber == rNumber) {
-      const unewUserPassword = userFound.personalData.password = userDto.personalData.password;
-      console.log(unewUserPassword)
-      const newPassword = await this.personalDataServices.exchangePassword(Number(getIdFromPersonalData), userFound.personalData)
-      console.log(newPassword)
-      return createUserResponse.createdUser = newPassword;
+  @Put('exchangePassword/:email')
+  async exchangePassword(@Param('email') email: string, @Body('password') password: CreatePersonalDataDto["password"]) {
+    const userFound = await this.personalDataServices.findByEmail(email)
+    const getIdFromPersonalData = await this.personalDataServices.getIdFromPersonalData(userFound)
+    if (userFound) {
+      userFound.password = await this.personalDataFactoryService.encryptPassword(String(password))
+      await this.personalDataServices.exchangePassword(Number(getIdFromPersonalData), userFound)
+      return "Senha alterada com sucesso"
     } else {
-      return console.log("Erro ao alterar dado de situação de usuário para confirmado")
+      return "Erro ao alterar dado de situação de usuário para confirmado"
     }
   }
 }

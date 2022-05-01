@@ -3,6 +3,7 @@ import { User } from '../../../core/entities';
 import { IDataServices } from '../../../core/abstracts';
 import { CreateUserDto, CreateUserResponseDto } from '../../../core/dtos';
 import { UserFactoryService } from './user-factory.service';
+import { UpdateResult } from 'typeorm';
 
 @Injectable()
 export class UserServices {
@@ -61,6 +62,10 @@ export class UserServices {
   findByEmail(email: string): Promise<User> {
     const personal_data = this.dataServices.user.findOneByEmail(email);
     return personal_data;
+  }
+
+  async updateNRegister(id: number, newUser: User): Promise<any> {
+    return await this.dataServices.user.updateNRegister(id, newUser)
   }
 
 }
