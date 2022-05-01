@@ -1,6 +1,5 @@
-import { IUserSituationRepository } from 'src/core';
+import { IUserSituationRepository, UserSituation } from 'src/core';
 import { Repository } from 'typeorm';
-import { EnumUserSituation } from 'src/core';
 
 export class MysqlUserSituationRepository<T> implements IUserSituationRepository<T> {
     private _repository: Repository<T>;
@@ -15,6 +14,17 @@ export class MysqlUserSituationRepository<T> implements IUserSituationRepository
 
     create(userSituation): Promise<T> {
         return this._repository.save(userSituation);
+    }
+
+    async insertEnumValues(): Promise<UserSituation | any> {
+        try {
+            await this._repository.createQueryBuilder().insert().into('user_situation').values(
+                [{ name: "CONFIRMADO" }]
+            ).execute();
+            return
+        } catch (error) {
+            return error
+        }
     }
 
     async findOneByName(nameSituation: string): Promise<T> {

@@ -7,4 +7,6 @@ export abstract class IUserSituationRepository<T> {
 
     abstract findOneByName(nameSituation: string): Promise<T>;
 
+    abstract insertEnumValues(): Promise<boolean>
+
 }

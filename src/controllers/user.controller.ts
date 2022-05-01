@@ -17,6 +17,7 @@ import {
   CreatePersonalDataDto,
   CreateUserDto,
   CreateUserResponseDto,
+  UserSituationDto,
 } from '../core/dtos';
 import { UserServices } from 'src/service/use-cases/user/user-services.service';
 import { UserFactoryService } from 'src/service/use-cases/user';
@@ -144,6 +145,7 @@ export class UserController {
 
   @Put('confirmRegistration/:rNumber')
   async confirmRegistration(@Param('rNumber') rNumber: string) {
+    await this.userSituationServices.insertEnumValue();
     const userFound = await this.userServices.getUserByNRegister(rNumber);
     const getIdFromUser = await this.userServices.getIdFromUser(userFound);
     const createUserResponse = new CreateUserResponseDto();
@@ -184,7 +186,6 @@ export class UserController {
     } else {
       return "Usuário não encontrado"
     }
-
   }
 
   @Put('exchangePassword/:email')

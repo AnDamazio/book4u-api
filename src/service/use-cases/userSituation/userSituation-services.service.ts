@@ -25,4 +25,12 @@ export class UserSituationServices {
             return await this.dataServices.userSituation.findOneByName(userSituationDto.name)
         }
     }
+
+    async insertEnumValue(): Promise<UserSituation | any> {
+        if (await this.dataServices.userSituation.checkIfExist("Confirmado")) {
+            return await this.dataServices.userSituation.insertEnumValues()
+        } else {
+            return await this.dataServices.userSituation.findOneByName("Confirmado")
+        }
+    }
 }
