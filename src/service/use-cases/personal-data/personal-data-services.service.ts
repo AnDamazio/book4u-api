@@ -9,7 +9,7 @@ export class PersonalDataServices {
   constructor(
     private dataServices: IDataServices,
     private personalDataFactoryService: PersonalDataFactoryService,
-  ) { }
+  ) {}
 
   async createPersonalData(
     createPersonalDataDto: CreatePersonalDataDto,
@@ -26,14 +26,28 @@ export class PersonalDataServices {
   }
 
   async findPersonalDataById(id: number): Promise<PersonalData> {
-    return await this.dataServices.personalData.findOneById(id)
+    return await this.dataServices.personalData.findOneById(id);
   }
 
-  async exchangePassword(id: number, newUserPassword: PersonalData): Promise<any | Error> {
-    return await this.dataServices.personalData.exchangePassword(id, newUserPassword)
+  async findUserDataByEmail(email: string): Promise<PersonalData> {
+    return await this.dataServices.personalData.findUserDataByEmail(email);
   }
 
-  async getIdFromPersonalData(personalData: PersonalData): Promise<PersonalData> {
-    return await this.dataServices.personalData.getIdFromPersonalData(personalData)
+  async exchangePassword(
+    id: number,
+    newUserPassword: PersonalData,
+  ): Promise<any | Error> {
+    return await this.dataServices.personalData.exchangePassword(
+      id,
+      newUserPassword,
+    );
+  }
+
+  async getIdFromPersonalData(
+    personalData: PersonalData,
+  ): Promise<PersonalData> {
+    return await this.dataServices.personalData.getIdFromPersonalData(
+      personalData,
+    );
   }
 }

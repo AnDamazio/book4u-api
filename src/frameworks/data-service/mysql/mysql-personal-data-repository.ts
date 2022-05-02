@@ -26,6 +26,19 @@ export class MysqlPersonalDataRepository<T>
     }
   }
 
+  async findUserDataByEmail(email: string) {
+    try {
+      const userData = await this._repository
+        .createQueryBuilder('personal_data')
+        .leftJoinAndSelect('personal_data.user', 'user')
+        .where('personal_data.email = :email', { email: email })
+        .getOne();
+      return userData;
+    } catch(error) {
+      console.log(error)
+    }
+  }
+
 
 
   async findOneById(id: number): Promise<T> {

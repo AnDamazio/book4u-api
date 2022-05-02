@@ -35,12 +35,12 @@ const transport = nodemailer.createTransport({
   secure: false,
   auth: {
     user: SMTP_CONFIG.user,
-    pass: SMTP_CONFIG.pass
+    pass: SMTP_CONFIG.pass,
   },
   tls: {
-    rejectUnauthorized: false
-  }
-})
+    rejectUnauthorized: false,
+  },
+});
 
 @Controller('api/user')
 export class UserController {
@@ -51,14 +51,17 @@ export class UserController {
     private personalDataFactoryService: PersonalDataFactoryService,
     private userSituationServices: UserSituationServices,
     private userSituationFactoryService: UserSituationFactoryService,
-  ) { }
+  ) {}
 
   @Post()
   async createUser(@Body() userDto: CreateUserDto) {
-
     const createUserResponse = new CreateUserResponseDto();
     {
       try {
+        userDto.personalData.password =
+          await this.personalDataFactoryService.encryptPassword(
+            userDto.personalData.password,
+          );
         const personalData =
           this.personalDataFactoryService.createNewPersonalData(
             userDto.personalData,
@@ -90,20 +93,20 @@ export class UserController {
         const createdUser = await this.userServices.createUser(user);
         createUserResponse.createdUser = createdUser;
 
-        transport.sendMail({
-          text: `Obrigado por se cadastrar no Book4U, SEJA BEM VINDO! Aqui está seu código de verificação ${user.registerNumber}`,
-          subject: `Confirmação de cadastro`,
-          from: SMTP_CONFIG.user,
-          to: createdPersonalData.email,
-        }).then(
-          (param) => console.log(param)
-        ).catch(error => console.log(error))
+        transport
+          .sendMail({
+            text: `Obrigado por se cadastrar no Book4U, SEJA BEM VINDO! Aqui está seu código de verificação ${user.registerNumber}`,
+            subject: `Confirmação de cadastro`,
+            from: SMTP_CONFIG.user,
+            to: createdPersonalData.email,
+          })
+          .then((param) => console.log(param))
+          .catch((error) => console.log(error));
 
         return createUserResponse;
       } catch (err) {
         createUserResponse.success = false;
-        return err.message
-
+        return err.message;
       }
     }
   }
@@ -137,10 +140,12 @@ export class UserController {
           id,
           fileName,
         );
-        createUserResponse.createdUser = createdProfilePic
-        return "Imagem trocada com sucesso!"
+        createUserResponse.createdUser = createdProfilePic;
+        return 'Imagem trocada com sucesso!';
       })
-      .catch((error) => { return (error) });
+      .catch((error) => {
+        return error;
+      });
   }
 
   @Put('confirmRegistration/:rNumber')
@@ -156,7 +161,7 @@ export class UserController {
       );
       return userFound.registerNumber;
     } else {
-      return ("Código de registro incorreto, tente novamente")
+      return 'Código de registro incorreto, tente novamente';
     }
   }
 
@@ -166,38 +171,54 @@ export class UserController {
     const getIdFromUser = await this.userServices.getIdFromUser(userFound);
     if (userFound) {
       function generateNewNumber() {
-        const nGenerated = String(Math.floor(Math.random() * 3000) + 1)
+        const nGenerated = String(Math.floor(Math.random() * 3000) + 1);
         if (nGenerated.length == 4) {
-          userFound.registerNumber = nGenerated
+          userFound.registerNumber = nGenerated;
         } else {
-          generateNewNumber()
+          generateNewNumber();
         }
       }
-      generateNewNumber()
-      transport.sendMail({
-        text: `Seu novo código de registro é: ${userFound.registerNumber}`,
-        subject: `Novo número de registro`,
-        from: SMTP_CONFIG.user,
-        to: userFound.personalData.email,
-      }).then(
-        await this.userServices.updateNRegister(Number(getIdFromUser), userFound)
-      ).catch((error) => { return error })
-      return (`E-mail enviado para o email ${userFound.personalData.email}`)
+      generateNewNumber();
+      transport
+        .sendMail({
+          text: `Seu novo código de registro é: ${userFound.registerNumber}`,
+          subject: `Novo número de registro`,
+          from: SMTP_CONFIG.user,
+          to: userFound.personalData.email,
+        })
+        .then(
+          await this.userServices.updateNRegister(
+            Number(getIdFromUser),
+            userFound,
+          ),
+        )
+        .catch((error) => {
+          return error;
+        });
+      return `E-mail enviado para o email ${userFound.personalData.email}`;
     } else {
-      return "Usuário não encontrado"
+      return 'Usuário não encontrado';
     }
   }
 
   @Put('exchangePassword/:email')
-  async exchangePassword(@Param('email') email: string, @Body('password') password: CreatePersonalDataDto["password"]) {
-    const userFound = await this.personalDataServices.findByEmail(email)
-    const getIdFromPersonalData = await this.personalDataServices.getIdFromPersonalData(userFound)
+  async exchangePassword(
+    @Param('email') email: string,
+    @Body('password') password: CreatePersonalDataDto['password'],
+  ) {
+    const userFound = await this.personalDataServices.findByEmail(email);
+    const getIdFromPersonalData =
+      await this.personalDataServices.getIdFromPersonalData(userFound);
     if (userFound) {
-      userFound.password = await this.personalDataFactoryService.encryptPassword(String(password))
-      await this.personalDataServices.exchangePassword(Number(getIdFromPersonalData), userFound)
-      return "Senha alterada com sucesso"
+      userFound.password =
+        await this.personalDataFactoryService.encryptPassword(String(password));
+      await this.personalDataServices.exchangePassword(
+        Number(getIdFromPersonalData),
+        userFound,
+      );
+      return 'Senha alterada com sucesso';
     } else {
-      return "Erro ao alterar dado de situação de usuário para confirmado"
+      return 'Erro ao alterar dado de situação de usuário para confirmado';
     }
   }
 }

@@ -12,9 +12,7 @@ export class PersonalDataFactoryService {
   async createNewPersonalData(createPersonalDataDto: CreatePersonalDataDto) {
     const newPersonalData = new PersonalData();
     newPersonalData.email = createPersonalDataDto.email;
-    newPersonalData.password = await this.encryptPassword(
-      createPersonalDataDto.password,
-    );
+    newPersonalData.password = createPersonalDataDto.password;
     newPersonalData.cpf = createPersonalDataDto.cpf;
     newPersonalData.rg = createPersonalDataDto.rg;
     newPersonalData.cellphone = createPersonalDataDto.cellphone;

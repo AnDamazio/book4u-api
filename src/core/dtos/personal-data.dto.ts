@@ -1,9 +1,9 @@
+import { MinLength } from 'class-validator';
 import {
   IsString,
   IsNotEmpty,
   IsEmail,
   IsPhoneNumber,
-  Length,
   Validate,
   IsMobilePhone
 } from 'class-validator/cjs';
@@ -31,7 +31,7 @@ export class CreatePersonalDataDto {
   email: string;
 
   @IsString()
-  @Length(8)
+  @MinLength(8)
   @IsNotEmpty()
   password: string;
 }
