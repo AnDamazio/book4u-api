@@ -31,26 +31,27 @@ export class MysqlPersonalDataRepository<T>
       const userData = await this._repository
         .createQueryBuilder('personal_data')
         .leftJoinAndSelect('personal_data.user', 'user')
+        .leftJoinAndSelect('user.userSituation', 'user_situation')
         .where('personal_data.email = :email', { email: email })
         .getOne();
       return userData;
-    } catch(error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
     }
   }
-
-
 
   async findOneById(id: number): Promise<T> {
     return await this._repository.findOne({ where: { id: id } });
   }
 
-  async exchangePassword(id: number, newUserPassword: T): Promise<UpdateResult> {
+  async exchangePassword(
+    id: number,
+    newUserPassword: T,
+  ): Promise<UpdateResult> {
     return await this._repository.update(id, newUserPassword);
   }
 
   async getIdFromPersonalData(personalData: T): Promise<T> {
-    return await this._repository.getId(personalData)
+    return await this._repository.getId(personalData);
   }
-
 }
