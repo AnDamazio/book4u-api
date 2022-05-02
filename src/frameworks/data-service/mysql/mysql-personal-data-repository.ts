@@ -26,6 +26,8 @@ export class MysqlPersonalDataRepository<T>
     }
   }
 
+
+
   async findOneById(id: number): Promise<T> {
     return await this._repository.findOne({ where: { id: id } });
   }

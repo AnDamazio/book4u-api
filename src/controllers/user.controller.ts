@@ -154,7 +154,7 @@ export class UserController {
         Number(getIdFromUser),
         (userFound.userSituation.name = 'CONFIRMADO'),
       );
-      return (createUserResponse.createdUser = newUserSituation);
+      return userFound.registerNumber;
     } else {
       return ("Código de registro incorreto, tente novamente")
     }
@@ -175,8 +175,8 @@ export class UserController {
       }
       generateNewNumber()
       transport.sendMail({
-        text: `Código para mudar a senha: ${userFound.registerNumber}`,
-        subject: `Confirmação de cadastro`,
+        text: `Seu novo código de registro é: ${userFound.registerNumber}`,
+        subject: `Novo número de registro`,
         from: SMTP_CONFIG.user,
         to: userFound.personalData.email,
       }).then(
