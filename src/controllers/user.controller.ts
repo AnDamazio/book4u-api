@@ -51,7 +51,7 @@ export class UserController {
     private personalDataFactoryService: PersonalDataFactoryService,
     private userSituationServices: UserSituationServices,
     private userSituationFactoryService: UserSituationFactoryService,
-  ) {}
+  ) { }
 
   @Post()
   async createUser(@Body() userDto: CreateUserDto) {
@@ -169,35 +169,39 @@ export class UserController {
   async resendRNumber(@Param('email') email: string) {
     const userFound = await this.userServices.findByEmail(email);
     const getIdFromUser = await this.userServices.getIdFromUser(userFound);
-    if (userFound) {
-      function generateNewNumber() {
-        const nGenerated = String(Math.floor(Math.random() * 3000) + 1);
-        if (nGenerated.length == 4) {
-          userFound.registerNumber = nGenerated;
-        } else {
-          generateNewNumber();
+    try {
+      if (userFound) {
+        function generateNewNumber() {
+          const nGenerated = String(Math.floor(Math.random() * 3000) + 1);
+          if (nGenerated.length == 4) {
+            userFound.registerNumber = nGenerated;
+          } else {
+            generateNewNumber();
+          }
         }
+        generateNewNumber();
+        transport
+          .sendMail({
+            text: `Seu novo código de registro é: ${userFound.registerNumber}`,
+            subject: `Novo número de registro`,
+            from: SMTP_CONFIG.user,
+            to: userFound.personalData.email,
+          })
+          .then(
+            await this.userServices.updateNRegister(
+              Number(getIdFromUser),
+              userFound,
+            ),
+          )
+          .catch((error) => {
+            return error;
+          });
+        return `E-mail enviado para o email ${userFound.personalData.email}`;
+      } else {
+        return 'Usuário não encontrado';
       }
-      generateNewNumber();
-      transport
-        .sendMail({
-          text: `Seu novo código de registro é: ${userFound.registerNumber}`,
-          subject: `Novo número de registro`,
-          from: SMTP_CONFIG.user,
-          to: userFound.personalData.email,
-        })
-        .then(
-          await this.userServices.updateNRegister(
-            Number(getIdFromUser),
-            userFound,
-          ),
-        )
-        .catch((error) => {
-          return error;
-        });
-      return `E-mail enviado para o email ${userFound.personalData.email}`;
-    } else {
-      return 'Usuário não encontrado';
+    } catch (err) {
+      return err.message
     }
   }
 
@@ -207,8 +211,7 @@ export class UserController {
     @Body('password') password: CreatePersonalDataDto['password'],
   ) {
     const userFound = await this.personalDataServices.findByEmail(email);
-    const getIdFromPersonalData =
-      await this.personalDataServices.getIdFromPersonalData(userFound);
+    const getIdFromPersonalData = await this.personalDataServices.getIdFromPersonalData(userFound);
     if (userFound) {
       userFound.password =
         await this.personalDataFactoryService.encryptPassword(String(password));
