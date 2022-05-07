@@ -4,9 +4,17 @@ import { AuthService } from './auth.service';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local.strategy';
 import { PersonalDataServicesModule } from 'src/service/use-cases/personal-data/personal-data-service.module';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './constants';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
-  imports: [UserServicesModule, PassportModule, PersonalDataServicesModule],
-  providers: [AuthService, LocalStrategy],
+  imports: [UserServicesModule, PassportModule, PersonalDataServicesModule,
+    JwtModule.register({
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '60s' },
+    }),],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
+  exports: [AuthService]
 })
-export class AuthModule {}
+export class AuthModule { }

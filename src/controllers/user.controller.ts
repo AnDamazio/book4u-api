@@ -27,6 +27,7 @@ import { ref, uploadBytes, deleteObject } from 'firebase/storage';
 import { storage } from '../firebase';
 import * as nodemailer from 'nodemailer';
 import { SMTP_CONFIG } from '../smtp/smtp-config';
+import { AuthService } from 'src/frameworks/auth/auth.service';
 
 const transport = nodemailer.createTransport({
   service: SMTP_CONFIG.service,
@@ -46,11 +47,13 @@ const transport = nodemailer.createTransport({
 export class UserController {
   constructor(
     private userServices: UserServices,
+    private authService: AuthService,
     private userFactoryService: UserFactoryService,
     private personalDataServices: PersonalDataServices,
     private personalDataFactoryService: PersonalDataFactoryService,
     private userSituationServices: UserSituationServices,
     private userSituationFactoryService: UserSituationFactoryService,
+
   ) { }
 
   @Post()
@@ -114,7 +117,15 @@ export class UserController {
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
   async login(@Request() req) {
-    return req.user;
+    if (req.user.user.userSituation.name == 'Confirmado') {
+      try {
+        return await this.authService.login(req.user)
+      } catch (err) {
+        return err.message
+      }
+    } else {
+      return "E-mail pendente"
+    }
   }
 
   @Put(':id')
