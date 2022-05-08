@@ -31,7 +31,7 @@ export class BookController {
     private publisherServices: PublisherServices,
     private categoryFactoryService: CategoryFactoryService,
     private categoryServices: CategoryServices,
-  ) { }
+  ) {}
 
   @Post()
   async createBook(@Body() bookDto: CreateBookDto) {
@@ -60,16 +60,14 @@ export class BookController {
       const category = await this.categoryServices.getCategory(
         bookDto.category,
       );
+
       bookDto.category = category;
-      console.log(category);
-      console.log(createdLanguage);
 
       const book = this.bookFactoryService.createNewBook(bookDto);
       const createdBook = await this.bookServices.createBook(book);
       createBookResponse.success = true;
       createBookResponse.createdBook = createdBook;
     } catch (error) {
-      console.log(error);
       createBookResponse.success = false;
     }
     return createBookResponse;

@@ -5,12 +5,14 @@ import {
   IsNotEmptyObject,
   IsObject,
   ValidateNested,
+  IsArray,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateAuthorDto } from './author.dto';
 import { CreateLanguageDto } from './language.dto';
 import { CreatePublisherDto } from './publisher.dto';
 import { CreateCategoryDto } from './category.dto';
+import { Book } from '../entities';
 
 export class CreateBookDto {
   @IsString()
@@ -55,8 +57,7 @@ export class CreateBookDto {
   publisher: CreatePublisherDto;
 
   @IsNotEmpty()
-  @IsNotEmptyObject()
-  @IsObject()
+  @IsArray()
   @ValidateNested()
   @Type(() => CreateCategoryDto)
   category: CreateCategoryDto[];

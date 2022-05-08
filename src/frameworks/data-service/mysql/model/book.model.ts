@@ -44,7 +44,17 @@ export class Book {
   @ManyToOne(() => Publisher, (publisher) => publisher.book)
   publisher!: Publisher;
 
-  @ManyToMany(() => Category)
-  @JoinTable()
-  category!: Category[];
+  @ManyToMany(() => Category, {
+    cascade: ['insert'],
+  })
+  @JoinTable({
+    joinColumn: {
+      name: 'book',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      referencedColumnName: 'id',
+    },
+  })
+  category: Category[];
 }
