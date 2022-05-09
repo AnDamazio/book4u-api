@@ -12,6 +12,7 @@ import { Author } from './author.model';
 import { Language } from './language.model';
 import { Category } from './category.model';
 import { Publisher } from './publisher.model';
+import { BookImages } from './book-images.model';
 
 @Entity()
 export class Book {
@@ -57,4 +58,8 @@ export class Book {
     },
   })
   category: Category[];
+
+  @ManyToOne(() => BookImages, (bookImages) => bookImages.book, { cascade: true })
+  @JoinColumn()
+  bookImages: BookImages;
 }

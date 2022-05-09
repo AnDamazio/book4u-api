@@ -13,6 +13,7 @@ import { CreateLanguageDto } from './language.dto';
 import { CreatePublisherDto } from './publisher.dto';
 import { CreateCategoryDto } from './category.dto';
 import { Book } from '../entities';
+import { CreateBookImagesDto } from './book-images.dto';
 
 export class CreateBookDto {
   @IsString()
@@ -61,4 +62,9 @@ export class CreateBookDto {
   @ValidateNested()
   @Type(() => CreateCategoryDto)
   category: CreateCategoryDto[];
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CreateBookImagesDto)
+  bookImages: CreateBookImagesDto;
 }

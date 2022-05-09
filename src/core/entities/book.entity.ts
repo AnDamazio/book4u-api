@@ -3,6 +3,7 @@ import {
   CreatePublisherDto,
   CreateLanguageDto,
   CreateCategoryDto,
+  CreateBookImagesDto,
 } from '../dtos';
 
 export class Book {
@@ -15,4 +16,5 @@ export class Book {
   language: CreateLanguageDto;
   publisher: CreatePublisherDto;
   category: CreateCategoryDto[];
+  bookImages: CreateBookImagesDto;
 }

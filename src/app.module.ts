@@ -15,6 +15,7 @@ import { LanguageServicesModule } from './service/use-cases/language';
 import { PublisherServicesModule } from './service/use-cases/publisher/publisher-services.module';
 import { CategoryServicesModule } from './service/use-cases/category';
 import { UserSituationServicesModule } from './service/use-cases/userSituation';
+import { BookImagesServicesModule } from './service/use-cases/bookImages';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { UserSituationServicesModule } from './service/use-cases/userSituation';
     AuthModule,
     LanguageServicesModule,
     CategoryServicesModule,
-    UserSituationServicesModule
+    UserSituationServicesModule,
+    BookImagesServicesModule
   ],
   controllers: [AppController, UserController, BookController],
   providers: [AppService, UserServices, BookServices],

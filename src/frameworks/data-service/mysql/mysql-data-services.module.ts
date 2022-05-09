@@ -10,6 +10,7 @@ import {
   Publisher,
   Category,
   UserSituation,
+  BookImages
 } from './model';
 import { MysqlDataServices } from './mysql-data-services.service';
 import 'dotenv/config';
@@ -25,7 +26,8 @@ import 'dotenv/config';
       Category,
       Language,
       Category,
-      UserSituation
+      UserSituation,
+      BookImages
     ]),
     TypeOrmModule.forRoot({
       type: 'mysql',
