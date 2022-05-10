@@ -12,6 +12,8 @@ import {
   UseInterceptors,
   UploadedFile,
   Put,
+  Get,
+  Req,
 } from '@nestjs/common';
 import {
   CreatePersonalDataDto,
@@ -28,6 +30,7 @@ import { storage } from '../firebase';
 import * as nodemailer from 'nodemailer';
 import { SMTP_CONFIG } from '../smtp/smtp-config';
 import { AuthService } from 'src/frameworks/auth/auth.service';
+import { AuthGuard } from '@nestjs/passport';
 
 const transport = nodemailer.createTransport({
   service: SMTP_CONFIG.service,
@@ -53,8 +56,7 @@ export class UserController {
     private personalDataFactoryService: PersonalDataFactoryService,
     private userSituationServices: UserSituationServices,
     private userSituationFactoryService: UserSituationFactoryService,
-
-  ) { }
+  ) {}
 
   @Post()
   async createUser(@Body() userDto: CreateUserDto) {
@@ -119,12 +121,12 @@ export class UserController {
   async login(@Request() req) {
     if (req.user.user.userSituation.name == 'Confirmado') {
       try {
-        return await this.authService.login(req.user)
+        return await this.authService.login(req.user);
       } catch (err) {
-        return err.message
+        return err.message;
       }
     } else {
-      return "E-mail pendente"
+      return 'E-mail pendente';
     }
   }
 
@@ -212,7 +214,7 @@ export class UserController {
         return 'Usuário não encontrado';
       }
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 
@@ -222,7 +224,8 @@ export class UserController {
     @Body('password') password: CreatePersonalDataDto['password'],
   ) {
     const userFound = await this.personalDataServices.findByEmail(email);
-    const getIdFromPersonalData = await this.personalDataServices.getIdFromPersonalData(userFound);
+    const getIdFromPersonalData =
+      await this.personalDataServices.getIdFromPersonalData(userFound);
     if (userFound) {
       userFound.password =
         await this.personalDataFactoryService.encryptPassword(String(password));
@@ -234,5 +237,22 @@ export class UserController {
     } else {
       return 'Erro ao alterar dado de situação de usuário para confirmado';
     }
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) {}
+
+  @Get('google/redirect')
+  @UseGuards(AuthGuard('google'))
+  googleAuthRedirect(@Req() req) {
+    if (!req.user) {
+      return 'No user from google';
+    }
+
+    return {
+      message: 'User information from google',
+      user: req.user,
+    };
   }
 }

@@ -7,14 +7,19 @@ import { PersonalDataServicesModule } from 'src/service/use-cases/personal-data/
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './jwt.strategy';
+import { GoogleStrategy } from './google.strategy';
 
 @Module({
-  imports: [UserServicesModule, PassportModule, PersonalDataServicesModule,
+  imports: [
+    UserServicesModule,
+    PassportModule,
+    PersonalDataServicesModule,
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '60s' },
-    }),],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService]
+    }),
+  ],
+  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy],
+  exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}
