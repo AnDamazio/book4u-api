@@ -19,7 +19,6 @@ import {
   CreatePersonalDataDto,
   CreateUserDto,
   CreateUserResponseDto,
-  CreateGoogleUserDto,
 } from '../core/dtos';
 import { UserServices } from 'src/service/use-cases/user/user-services.service';
 import { UserFactoryService } from 'src/service/use-cases/user';

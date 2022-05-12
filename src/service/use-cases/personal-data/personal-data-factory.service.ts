@@ -17,6 +17,8 @@ export class PersonalDataFactoryService {
     newPersonalData.rg = createPersonalDataDto.rg;
     newPersonalData.cellphone = createPersonalDataDto.cellphone;
     newPersonalData.telephone = createPersonalDataDto.telephone;
+    newPersonalData.address = createPersonalDataDto.address;
+    newPersonalData.complement = createPersonalDataDto.complement;
 
     return newPersonalData;
   }

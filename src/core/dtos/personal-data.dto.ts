@@ -27,10 +27,12 @@ export class CreatePersonalDataDto {
   telephone: string;
 
   @IsString()
+  @MinLength(0)
   @MaxLength(50)
   address: string;
 
   @IsString()
+  @MinLength(0)
   @MaxLength(50)
   complement: string;
 
