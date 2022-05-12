@@ -7,6 +7,7 @@ export * from './book.dto';
 export * from './language.dto'
 export * from './publisher.dto';
 export * from './create-publisher-response.dto';
-export * from './category.dto'
-export * from './user-situation.dto'
-export * from './book-images.dto'
+export * from './category.dto';
+export * from './user-situation.dto';
+export * from './book-images.dto';
+export * from './google-user.dto';

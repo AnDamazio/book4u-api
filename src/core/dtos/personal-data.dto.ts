@@ -1,4 +1,4 @@
-import { MinLength } from 'class-validator';
+import { MaxLength, MinLength } from 'class-validator';
 import {
   IsString,
   IsNotEmpty,
@@ -25,6 +25,14 @@ export class CreatePersonalDataDto {
   @IsPhoneNumber('BR')
   @IsNotEmpty()
   telephone: string;
+
+  @IsString()
+  @MaxLength(50)
+  address: string;
+
+  @IsString()
+  @MaxLength(50)
+  complement: string;
 
   @IsEmail()
   @IsNotEmpty()

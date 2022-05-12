@@ -23,6 +23,12 @@ export class PersonalData {
   @Column()
   password!: string;
 
+  @Column()
+  address: string;
+
+  @Column()
+  complement: string;
+
   @Column({ name: 'cpf' })
   cpf!: string;
 

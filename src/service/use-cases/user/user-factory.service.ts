@@ -9,7 +9,7 @@ export class UserFactoryService {
     newUser.firstName = createUserDto.firstName;
     newUser.lastName = createUserDto.lastName;
     newUser.registerNumber = createUserDto.registerNumber;
-    newUser.profileImage = createUserDto.profileImage;
+    newUser.picture = createUserDto.picture;
     newUser.personalData = createUserDto.personalData;
     newUser.userSituation = createUserDto.userSituation;
 

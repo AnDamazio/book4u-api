@@ -23,7 +23,7 @@ export class User {
   lastName!: string;
 
   @Column()
-  profileImage: string;
+  picture: string;
 
   @Column()
   registerNumber: string;

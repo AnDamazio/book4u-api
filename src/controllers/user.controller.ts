@@ -19,7 +19,7 @@ import {
   CreatePersonalDataDto,
   CreateUserDto,
   CreateUserResponseDto,
-  UserSituationDto,
+  CreateGoogleUserDto,
 } from '../core/dtos';
 import { UserServices } from 'src/service/use-cases/user/user-services.service';
 import { UserFactoryService } from 'src/service/use-cases/user';
@@ -138,8 +138,8 @@ export class UserController {
   ) {
     const userFound = this.userServices.getUserById(id);
     const createUserResponse = new CreateUserResponseDto();
-    if ((await userFound).profileImage != '') {
-      const userPic = (await userFound).profileImage;
+    if ((await userFound).picture != '') {
+      const userPic = (await userFound).picture;
       const fileRef = ref(storage, userPic);
       deleteObject(fileRef)
         .then()
@@ -246,6 +246,9 @@ export class UserController {
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
   googleAuthRedirect(@Req() req) {
+    console.log(req.user);
+    this.userServices.createUser(req.user);
+
     if (!req.user) {
       return 'No user from google';
     }
