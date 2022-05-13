@@ -12,12 +12,13 @@ import {
   UseInterceptors,
   UploadedFile,
   Put,
+  Get,
+  Req,
 } from '@nestjs/common';
 import {
   CreatePersonalDataDto,
   CreateUserDto,
   CreateUserResponseDto,
-  UserSituationDto,
 } from '../core/dtos';
 import { UserServices } from 'src/service/use-cases/user/user-services.service';
 import { UserFactoryService } from 'src/service/use-cases/user';
@@ -28,6 +29,7 @@ import { storage } from '../firebase';
 import * as nodemailer from 'nodemailer';
 import { SMTP_CONFIG } from '../smtp/smtp-config';
 import { AuthService } from 'src/frameworks/auth/auth.service';
+import { AuthGuard } from '@nestjs/passport';
 
 const transport = nodemailer.createTransport({
   service: SMTP_CONFIG.service,
@@ -53,7 +55,6 @@ export class UserController {
     private personalDataFactoryService: PersonalDataFactoryService,
     private userSituationServices: UserSituationServices,
     private userSituationFactoryService: UserSituationFactoryService,
-
   ) { }
 
   @Post()
@@ -66,12 +67,12 @@ export class UserController {
             userDto.personalData.password,
           );
         const personalData =
-          this.personalDataFactoryService.createNewPersonalData(
+          await this.personalDataFactoryService.createNewPersonalData(
             userDto.personalData,
           );
         const createdPersonalData =
           await this.personalDataServices.createPersonalData(
-            await personalData,
+            personalData,
           );
         userDto.personalData = createdPersonalData;
         const userSituation =
@@ -121,12 +122,12 @@ export class UserController {
   async login(@Request() req) {
     if (req.user.user.userSituation.name == 'Confirmado') {
       try {
-        return await this.authService.login(req.user)
+        return await this.authService.login(req.user);
       } catch (err) {
-        return err.message
+        return err.message;
       }
     } else {
-      return "E-mail pendente"
+      return 'E-mail pendente';
     }
   }
 
@@ -138,8 +139,8 @@ export class UserController {
   ) {
     const userFound = this.userServices.getUserById(id);
     const createUserResponse = new CreateUserResponseDto();
-    if ((await userFound).profileImage != '') {
-      const userPic = (await userFound).profileImage;
+    if ((await userFound).picture != '') {
+      const userPic = (await userFound).picture;
       const fileRef = ref(storage, userPic);
       deleteObject(fileRef)
         .then()
@@ -218,7 +219,7 @@ export class UserController {
         return 'Usuário não encontrado';
       }
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 
@@ -228,7 +229,8 @@ export class UserController {
     @Body('password') password: CreatePersonalDataDto['password'],
   ) {
     const userFound = await this.personalDataServices.findByEmail(email);
-    const getIdFromPersonalData = await this.personalDataServices.getIdFromPersonalData(userFound);
+    const getIdFromPersonalData =
+      await this.personalDataServices.getIdFromPersonalData(userFound);
     if (userFound) {
       userFound.password =
         await this.personalDataFactoryService.encryptPassword(String(password));
@@ -240,5 +242,25 @@ export class UserController {
     } else {
       return 'Erro ao alterar dado de situação de usuário para confirmado';
     }
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) { }
+
+  @Get('google/redirect')
+  @UseGuards(AuthGuard('google'))
+  googleAuthRedirect(@Req() req) {
+    console.log(req.user);
+    this.userServices.createUser(req.user);
+
+    if (!req.user) {
+      return 'No user from google';
+    }
+
+    return {
+      message: 'User information from google',
+      user: req.user,
+    };
   }
 }

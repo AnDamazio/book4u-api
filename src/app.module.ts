@@ -1,3 +1,4 @@
+import { PersonalDataController } from './controllers/personal-data.controller';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -32,7 +33,7 @@ import { TokenController } from './controllers/token.controller';
     BookImagesServicesModule,
     AuthModule
   ],
-  controllers: [AppController, UserController, BookController, TokenController],
-  providers: [AppService, UserServices, BookServices],
+  controllers: [AppController, UserController, BookController, TokenController, PersonalDataController],
+  providers: [AppService, UserServices, BookServices, PersonalDataServices],
 })
 export class AppModule { }

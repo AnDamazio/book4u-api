@@ -18,4 +18,5 @@ export abstract class IUserRepository<T> {
   abstract findOneByEmail(email: string): Promise<T>;
 
   abstract updateNRegister(id: number, newUser: T): Promise<UpdateResult>;
+
 }

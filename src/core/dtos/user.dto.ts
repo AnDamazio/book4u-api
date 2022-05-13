@@ -3,8 +3,7 @@ import {
   IsNotEmpty,
   IsNotEmptyObject,
   IsObject,
-  ValidateNested,
-  IsEmpty
+  ValidateNested
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreatePersonalDataDto } from './personal-data.dto';
@@ -19,7 +18,7 @@ export class CreateUserDto {
   lastName: string;
 
   @IsString()
-  profileImage: string;
+  picture: string;
 
   @IsString()
   registerNumber: string;

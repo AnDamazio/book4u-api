@@ -27,7 +27,7 @@ import 'dotenv/config';
       Language,
       Category,
       UserSituation,
-      BookImages,
+      BookImages
     ]),
     TypeOrmModule.forRoot({
       type: 'mysql',

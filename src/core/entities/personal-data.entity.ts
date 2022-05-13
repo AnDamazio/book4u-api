@@ -6,4 +6,6 @@ export class PersonalData {
   email: string;
   password: string;
   token: string;
+  address: string;
+  complement: string;
 }

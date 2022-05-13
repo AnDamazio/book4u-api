@@ -13,9 +13,14 @@ import { CreateAuthorDto } from './author.dto';
 import { CreateLanguageDto } from './language.dto';
 import { CreatePublisherDto } from './publisher.dto';
 import { CreateCategoryDto } from './category.dto';
+<<<<<<< HEAD
 import { CreateBookImagesDto } from './book-images.dto';
 import { CreateUserDto } from './user.dto';
 import { Condition, Status } from '../enums';
+=======
+import { Book } from '../entities';
+import { CreateBookImagesDto } from './book-images.dto';
+>>>>>>> 24573e1cf095eb61263be8a4e56783439992f08b
 
 export class CreateBookDto {
   @IsString()
@@ -76,8 +81,11 @@ export class CreateBookDto {
   @ValidateNested()
   @Type(() => CreateBookImagesDto)
   bookImages: CreateBookImagesDto;
+<<<<<<< HEAD
 
   @ValidateNested()
   @Type(() => CreateUserDto)
   owner: CreateUserDto;
+=======
+>>>>>>> 24573e1cf095eb61263be8a4e56783439992f08b
 }

@@ -1,7 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { PersonalData } from '../../../core/entities';
 import { IDataServices } from '../../../core/abstracts';
-import { CreatePersonalDataDto } from '../../../core/dtos';
+import { CreatePersonalDataDto, LocationDto } from '../../../core/dtos';
 import { PersonalDataFactoryService } from './personal-data-factory.service';
 import { AuthService } from 'src/frameworks/auth/auth.service';
 
@@ -71,5 +71,26 @@ export class PersonalDataServices {
     } else {
       return HttpStatus.UNAUTHORIZED
     }
+  }
+
+  async updateAddress(locationDto: LocationDto): Promise<any> {
+    if (locationDto.address == '' && locationDto.complement == '') {
+      throw new Error('Nenhum endereço ou completo inseridos');
+    }
+    if (locationDto.address != '' && locationDto.complement == '') {
+      const { id, address } = locationDto;
+      return await this.dataServices.personalData.createAddress({
+        id,
+        address,
+      });
+    }
+    if (locationDto.address == '' && locationDto.complement != '') {
+      const { id, complement } = locationDto;
+      return await this.dataServices.personalData.createAddress({
+        id,
+        complement,
+      });
+    }
+    await this.dataServices.personalData.createAddress(locationDto);
   }
 }
