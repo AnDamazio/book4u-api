@@ -15,4 +15,6 @@ export abstract class IPersonalDataRepository<T> {
   ): Promise<UpdateResult | Error>;
 
   abstract getIdFromPersonalData(personalData: T): Promise<T>;
+
+  abstract createAddress(location): Promise<any>;
 }

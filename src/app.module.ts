@@ -1,3 +1,5 @@
+import { PersonalDataServices } from 'src/service';
+import { PersonalDataController } from './controllers/personal-data.controller';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -29,9 +31,10 @@ import { BookImagesServicesModule } from './service/use-cases/bookImages';
     LanguageServicesModule,
     CategoryServicesModule,
     UserSituationServicesModule,
-    BookImagesServicesModule
+    BookImagesServicesModule,
+    PersonalDataServicesModule
   ],
-  controllers: [AppController, UserController, BookController],
-  providers: [AppService, UserServices, BookServices],
+  controllers: [AppController, UserController, BookController, PersonalDataController],
+  providers: [AppService, UserServices, BookServices, PersonalDataServices],
 })
 export class AppModule { }
