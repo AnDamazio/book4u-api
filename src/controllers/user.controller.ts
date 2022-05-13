@@ -82,6 +82,7 @@ export class UserController {
           await this.userSituationServices.createUserSituation(userSituation);
         userDto.userSituation = createdUserSituation;
 
+
         const user = this.userFactoryService.createNewUser(userDto);
         function generateNewNumber() {
           const nGenerated = String(Math.floor(Math.random() * 3000) + 1);
@@ -109,6 +110,7 @@ export class UserController {
         return createUserResponse;
       } catch (err) {
         createUserResponse.success = false;
+        console.log(err)
         return err.message;
       }
     }
@@ -161,18 +163,22 @@ export class UserController {
 
   @Put('confirmRegistration/:rNumber')
   async confirmRegistration(@Param('rNumber') rNumber: string) {
-    await this.userSituationServices.insertEnumValue();
-    const userFound = await this.userServices.getUserByNRegister(rNumber);
-    const getIdFromUser = await this.userServices.getIdFromUser(userFound);
-    const createUserResponse = new CreateUserResponseDto();
-    if (userFound.registerNumber == rNumber) {
-      const newUserSituation = await this.userServices.setSituationUser(
-        Number(getIdFromUser),
-        (userFound.userSituation.name = 'CONFIRMADO'),
-      );
-      return userFound.registerNumber;
-    } else {
-      return 'Código de registro incorreto, tente novamente';
+    try {
+      await this.userSituationServices.insertEnumValue();
+      const userFound = await this.userServices.getUserByNRegister(rNumber);
+      const getIdFromUser = await this.userServices.getIdFromUser(userFound);
+      if (userFound.registerNumber == rNumber) {
+        await this.userServices.setSituationUser(
+          Number(getIdFromUser),
+          (userFound.userSituation.name = 'CONFIRMADO'),
+        );
+        return userFound.registerNumber;
+      }
+    } catch (err) {
+      return {
+        defaultError: err.message,
+        editedError: "Por favor, digite um número válido"
+      }
     }
   }
 

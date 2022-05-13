@@ -5,3 +5,4 @@ export * from './book.entity';
 export * from './language.entity';
 export * from './publisher.entity';
 export * from './user-situation.entity'
+export * from './book-images.entity'

@@ -9,12 +9,16 @@ export class BookFactoryService {
     newBook.name = createBookDto.name;
     newBook.pagesQuantity = createBookDto.pagesQuantity;
     newBook.synopsis = createBookDto.synopsis;
+    newBook.price = createBookDto.price;
     newBook.status = createBookDto.status;
     newBook.condition = createBookDto.condition;
+    newBook.createdAt = createBookDto.createdAt;
     newBook.author = createBookDto.author;
     newBook.language = createBookDto.language;
     newBook.publisher = createBookDto.publisher;
     newBook.category = createBookDto.category;
+    newBook.bookImages = createBookDto.bookImages;
+    newBook.owner = createBookDto.owner;
     return newBook;
   }
 }

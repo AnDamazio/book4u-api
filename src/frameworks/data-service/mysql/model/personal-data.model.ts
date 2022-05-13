@@ -35,6 +35,9 @@ export class PersonalData {
   @Column()
   telephone!: string;
 
+  @Column()
+  token: string;
+
   @OneToOne(() => User, (user) => user.personalData)
   user: User;
 }

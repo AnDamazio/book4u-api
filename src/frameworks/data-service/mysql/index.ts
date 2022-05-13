@@ -9,3 +9,4 @@ export * from './mysql-language.repository'
 export * from './mysql-publisher.repository';
 export * from './mysql-category.repository';
 export * from './mysql-user-situation.repository'
+export * from './mysql-book-images.repository'

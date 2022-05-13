@@ -12,7 +12,6 @@ export class UserFactoryService {
     newUser.profileImage = createUserDto.profileImage;
     newUser.personalData = createUserDto.personalData;
     newUser.userSituation = createUserDto.userSituation;
-
     return newUser;
   }
 }

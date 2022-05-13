@@ -5,5 +5,5 @@ export class User {
   profileImage!: string;
   registerNumber: string;
   personalData: CreatePersonalDataDto;
-  userSituation: UserSituationDto
+  userSituation: UserSituationDto;
 }

@@ -4,13 +4,11 @@ import {
   IsNotEmptyObject,
   IsObject,
   ValidateNested,
-  IsEnum
+  IsEmpty
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreatePersonalDataDto } from './personal-data.dto';
 import { UserSituationDto } from './user-situation.dto';
-import { UserSituation } from '../entities';
-import { EnumUserSituation } from '../enums';
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()

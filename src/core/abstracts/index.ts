@@ -7,3 +7,4 @@ export * from './language-repository.abstract'
 export * from './publisher-repository.abstract';
 export * from './category-repository.abstract';
 export * from './user-situation.abstract'
+export * from './book-images-repository.abstract'

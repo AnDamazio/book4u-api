@@ -65,7 +65,7 @@ export class UserServices {
   }
 
   async updateNRegister(id: number, newUser: User): Promise<any> {
-    return await this.dataServices.user.updateNRegister(id, newUser)
+    return await this.dataServices.user.updateNRegister(id, newUser);
   }
 
 }

@@ -1,4 +1,4 @@
-import { IPersonalDataRepository } from 'src/core';
+import { IBookImagesRepository, IPersonalDataRepository } from 'src/core';
 import {
   User,
   PersonalData,
@@ -7,6 +7,7 @@ import {
   Language,
   Publisher,
   UserSituation,
+  BookImages,
 } from '../entities';
 import { IAuthorRepository } from './author-repository.abstract';
 import { IBookRepository } from './book-repository.abstract';
@@ -26,4 +27,5 @@ export abstract class IDataServices {
   abstract publisher: IPublisherRepository<Publisher>;
   abstract category: ICategoryRepository<Category>;
   abstract userSituation: IUserSituationRepository<UserSituation>
+  abstract bookImages: IBookImagesRepository<BookImages>
 }

@@ -5,4 +5,5 @@ export class PersonalData {
   telephone: string;
   email: string;
   password: string;
+  token: string;
 }
