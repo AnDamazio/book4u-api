@@ -24,7 +24,7 @@ import { UserServices } from 'src/service/use-cases/user/user-services.service';
 import { UserFactoryService } from 'src/service/use-cases/user';
 import { LocalAuthGuard } from 'src/frameworks/auth/local-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ref, uploadBytes, deleteObject } from 'firebase/storage';
+import { ref, uploadBytes, deleteObject, getDownloadURL } from 'firebase/storage';
 import { storage } from '../firebase';
 import * as nodemailer from 'nodemailer';
 import { SMTP_CONFIG } from '../smtp/smtp-config';
@@ -137,29 +137,34 @@ export class UserController {
     @Param('id') id: number,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const userFound = this.userServices.getUserById(id);
-    const createUserResponse = new CreateUserResponseDto();
-    if ((await userFound).picture != '') {
-      const userPic = (await userFound).picture;
-      const fileRef = ref(storage, userPic);
-      deleteObject(fileRef)
-        .then()
-        .catch((error) => console.log(error));
+    try {
+      const userFound = this.userServices.getUserById(id);
+      if ((await userFound).picture != '') {
+        const userPic = (await userFound).picture;
+        const fileRef = ref(storage, userPic);
+        deleteObject(fileRef)
+          .then()
+          .catch((error) => console.log(error));
+      }
+      const fileName = Math.floor(Math.random() * 65536) + '_' + file.originalname;
+      const fileRef = ref(storage, fileName);
+      uploadBytes(fileRef, file.buffer)
+        .then(async () => {
+          getDownloadURL(fileRef)
+            .then(async (url) => {
+              await this.userServices.setProfilePic(
+                id,
+                url,
+              )
+            })
+        })
+      return 'Imagem trocada com sucesso!';
+    } catch (err) {
+      return {
+        defaultError: err.message,
+        editedError: "Erro ao alterar imagem, por favor tente novamente"
+      }
     }
-    const fileName = Date.now() + '_' + file.originalname;
-    const fileRef = ref(storage, fileName);
-    uploadBytes(fileRef, file.buffer)
-      .then(async () => {
-        const createdProfilePic = await this.userServices.setProfilePic(
-          id,
-          fileName,
-        );
-        createUserResponse.createdUser = createdProfilePic;
-        return 'Imagem trocada com sucesso!';
-      })
-      .catch((error) => {
-        return error;
-      });
   }
 
   @Put('confirmRegistration/:rNumber')

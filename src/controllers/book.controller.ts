@@ -17,14 +17,15 @@ import {
   CategoryFactoryService,
   CategoryServices,
 } from 'src/service/use-cases/category';
-import { UpdateDateColumn } from 'typeorm';
+
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { ref, uploadBytes, deleteObject } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../firebase';
 import { BookImagesServices } from 'src/service/use-cases/bookImages';
 import { UserServices } from 'src/service';
-import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from 'src/frameworks/auth/jwt-auth.guard';
+
+
 
 @Controller('api/book')
 @UseGuards(JwtAuthGuard)
@@ -91,7 +92,7 @@ export class BookController {
   }
 
   @Get('list')
-  async userList() {
+  async bookList() {
     const books = await this.bookServices.getAllBooks();
     return books;
   }
@@ -103,34 +104,44 @@ export class BookController {
       const bookFound = await this.bookServices.findBookByPk(id)
       const idFromBookImage = await this.bookImagesServices.getIdFromBookImages(bookFound.bookImages)
       const [file0, file1, file2, file3] = files;
-      bookFound.bookImages.frontSideImage = Date.now() + '_' + file0.originalname;
-      bookFound.bookImages.rightSideImage = Date.now() + '_' + file1.originalname;
-      bookFound.bookImages.leftSideImage = Date.now() + '_' + file2.originalname;
-      bookFound.bookImages.backSideImage = Date.now() + '_' + file3.originalname;
+      bookFound.bookImages.frontSideImage = Math.floor(Math.random() * 65536) + '_' + file0.originalname;
+      bookFound.bookImages.rightSideImage = Math.floor(Math.random() * 65536) + '_' + file1.originalname;
+      bookFound.bookImages.leftSideImage = Math.floor(Math.random() * 65536) + '_' + file2.originalname;
+      bookFound.bookImages.backSideImage = Math.floor(Math.random() * 65536) + '_' + file3.originalname;
 
-      const fileName = [
+      const fileNames = [
         bookFound.bookImages.frontSideImage,
         bookFound.bookImages.rightSideImage,
         bookFound.bookImages.leftSideImage,
         bookFound.bookImages.backSideImage
       ]
 
-      fileName.forEach((fileName, position) => {
-        const fileRef = ref(storage, fileName);
-        uploadBytes(fileRef, files[position].buffer)
-          .then()
-          .catch((error) => {
-            return error;
-          });
-      })
-      await this.bookImagesServices.updateBookImages(
-        Number(idFromBookImage),
-        bookFound.bookImages
-      );
+      const filesURL = []
+
+      for (let value = 0; value <= 3; value++) {
+        const fileRef = ref(storage, fileNames[value]);
+        await uploadBytes(fileRef, files[value].buffer)
+          .then(() => { })
+        await getDownloadURL(fileRef).then((url) => {
+          filesURL.push(url)
+          if (value === fileNames.length - 1) {
+            bookFound.bookImages.frontSideImage = filesURL[0]
+            bookFound.bookImages.rightSideImage = filesURL[1]
+            bookFound.bookImages.leftSideImage = filesURL[2]
+            bookFound.bookImages.backSideImage = filesURL[3]
+            console.log(bookFound.bookImages)
+            this.bookImagesServices.updateBookImages(
+              Number(idFromBookImage),
+              bookFound.bookImages
+            );
+
+          }
+        })
+      }
       return `Imagens inseridas com sucesso!`;
+
     } catch (err) {
       return err.message
     }
   }
 }
-

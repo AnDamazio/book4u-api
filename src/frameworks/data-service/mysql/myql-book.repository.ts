@@ -9,7 +9,7 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
   }
 
   async findAll(): Promise<T[]> {
-    return await this._repository.find();
+    return await this._repository.find({ relations: ['bookImages', 'owner', 'author', 'language', 'publisher', 'category'] });
   }
 
   async create(book): Promise<T> {
