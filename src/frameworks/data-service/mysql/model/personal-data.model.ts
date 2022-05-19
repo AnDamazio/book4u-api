@@ -23,6 +23,12 @@ export class PersonalData {
   @Column()
   password!: string;
 
+  @Column({ nullable: true })
+  address: string;
+
+  @Column({ nullable: true })
+  complement: string;
+
   @Column({ name: 'cpf' })
   cpf!: string;
 
@@ -34,6 +40,9 @@ export class PersonalData {
 
   @Column()
   telephone!: string;
+
+  @Column()
+  token: string;
 
   @OneToOne(() => User, (user) => user.personalData)
   user: User;

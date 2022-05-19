@@ -1,8 +1,9 @@
+import { PersonalDataController } from './controllers/personal-data.controller';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserController } from './controllers/user.controller';
-import { UserServices } from './service';
+import { PersonalDataServices, UserServices } from './service';
 import { DataServicesModule } from './service/data-services';
 import { PersonalDataServicesModule } from './service/use-cases/personal-data/personal-data-service.module';
 import { UserServicesModule } from './service/use-cases/user/user-services.module';
@@ -16,6 +17,7 @@ import { PublisherServicesModule } from './service/use-cases/publisher/publisher
 import { CategoryServicesModule } from './service/use-cases/category';
 import { UserSituationServicesModule } from './service/use-cases/userSituation';
 import { BookImagesServicesModule } from './service/use-cases/bookImages';
+import { TokenController } from './controllers/token.controller';
 
 @Module({
   imports: [
@@ -25,13 +27,13 @@ import { BookImagesServicesModule } from './service/use-cases/bookImages';
     AuthorServicesModule,
     BookServicesModule,
     PublisherServicesModule,
-    AuthModule,
     LanguageServicesModule,
     CategoryServicesModule,
     UserSituationServicesModule,
-    BookImagesServicesModule
+    BookImagesServicesModule,
+    AuthModule
   ],
-  controllers: [AppController, UserController, BookController],
-  providers: [AppService, UserServices, BookServices],
+  controllers: [AppController, UserController, BookController, TokenController, PersonalDataController],
+  providers: [AppService, UserServices, BookServices, PersonalDataServices],
 })
 export class AppModule { }

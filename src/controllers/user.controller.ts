@@ -12,22 +12,24 @@ import {
   UseInterceptors,
   UploadedFile,
   Put,
+  Get,
+  Req,
 } from '@nestjs/common';
 import {
   CreatePersonalDataDto,
   CreateUserDto,
   CreateUserResponseDto,
-  UserSituationDto,
 } from '../core/dtos';
 import { UserServices } from 'src/service/use-cases/user/user-services.service';
 import { UserFactoryService } from 'src/service/use-cases/user';
 import { LocalAuthGuard } from 'src/frameworks/auth/local-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ref, uploadBytes, deleteObject } from 'firebase/storage';
+import { ref, uploadBytes, deleteObject, getDownloadURL } from 'firebase/storage';
 import { storage } from '../firebase';
 import * as nodemailer from 'nodemailer';
 import { SMTP_CONFIG } from '../smtp/smtp-config';
 import { AuthService } from 'src/frameworks/auth/auth.service';
+import { AuthGuard } from '@nestjs/passport';
 
 const transport = nodemailer.createTransport({
   service: SMTP_CONFIG.service,
@@ -53,7 +55,6 @@ export class UserController {
     private personalDataFactoryService: PersonalDataFactoryService,
     private userSituationServices: UserSituationServices,
     private userSituationFactoryService: UserSituationFactoryService,
-
   ) { }
 
   @Post()
@@ -66,12 +67,12 @@ export class UserController {
             userDto.personalData.password,
           );
         const personalData =
-          this.personalDataFactoryService.createNewPersonalData(
+          await this.personalDataFactoryService.createNewPersonalData(
             userDto.personalData,
           );
         const createdPersonalData =
           await this.personalDataServices.createPersonalData(
-            await personalData,
+            personalData,
           );
         userDto.personalData = createdPersonalData;
         const userSituation =
@@ -81,6 +82,7 @@ export class UserController {
         const createdUserSituation =
           await this.userSituationServices.createUserSituation(userSituation);
         userDto.userSituation = createdUserSituation;
+
 
         const user = this.userFactoryService.createNewUser(userDto);
         function generateNewNumber() {
@@ -109,6 +111,7 @@ export class UserController {
         return createUserResponse;
       } catch (err) {
         createUserResponse.success = false;
+        console.log(err)
         return err.message;
       }
     }
@@ -119,12 +122,12 @@ export class UserController {
   async login(@Request() req) {
     if (req.user.user.userSituation.name == 'Confirmado') {
       try {
-        return await this.authService.login(req.user)
+        return await this.authService.login(req.user);
       } catch (err) {
-        return err.message
+        return err.message;
       }
     } else {
-      return "E-mail pendente"
+      return 'E-mail pendente';
     }
   }
 
@@ -134,45 +137,54 @@ export class UserController {
     @Param('id') id: number,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const userFound = this.userServices.getUserById(id);
-    const createUserResponse = new CreateUserResponseDto();
-    if ((await userFound).profileImage != '') {
-      const userPic = (await userFound).profileImage;
-      const fileRef = ref(storage, userPic);
-      deleteObject(fileRef)
-        .then()
-        .catch((error) => console.log(error));
+    try {
+      const userFound = this.userServices.getUserById(id);
+      if ((await userFound).picture != '') {
+        const userPic = (await userFound).picture;
+        const fileRef = ref(storage, userPic);
+        deleteObject(fileRef)
+          .then()
+          .catch((error) => console.log(error));
+      }
+      const fileName = Math.floor(Math.random() * 65536) + '_' + file.originalname;
+      const fileRef = ref(storage, fileName);
+      uploadBytes(fileRef, file.buffer)
+        .then(async () => {
+          getDownloadURL(fileRef)
+            .then(async (url) => {
+              await this.userServices.setProfilePic(
+                id,
+                url,
+              )
+            })
+        })
+      return 'Imagem trocada com sucesso!';
+    } catch (err) {
+      return {
+        defaultError: err.message,
+        editedError: "Erro ao alterar imagem, por favor tente novamente"
+      }
     }
-    const fileName = Date.now() + '_' + file.originalname;
-    const fileRef = ref(storage, fileName);
-    uploadBytes(fileRef, file.buffer)
-      .then(async () => {
-        const createdProfilePic = await this.userServices.setProfilePic(
-          id,
-          fileName,
-        );
-        createUserResponse.createdUser = createdProfilePic;
-        return 'Imagem trocada com sucesso!';
-      })
-      .catch((error) => {
-        return error;
-      });
   }
 
   @Put('confirmRegistration/:rNumber')
   async confirmRegistration(@Param('rNumber') rNumber: string) {
-    await this.userSituationServices.insertEnumValue();
-    const userFound = await this.userServices.getUserByNRegister(rNumber);
-    const getIdFromUser = await this.userServices.getIdFromUser(userFound);
-    const createUserResponse = new CreateUserResponseDto();
-    if (userFound.registerNumber == rNumber) {
-      const newUserSituation = await this.userServices.setSituationUser(
-        Number(getIdFromUser),
-        (userFound.userSituation.name = 'CONFIRMADO'),
-      );
-      return userFound.registerNumber;
-    } else {
-      return 'Código de registro incorreto, tente novamente';
+    try {
+      await this.userSituationServices.insertEnumValue();
+      const userFound = await this.userServices.getUserByNRegister(rNumber);
+      const getIdFromUser = await this.userServices.getIdFromUser(userFound);
+      if (userFound.registerNumber == rNumber) {
+        await this.userServices.setSituationUser(
+          Number(getIdFromUser),
+          (userFound.userSituation.name = 'CONFIRMADO'),
+        );
+        return userFound.registerNumber;
+      }
+    } catch (err) {
+      return {
+        defaultError: err.message,
+        editedError: "Por favor, digite um número válido"
+      }
     }
   }
 
@@ -212,7 +224,7 @@ export class UserController {
         return 'Usuário não encontrado';
       }
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 
@@ -222,7 +234,8 @@ export class UserController {
     @Body('password') password: CreatePersonalDataDto['password'],
   ) {
     const userFound = await this.personalDataServices.findByEmail(email);
-    const getIdFromPersonalData = await this.personalDataServices.getIdFromPersonalData(userFound);
+    const getIdFromPersonalData =
+      await this.personalDataServices.getIdFromPersonalData(userFound);
     if (userFound) {
       userFound.password =
         await this.personalDataFactoryService.encryptPassword(String(password));
@@ -234,5 +247,25 @@ export class UserController {
     } else {
       return 'Erro ao alterar dado de situação de usuário para confirmado';
     }
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) { }
+
+  @Get('google/redirect')
+  @UseGuards(AuthGuard('google'))
+  googleAuthRedirect(@Req() req) {
+    console.log(req.user);
+    this.userServices.createUser(req.user);
+
+    if (!req.user) {
+      return 'No user from google';
+    }
+
+    return {
+      message: 'User information from google',
+      user: req.user,
+    };
   }
 }

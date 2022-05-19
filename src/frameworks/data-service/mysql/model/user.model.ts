@@ -6,7 +6,9 @@ import {
   JoinColumn,
   ManyToOne,
   Unique,
+  OneToMany,
 } from 'typeorm';
+import { Book } from './book.model';
 import { PersonalData } from './personal-data.model';
 import { UserSituation } from './user-situation.model';
 
@@ -23,7 +25,7 @@ export class User {
   lastName!: string;
 
   @Column()
-  profileImage: string;
+  picture: string;
 
   @Column()
   registerNumber: string;
@@ -35,4 +37,7 @@ export class User {
   @ManyToOne(() => UserSituation, (userSituation) => userSituation.user)
   @JoinColumn()
   userSituation!: UserSituation;
+
+  @OneToMany(() => Book, (book) => book.owner)
+  book: Book[];
 }

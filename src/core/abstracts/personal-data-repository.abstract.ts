@@ -15,4 +15,10 @@ export abstract class IPersonalDataRepository<T> {
   ): Promise<UpdateResult | Error>;
 
   abstract getIdFromPersonalData(personalData: T): Promise<T>;
+
+  abstract insertToken(id: number, newUserToken: T): Promise<UpdateResult>
+
+  abstract findToken(oldToken: string): Promise<T>
+
+  abstract createAddress(location): Promise<any>;
 }

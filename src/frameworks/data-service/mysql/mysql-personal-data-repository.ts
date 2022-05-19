@@ -1,5 +1,7 @@
 import { Repository, UpdateResult } from 'typeorm';
 import { IPersonalDataRepository } from 'src/core';
+import { use } from 'passport';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 export class MysqlPersonalDataRepository<T>
   implements IPersonalDataRepository<T>
@@ -53,5 +55,22 @@ export class MysqlPersonalDataRepository<T>
 
   async getIdFromPersonalData(personalData: T): Promise<T> {
     return await this._repository.getId(personalData);
+  }
+
+  async insertToken(id: number, newUserToken: T): Promise<UpdateResult> {
+    return await this._repository.update(id, newUserToken)
+  }
+
+  async findToken(token: string): Promise<T> {
+    try {
+      const user = await this._repository.findOne(token)
+      return user
+    } catch (err) {
+      return err.message
+    }
+  }
+
+  async createAddress(location) {
+    return await this._repository.update(location.id, location as unknown as QueryDeepPartialEntity<T>)
   }
 }

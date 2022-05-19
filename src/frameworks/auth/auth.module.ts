@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UserServicesModule } from 'src/service/use-cases/user/user-services.module';
 import { AuthService } from './auth.service';
 import { PassportModule } from '@nestjs/passport';
@@ -7,14 +7,15 @@ import { PersonalDataServicesModule } from 'src/service/use-cases/personal-data/
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './jwt.strategy';
+import { GoogleStrategy } from './google.strategy';
 
 @Module({
-  imports: [UserServicesModule, PassportModule, PersonalDataServicesModule,
+  imports: [UserServicesModule, PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
-    }),],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService]
+      signOptions: { expiresIn: '1h' },
+    }), forwardRef(() => PersonalDataServicesModule)],
+  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy],
+  exports: [AuthService, JwtModule]
 })
 export class AuthModule { }

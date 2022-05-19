@@ -25,7 +25,7 @@ export class MysqlDataServices
   publisher: MysqlPublisherRepository<Publisher>;
   category: MysqlCategoryRepository<Category>;
   userSituation: MysqlUserSituationRepository<UserSituation>;
-  bookImages: MysqlBookImagesRepository<BookImages>
+  bookImages: MysqlBookImagesRepository<BookImages>;
 
   constructor(
     @InjectRepository(User) private UserRepository: Repository<User>,

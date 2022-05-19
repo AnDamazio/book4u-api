@@ -10,7 +10,7 @@ import {
   Publisher,
   Category,
   UserSituation,
-  BookImages
+  BookImages,
 } from './model';
 import { MysqlDataServices } from './mysql-data-services.service';
 import 'dotenv/config';
