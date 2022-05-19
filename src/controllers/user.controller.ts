@@ -207,7 +207,7 @@ export class UserController {
           .catch((error) => {
             return error;
           });
-        return `E-mail enviado para o email ${userFound.personalData.email}`;
+        return userFound.registerNumber;
       } else {
         return 'Usuário não encontrado';
       }
