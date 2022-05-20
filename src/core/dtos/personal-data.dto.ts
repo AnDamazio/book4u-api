@@ -43,4 +43,8 @@ export class CreatePersonalDataDto {
   @MinLength(8)
   @IsNotEmpty()
   password: string;
+
+  @IsString()
+  @IsEmpty()
+  token: string;
 }

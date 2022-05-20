@@ -19,7 +19,7 @@ export class PersonalDataFactoryService {
     newPersonalData.telephone = createPersonalDataDto.telephone;
     newPersonalData.address = createPersonalDataDto.address;
     newPersonalData.complement = createPersonalDataDto.complement;
-
+    newPersonalData.token = createPersonalDataDto.token;
     return newPersonalData;
   }
 }
