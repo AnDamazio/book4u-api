@@ -14,7 +14,7 @@ export class MysqlUserRepository<T> implements IUserRepository<T> {
 
   findOneById(id: number): Promise<T> {
     return this._repository.findOne({
-      relations: ['userSituation'],
+      relations: ['userSituation', 'personalData'],
       where: { id: id },
     });
   }

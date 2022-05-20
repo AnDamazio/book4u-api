@@ -30,6 +30,7 @@ import * as nodemailer from 'nodemailer';
 import { SMTP_CONFIG } from '../smtp/smtp-config';
 import { AuthService } from 'src/frameworks/auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import * as jwt from 'jsonwebtoken'
 
 const transport = nodemailer.createTransport({
   service: SMTP_CONFIG.service,
@@ -122,7 +123,11 @@ export class UserController {
   async login(@Request() req) {
     if (req.user.user.userSituation.name == 'Confirmado') {
       try {
-        return await this.authService.login(req.user);
+        const token = await this.authService.login(req.user)
+        return {
+          token,
+          user_id: jwt.verify(token.access_token, process.env.SECRET_KEY)
+        }
       } catch (err) {
         return err.message;
       }
@@ -219,7 +224,7 @@ export class UserController {
           .catch((error) => {
             return error;
           });
-        return `E-mail enviado para o email ${userFound.personalData.email}`;
+        return userFound.registerNumber;
       } else {
         return 'Usuário não encontrado';
       }
@@ -267,5 +272,14 @@ export class UserController {
       message: 'User information from google',
       user: req.user,
     };
+  }
+
+  @Get('/getUserById/:id')
+  async getUserById(@Param('id') id: number) {
+    try {
+      return await this.userServices.getUserById(id)
+    } catch (err) {
+      return err.message
+    }
   }
 }

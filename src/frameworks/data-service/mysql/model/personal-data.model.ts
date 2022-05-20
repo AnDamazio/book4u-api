@@ -3,7 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Unique,
-  OneToOne,
+  OneToOne
 } from 'typeorm';
 import { User } from './user.model';
 
@@ -41,7 +41,7 @@ export class PersonalData {
   @Column()
   telephone!: string;
 
-  @Column()
+  @Column({ default: "" })
   token: string;
 
   @OneToOne(() => User, (user) => user.personalData)

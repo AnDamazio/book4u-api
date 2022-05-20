@@ -14,3 +14,4 @@ export * from './refresh-token.dto'
 export * from './google-user.dto';
 export * from './create-personal-data-response.dto';
 export * from './location.dto'
+export * from './exchange-books.dto'
