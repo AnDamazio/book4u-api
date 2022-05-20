@@ -42,7 +42,7 @@ export class PersonalData {
   telephone!: string;
 
   @Column()
-  token: string;
+  token: string = "";
 
   @OneToOne(() => User, (user) => user.personalData)
   user: User;
