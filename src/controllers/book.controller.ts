@@ -1,3 +1,4 @@
+import { ExchangeSituation } from './../core/enums/exchange-situation.enum';
 import {
   AuthorServices,
   AuthorFactoryService,
@@ -8,7 +9,7 @@ import {
   PublisherFactoryService,
   PublisherServices,
 } from 'src/service/use-cases/publisher';
-import { CreateBookDto, CreateBookResponseDto } from '../core/dtos';
+import { CreateBookDto, CreateBookResponseDto, CreateExchangeBooksDto } from '../core/dtos';
 import {
   LanguageFactoryService,
   LanguageServices,
@@ -22,8 +23,9 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../firebase';
 import { BookImagesServices } from 'src/service/use-cases/bookImages';
-import { UserServices } from 'src/service';
+import { AutoRelationBooksServices, UserServices } from 'src/service';
 import { JwtAuthGuard } from 'src/frameworks/auth/jwt-auth.guard';
+import { AutoRelationBook } from 'src/core';
 
 
 
@@ -43,6 +45,7 @@ export class BookController {
     private categoryServices: CategoryServices,
     private bookImagesServices: BookImagesServices,
     private userServices: UserServices,
+    private autoRelationBooksServices: AutoRelationBooksServices
   ) { }
 
   @Post(':id')
@@ -144,4 +147,30 @@ export class BookController {
       return err.message
     }
   }
+
+  @Get('userLibrary/:id')
+  async getUserLibrary(@Param('id') id: number) {
+    return await this.bookServices.getUserLibrary(id)
+  }
+
+  @Post('exchangeBook/:book1/:book2')
+  async createExchangeBooks(@Param('book1') book1: number, @Param('book2') book2: number) {
+    try {
+      const getBook1 = await this.bookServices.findBookByPk(book1)
+      const getBook2 = await this.bookServices.findBookByPk(book2)
+
+      const createExchangeBooksDto = {
+        situation: ExchangeSituation.PENDENTE,
+        book1: getBook1,
+        book2: getBook2,
+      }
+
+      this.autoRelationBooksServices.createExchangeBooks(createExchangeBooksDto);
+      return "Proposta de troca enviada"
+    } catch (err) {
+      return err.message
+    }
+
+  }
+
 }

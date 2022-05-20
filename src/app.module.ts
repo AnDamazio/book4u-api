@@ -1,3 +1,4 @@
+import { AutoRelationBooksServicesModule } from './service/use-cases/autoRelationBooks/autoRelationBooks.module';
 import { PersonalDataController } from './controllers/personal-data.controller';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
@@ -31,7 +32,8 @@ import { TokenController } from './controllers/token.controller';
     CategoryServicesModule,
     UserSituationServicesModule,
     BookImagesServicesModule,
-    AuthModule
+    AuthModule,
+    AutoRelationBooksServicesModule
   ],
   controllers: [AppController, UserController, BookController, TokenController, PersonalDataController],
   providers: [AppService, UserServices, BookServices, PersonalDataServices],
