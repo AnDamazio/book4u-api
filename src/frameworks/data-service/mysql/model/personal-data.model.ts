@@ -3,7 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Unique,
-  OneToOne,
+  OneToOne
 } from 'typeorm';
 import { User } from './user.model';
 

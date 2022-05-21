@@ -20,7 +20,6 @@ export class PersonalDataFactoryService {
     newPersonalData.address = createPersonalDataDto.address;
     newPersonalData.complement = createPersonalDataDto.complement;
     newPersonalData.token = createPersonalDataDto.token;
-
     return newPersonalData;
   }
 }

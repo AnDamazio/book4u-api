@@ -1,7 +1,7 @@
 import { MysqlPersonalDataRepository } from './mysql-personal-data-repository';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, PersonalData, Author, Book, Language, Publisher, UserSituation, BookImages } from './model';
+import { User, PersonalData, Author, Book, Language, Publisher, UserSituation, BookImages, AutoRelationBook } from './model';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { IDataServices } from 'src/core';
 import { MysqlUserRepository } from './mysql-user-repository';
@@ -13,6 +13,7 @@ import { Category } from './model/category.model';
 import { MysqlCategoryRepository } from './mysql-category.repository';
 import { MysqlUserSituationRepository } from './mysql-user-situation.repository'
 import { MysqlBookImagesRepository } from './mysql-book-images.repository'
+import { MysqlAutoRelationBookRepository } from './mysql-auto-relation-books.repository'
 
 @Injectable()
 export class MysqlDataServices
@@ -26,6 +27,7 @@ export class MysqlDataServices
   category: MysqlCategoryRepository<Category>;
   userSituation: MysqlUserSituationRepository<UserSituation>;
   bookImages: MysqlBookImagesRepository<BookImages>;
+  autoRelationBook: MysqlAutoRelationBookRepository<AutoRelationBook>
 
   constructor(
     @InjectRepository(User) private UserRepository: Repository<User>,
@@ -43,6 +45,8 @@ export class MysqlDataServices
     private UserSituationRepository: Repository<UserSituation>,
     @InjectRepository(BookImages)
     private BookImagesRepository: Repository<BookImages>,
+    @InjectRepository(AutoRelationBook)
+    private AutoRelationBookRepository: Repository<AutoRelationBook>
   ) { }
 
   onApplicationBootstrap() {
@@ -67,5 +71,8 @@ export class MysqlDataServices
     this.bookImages = new MysqlBookImagesRepository<BookImages>(
       this.BookImagesRepository,
     );
+    this.autoRelationBook = new MysqlAutoRelationBookRepository<AutoRelationBook>(
+      this.AutoRelationBookRepository
+    )
   }
 }

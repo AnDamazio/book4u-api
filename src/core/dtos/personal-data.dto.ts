@@ -24,7 +24,6 @@ export class CreatePersonalDataDto {
   cellphone: string;
 
   @IsPhoneNumber('BR')
-  @IsNotEmpty()
   telephone: string;
 
   @IsString()

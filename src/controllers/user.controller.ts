@@ -224,7 +224,7 @@ export class UserController {
           .catch((error) => {
             return error;
           });
-        return `E-mail enviado para o email ${userFound.personalData.email}`;
+        return userFound.registerNumber;
       } else {
         return 'Usuário não encontrado';
       }
@@ -272,5 +272,14 @@ export class UserController {
       message: 'User information from google',
       user: req.user,
     };
+  }
+
+  @Get('/getUserById/:id')
+  async getUserById(@Param('id') id: number) {
+    try {
+      return await this.userServices.getUserById(id)
+    } catch (err) {
+      return err.message
+    }
   }
 }
