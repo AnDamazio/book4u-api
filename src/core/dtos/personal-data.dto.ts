@@ -7,6 +7,7 @@ import {
   Validate,
   IsMobilePhone
 } from 'class-validator/cjs';
+import { IsNull } from 'typeorm';
 import { IsCpf } from '../validations/cpf-validation';
 export class CreatePersonalDataDto {
   @IsString()
