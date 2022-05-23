@@ -2,6 +2,7 @@ import { AuthService } from 'src/frameworks/auth/auth.service';
 import { Body, Controller, Put } from "@nestjs/common";
 import { RefreshTokenDto } from "src/core/dtos/refresh-token.dto";
 import { PersonalDataServices } from "src/service/use-cases/personal-data";
+import * as jwt from 'jsonwebtoken'
 
 @Controller('token')
 export class TokenController {
@@ -14,7 +15,12 @@ export class TokenController {
     async refreshToken(@Body() oldToken: RefreshTokenDto['token']) {
         try {
              const user = await this.personalDataServices.refreshToken(oldToken)
-             return await this.authService.login(user)
+             const token = await this.authService.login(user)
+             return {
+                token,
+                user_id: jwt.verify(token.access_token, process.env.SECRET_KEY)
+              }
+             
         } catch (error) {
             return error.message
         }

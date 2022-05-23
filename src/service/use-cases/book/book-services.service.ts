@@ -35,4 +35,12 @@ export class BookServices {
       return err.message;
     }
   }
+
+  async getUserLibrary(id: number): Promise<Book[]> {
+    try {
+      return await this.bookServices.book.getUserLibrary(id)
+    } catch (err) {
+      return err.message
+    }
+  }
 }

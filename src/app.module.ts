@@ -1,3 +1,4 @@
+import { AutoRelationBooksServicesModule } from './service/use-cases/autoRelationBooks/autoRelationBooks.module';
 import { PersonalDataController } from './controllers/personal-data.controller';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
@@ -51,6 +52,8 @@ import { WishListServicesModule } from './service/use-cases/wish-list/wish-list-
     BookServices,
     PersonalDataServices,
     WishListServices,
+    AuthModule,
+    AutoRelationBooksServicesModule
   ],
 })
 export class AppModule {}
