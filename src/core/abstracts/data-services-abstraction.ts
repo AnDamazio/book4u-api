@@ -17,6 +17,8 @@ import { ICategoryRepository } from './category-repository.abstract';
 import { IPublisherRepository } from './publisher-repository.abstract';
 import { IUserRepository } from './user-repository-abstract';
 import { IUserSituationRepository } from './user-situation.abstract';
+import { IWishListRepository } from '.';
+import { WishList } from '../entities/wish-list.entity';
 
 export abstract class IDataServices {
   abstract user: IUserRepository<User>;
@@ -26,6 +28,7 @@ export abstract class IDataServices {
   abstract language: ILanguageRepository<Language>;
   abstract publisher: IPublisherRepository<Publisher>;
   abstract category: ICategoryRepository<Category>;
-  abstract userSituation: IUserSituationRepository<UserSituation>
-  abstract bookImages: IBookImagesRepository<BookImages>
+  abstract userSituation: IUserSituationRepository<UserSituation>;
+  abstract bookImages: IBookImagesRepository<BookImages>;
+  abstract wishList: IWishListRepository<WishList>;
 }

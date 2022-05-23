@@ -11,6 +11,7 @@ import {
 import { Book } from './book.model';
 import { PersonalData } from './personal-data.model';
 import { UserSituation } from './user-situation.model';
+import { Wish } from './wish.model';
 
 @Entity()
 @Unique(['registerNumber'])
@@ -33,6 +34,9 @@ export class User {
   @OneToOne(() => PersonalData)
   @JoinColumn()
   personalData!: PersonalData;
+
+  @OneToMany(() => Wish, (wish) => wish.user, { cascade: true })
+  wish: Wish;
 
   @ManyToOne(() => UserSituation, (userSituation) => userSituation.user)
   @JoinColumn()

@@ -18,6 +18,9 @@ import { CategoryServicesModule } from './service/use-cases/category';
 import { UserSituationServicesModule } from './service/use-cases/userSituation';
 import { BookImagesServicesModule } from './service/use-cases/bookImages';
 import { TokenController } from './controllers/token.controller';
+import { WishListServices } from './service/use-cases/wish-list';
+import { WishListController } from './controllers/wish-list.controller';
+import { WishListServicesModule } from './service/use-cases/wish-list/wish-list-services.module';
 
 @Module({
   imports: [
@@ -31,9 +34,23 @@ import { TokenController } from './controllers/token.controller';
     CategoryServicesModule,
     UserSituationServicesModule,
     BookImagesServicesModule,
-    AuthModule
+    WishListServicesModule,
+    AuthModule,
   ],
-  controllers: [AppController, UserController, BookController, TokenController, PersonalDataController],
-  providers: [AppService, UserServices, BookServices, PersonalDataServices],
+  controllers: [
+    AppController,
+    UserController,
+    BookController,
+    TokenController,
+    PersonalDataController,
+    WishListController,
+  ],
+  providers: [
+    AppService,
+    UserServices,
+    BookServices,
+    PersonalDataServices,
+    WishListServices,
+  ],
 })
-export class AppModule { }
+export class AppModule {}

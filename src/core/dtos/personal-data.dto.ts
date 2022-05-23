@@ -1,12 +1,13 @@
-import { MaxLength, MinLength } from 'class-validator';
+import { IsEmpty, MaxLength, MinLength } from 'class-validator';
 import {
   IsString,
   IsNotEmpty,
   IsEmail,
   IsPhoneNumber,
   Validate,
-  IsMobilePhone
+  IsMobilePhone,
 } from 'class-validator/cjs';
+import { IsNull } from 'typeorm';
 import { IsCpf } from '../validations/cpf-validation';
 export class CreatePersonalDataDto {
   @IsString()
@@ -44,4 +45,5 @@ export class CreatePersonalDataDto {
   @MinLength(8)
   @IsNotEmpty()
   password: string;
+
 }

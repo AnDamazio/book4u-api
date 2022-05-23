@@ -41,7 +41,7 @@ export class PersonalData {
   @Column()
   telephone!: string;
 
-  @Column()
+  @Column({default: ""})
   token: string;
 
   @OneToOne(() => User, (user) => user.personalData)

@@ -9,13 +9,13 @@ export class BookServices {
   constructor(
     private bookServices: IDataServices,
     private bookFactoryService: BookFactoryService,
-  ) { }
+  ) {}
 
   async getAllBooks(): Promise<Book[]> {
     try {
       return await this.bookServices.book.findAll();
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 
@@ -24,15 +24,15 @@ export class BookServices {
       const book = this.bookFactoryService.createNewBook(createBookDto);
       return await this.bookServices.book.create(book);
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 
   async findBookByPk(id: number): Promise<Book> {
     try {
-      return await this.bookServices.book.findBookByPk(id)
+      return await this.bookServices.book.findBookByPk(id);
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 }

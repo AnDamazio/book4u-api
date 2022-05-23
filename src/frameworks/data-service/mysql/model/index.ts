@@ -6,4 +6,5 @@ export * from './language.model';
 export * from './publisher.model';
 export * from './category.model';
 export * from './user-situation.model';
-export * from './book-images.model'
+export * from './book-images.model';
+export * from './wish.model';
