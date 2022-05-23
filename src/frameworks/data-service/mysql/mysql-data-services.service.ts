@@ -12,20 +12,20 @@ import {
   BookImages,
   Wish,
   Category,
-  AutoRelationBook
+  AutoRelationBook,
 } from './model';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { IDataServices } from 'src/core';
 import { MysqlUserRepository } from './mysql-user-repository';
 import { MysqlAuthorRepository } from './mysql-author.repository';
-import { MysqlBookRepository } from './myql-book.repository';
+import { MysqlBookRepository } from './mysql-book.repository';
 import { MysqlLanguageRepository } from './mysql-language.repository';
 import { MysqlPublisherRepository } from './mysql-publisher.repository';
 import { MysqlCategoryRepository } from './mysql-category.repository';
 import { MysqlUserSituationRepository } from './mysql-user-situation.repository';
 import { MysqlWishListRepository } from './mysql-wish-list.repository';
-import { MysqlBookImagesRepository } from './mysql-book-images.repository'
-import { MysqlAutoRelationBookRepository } from './mysql-auto-relation-books.repository'
+import { MysqlBookImagesRepository } from './mysql-book-images.repository';
+import { MysqlAutoRelationBookRepository } from './mysql-auto-relation-books.repository';
 
 @Injectable()
 export class MysqlDataServices
@@ -41,7 +41,7 @@ export class MysqlDataServices
   userSituation: MysqlUserSituationRepository<UserSituation>;
   bookImages: MysqlBookImagesRepository<BookImages>;
   wishList: MysqlWishListRepository<Wish>;
-  autoRelationBook: MysqlAutoRelationBookRepository<AutoRelationBook>
+  autoRelationBook: MysqlAutoRelationBookRepository<AutoRelationBook>;
 
   constructor(
     @InjectRepository(User) private UserRepository: Repository<User>,
@@ -61,10 +61,9 @@ export class MysqlDataServices
     private BookImagesRepository: Repository<BookImages>,
     @InjectRepository(Wish)
     private WishListRepository: Repository<Wish>,
-  ) {}
     @InjectRepository(AutoRelationBook)
-    private AutoRelationBookRepository: Repository<AutoRelationBook>
-  ) { }
+    private AutoRelationBookRepository: Repository<AutoRelationBook>,
+  ) {}
 
   onApplicationBootstrap() {
     this.user = new MysqlUserRepository<User>(this.UserRepository);
@@ -88,11 +87,10 @@ export class MysqlDataServices
     this.bookImages = new MysqlBookImagesRepository<BookImages>(
       this.BookImagesRepository,
     );
-    this.wishList = new MysqlWishListRepository<Wish>(
-      this.WishListRepository,
-    );
-    this.autoRelationBook = new MysqlAutoRelationBookRepository<AutoRelationBook>(
-      this.AutoRelationBookRepository
-    );
+    this.wishList = new MysqlWishListRepository<Wish>(this.WishListRepository);
+    this.autoRelationBook =
+      new MysqlAutoRelationBookRepository<AutoRelationBook>(
+        this.AutoRelationBookRepository,
+      );
   }
 }
