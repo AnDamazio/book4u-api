@@ -6,12 +6,16 @@ import { AutoRelationBooksFactoryService } from './autoRelationBooks-factory.ser
 
 @Injectable()
 export class AutoRelationBooksServices {
-    constructor(
-        private dataServices: IDataServices,
-        private autoRelationBooksFactoryService: AutoRelationBooksFactoryService,
-    ) { }
+  constructor(
+    private dataServices: IDataServices,
+    private autoRelationBooksFactoryService: AutoRelationBooksFactoryService,
+  ) {}
 
-    async createExchangeBooks(createExchangeBooksDto: CreateExchangeBooksDto): Promise<AutoRelationBook> {
-        return await this.dataServices.autoRelationBook.createExchangeBooks(createExchangeBooksDto)
-    }
+  async createExchangeBooks(
+    createExchangeBooksDto: CreateExchangeBooksDto,
+  ): Promise<AutoRelationBook> {
+    return await this.dataServices.autoRelationBook.createExchangeBooks(
+      createExchangeBooksDto,
+    );
+  }
 }

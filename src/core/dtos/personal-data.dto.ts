@@ -45,10 +45,7 @@ export class CreatePersonalDataDto {
   @IsNotEmpty()
   password: string;
 
-<<<<<<< HEAD
-=======
   @IsString()
   @IsEmpty()
   token: string;
->>>>>>> 80de06eb63220560a803ec6cc1f9da6eaece0dbf
 }
