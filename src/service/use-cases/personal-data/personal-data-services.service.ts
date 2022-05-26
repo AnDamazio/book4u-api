@@ -101,10 +101,6 @@ export class PersonalDataServices {
   }
 
   async updateTelephone(telephoneDto: TelephoneDto): Promise<any> {
-    try {
-      return await this.dataServices.personalData.createTelephone(telephoneDto);
-    } catch (error) {
-      console.log('Não funcionou', error);
-    }
+    return await this.dataServices.personalData.createTelephone(telephoneDto);
   }
 }

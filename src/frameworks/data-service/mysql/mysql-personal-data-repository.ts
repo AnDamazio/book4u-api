@@ -58,23 +58,26 @@ export class MysqlPersonalDataRepository<T>
   }
 
   async insertToken(id: number, newUserToken: T): Promise<UpdateResult> {
-    return await this._repository.update(id, newUserToken)
+    return await this._repository.update(id, newUserToken);
   }
 
   async findToken(token: string): Promise<T> {
     try {
-      const user = await this._repository.findOne(token)
-      return user
+      const user = await this._repository.findOne(token);
+      return user;
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 
   async createAddress(location) {
-    return await this._repository.update(location.id, location as unknown as QueryDeepPartialEntity<T>)
+    return await this._repository.update(
+      location.id,
+      location as unknown as QueryDeepPartialEntity<T>,
+    );
   }
 
-  async createTelephone(telephone: any): Promise<UpdateResult> {
-    return await this._repository.update(telephone.id, telephone.telephone)
+  async createTelephone(telephone: any) {
+    return await this._repository.update(telephone.id, telephone);
   }
 }
