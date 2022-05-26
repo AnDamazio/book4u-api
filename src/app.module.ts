@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserController } from './controllers/user.controller';
-import { PersonalDataServices, UserServices } from './service';
+import { AutoRelationBooksServices, PersonalDataServices, UserServices } from './service';
 import { DataServicesModule } from './service/data-services';
 import { PersonalDataServicesModule } from './service/use-cases/personal-data/personal-data-service.module';
 import { UserServicesModule } from './service/use-cases/user/user-services.module';
@@ -37,6 +37,7 @@ import { WishListServicesModule } from './service/use-cases/wish-list/wish-list-
     BookImagesServicesModule,
     WishListServicesModule,
     AuthModule,
+    AutoRelationBooksServicesModule,
   ],
   controllers: [
     AppController,
@@ -53,7 +54,8 @@ import { WishListServicesModule } from './service/use-cases/wish-list/wish-list-
     PersonalDataServices,
     WishListServices,
     AuthModule,
-    AutoRelationBooksServicesModule
+    BookServices,
+    AutoRelationBooksServices
   ],
 })
 export class AppModule {}

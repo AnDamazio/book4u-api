@@ -73,4 +73,8 @@ export class MysqlPersonalDataRepository<T>
   async createAddress(location) {
     return await this._repository.update(location.id, location as unknown as QueryDeepPartialEntity<T>)
   }
+
+  async createTelephone(telephone: any): Promise<UpdateResult> {
+    return await this._repository.update(telephone.id, telephone.telephone)
+  }
 }
