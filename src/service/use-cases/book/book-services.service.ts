@@ -10,7 +10,7 @@ export class BookServices {
   constructor(
     private bookServices: IDataServices,
     private bookFactoryService: BookFactoryService,
-  ) {}
+  ) { }
 
   async getAllBooks(): Promise<Book[]> {
     try {
@@ -45,7 +45,7 @@ export class BookServices {
     }
   }
 
-  async updateBook(id: number, book: Book): Promise<UpdateResult>{
+  async updateBook(id: number, book: Book): Promise<UpdateResult> {
     try {
       return await this.bookServices.book.updateBook(id, book);
     } catch (err) {

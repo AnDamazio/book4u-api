@@ -9,7 +9,7 @@ export class AutoRelationBooksServices {
   constructor(
     private dataServices: IDataServices,
     private autoRelationBooksFactoryService: AutoRelationBooksFactoryService,
-  ) {}
+  ) { }
 
   async createExchangeBooks(
     createExchangeBooksDto: CreateExchangeBooksDto,
@@ -19,10 +19,10 @@ export class AutoRelationBooksServices {
     );
   }
 
-  async exchangeNotification(id: number): Promise<AutoRelationBook>{
-    try{
+  async exchangeNotification(id: number): Promise<AutoRelationBook> {
+    try {
       return await this.dataServices.autoRelationBook.exchangeNotification(id)
-    } catch(err) {
+    } catch (err) {
       return err.message
     }
   }

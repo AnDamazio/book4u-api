@@ -24,5 +24,4 @@ export class MysqlBookImagesRepository<T> implements IBookImagesRepository<T> {
     async getIdFromBookImages(bookImages: T): Promise<T> {
         return await this._repository.getId(bookImages)
     }
-
 }

@@ -57,4 +57,4 @@ import { WishListServicesModule } from './service/use-cases/wish-list/wish-list-
     AutoRelationBooksServicesModule
   ],
 })
-export class AppModule {}
+export class AppModule { }

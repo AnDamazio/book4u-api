@@ -20,7 +20,6 @@ export class MysqlPersonalDataRepository<T>
     try {
       const userData = await this._repository
         .createQueryBuilder('personal_data')
-        .leftJoinAndSelect('personal_data.user', 'user')
         .where('personal_data.email = :email', { email: email })
         .getOne();
       return userData;

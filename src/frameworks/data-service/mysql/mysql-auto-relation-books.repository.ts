@@ -16,7 +16,7 @@ export class MysqlAutoRelationBookRepository<T> implements IAutoRelationBookRepo
         return await this._repository.update(id, book)
     }
 
-    async exchangeNotification(id: number): Promise<T>{
-        return await this._repository.findOne({relations: ['book2', 'book2.owner']})
+    async exchangeNotification(id: number): Promise<T> {
+        return await this._repository.findOne({ relations: ['book2', 'book2.owner'] })
     }
 }

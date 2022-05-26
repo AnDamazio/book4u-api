@@ -24,7 +24,7 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
     return await this._repository.find({ where: { owner: id, status: "Disponível" }, relations: ['bookImages', 'owner', 'author', 'language', 'publisher', 'category'] })
   }
 
-  async updateBook(id: number, book: T): Promise<UpdateResult>{
+  async updateBook(id: number, book: T): Promise<UpdateResult> {
     return await this._repository.update(id, book);
   }
 }
