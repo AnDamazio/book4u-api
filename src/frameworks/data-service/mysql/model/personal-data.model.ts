@@ -3,7 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Unique,
-  OneToOne,
+  OneToOne
 } from 'typeorm';
 import { User } from './user.model';
 
@@ -11,6 +11,8 @@ import { User } from './user.model';
 @Unique(['cpf'])
 @Unique(['email'])
 @Unique(['rg'])
+@Unique(['cellphone'])
+@Unique(['telephone'])
 export class PersonalData {
   @PrimaryGeneratedColumn()
   id!: string;
@@ -21,6 +23,12 @@ export class PersonalData {
   @Column()
   password!: string;
 
+  @Column({ nullable: true })
+  address: string;
+
+  @Column({ nullable: true })
+  complement: string;
+
   @Column({ name: 'cpf' })
   cpf!: string;
 
@@ -29,6 +37,12 @@ export class PersonalData {
 
   @Column()
   cellphone!: string;
+
+  @Column()
+  telephone!: string;
+
+  @Column()
+  token: string = "";
 
   @OneToOne(() => User, (user) => user.personalData)
   user: User;

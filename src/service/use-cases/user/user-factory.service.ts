@@ -8,8 +8,10 @@ export class UserFactoryService {
     const newUser = new User();
     newUser.firstName = createUserDto.firstName;
     newUser.lastName = createUserDto.lastName;
+    newUser.registerNumber = createUserDto.registerNumber;
+    newUser.picture = createUserDto.picture;
     newUser.personalData = createUserDto.personalData;
-
+    newUser.userSituation = createUserDto.userSituation;
     return newUser;
   }
 }
