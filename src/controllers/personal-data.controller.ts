@@ -1,14 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { PersonalDataServices } from 'src/service';
-import {
-  LocationDto,
-  CreateLocationResponseDto,
-  TelephoneDto,
-  CreateTelephoneResponseDto,
-} from 'src/core';
+import { LocationDto, CreateLocationResponseDto } from 'src/core';
 @Controller('api/personal-data')
 export class PersonalDataController {
-  constructor(private personalDataServices: PersonalDataServices) {}
+  constructor(private personalDataServices: PersonalDataServices) { }
   @Post()
   async createPersonalData(@Body() locationDto: LocationDto) {
     const locationResponse = new CreateLocationResponseDto();
@@ -23,20 +18,6 @@ export class PersonalDataController {
     } catch (error) {
       locationResponse.success = false;
       return location;
-    }
-  }
-
-  @Post('/update-telephone')
-  async createTelephone(@Body() telephoneDto: TelephoneDto) {
-    const telephoneResponse = new CreateTelephoneResponseDto();
-    try {
-      await this.personalDataServices.updateTelephone(telephoneDto);
-      telephoneResponse.success = true;
-      telephoneResponse.createdTelephone = telephoneDto;
-      return telephoneResponse;
-    } catch (error) {
-      telephoneResponse.success = false;
-      telephoneResponse.createdTelephone = telephoneDto;
     }
   }
 }

@@ -6,6 +6,7 @@ import {
   WishFactoryService,
   WishListServices,
 } from 'src/service/use-cases/wish-list';
+import * as jwt from 'jsonwebtoken'
 
 @Controller('api/wish-list')
 @UseGuards(JwtAuthGuard)
@@ -15,28 +16,29 @@ export class WishListController {
     private wishFactoryService: WishFactoryService,
     private bookServices: BookServices,
     private userServices: UserServices,
-  ) {}
+  ) { }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/:bookId/:userId')
+  @Post('/:bookId/:token')
   async createWish(
     @Body() wishDto: CreateWishListDto,
     @Param('bookId') bookId: number,
-    @Param('userId') userId: number,
+    @Param('token') token: string,
   ) {
     try {
-      console.log(userId, bookId);
-      const user = await this.userServices.getUserById(userId);
+      const destructToken: any = jwt.decode(token);
+      const userFound = await this.userServices.findByEmail(destructToken.email)
+      const id = await this.userServices.getIdFromUser(userFound)
+      const user = await this.userServices.getUserById(id);
       const book = await this.bookServices.findBookByPk(bookId);
       const wish = this.wishFactoryService.createNewWish(wishDto);
-      console.log(user, book);
 
       wish.book = [book];
       wish.user = user;
-      const createdWish = await this.wishServices.createWish(wish);
-      console.log(createdWish);
+      await this.wishServices.createWish(wish);
+      return "Adicionado aos favoritos"
     } catch (error) {
-      console.log(error);
+      return error.message
     }
   }
 }

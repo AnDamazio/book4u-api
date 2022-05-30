@@ -46,6 +46,9 @@ import { JwtAuthGuard } from 'src/frameworks/auth/jwt-auth.guard';
 import { AutoRelationBook, EnumUserSituation } from 'src/core';
 import { string } from 'joi';
 import { BookCategoriesServices } from 'src/service/use-cases/book-categories/book-categories-services.service';
+import * as jwt from 'jsonwebtoken'
+
+
 
 @Controller('api/book')
 @UseGuards(JwtAuthGuard)
@@ -59,7 +62,6 @@ export class BookController {
     private languageServices: LanguageServices,
     private publisherFactoryService: PublisherFactoryService,
     private publisherServices: PublisherServices,
-    private categoryFactoryService: CategoryFactoryService,
     private categoryServices: CategoryServices,
     private bookCategoriesFactoryService: BookCategoriesFactoryService,
     private bookCategoriesServices: BookCategoriesServices,
@@ -68,8 +70,8 @@ export class BookController {
     private autoRelationBooksServices: AutoRelationBooksServices,
   ) {}
 
-  @Post(':id')
-  async createBook(@Body() bookDto: CreateBookDto, @Param('id') id: number) {
+  @Post(':token')
+  async createBook(@Body() bookDto: CreateBookDto, @Param('token') token: string) {
     const createBookResponse = new CreateBookResponseDto();
     try {
       const author = this.authorFactoryService.createNewAuthor(bookDto.author);
@@ -94,10 +96,15 @@ export class BookController {
       const category = await this.categoryServices.getCategory(
         bookDto.category,
       );
-      const owner = await this.userServices.getUserById(id);
-      bookDto.owner = owner;
 
-      bookDto.createdAt = String(Date.now());
+      const destructToken: any = jwt.decode(token);
+      const user = await this.userServices.findByEmail(destructToken.email)
+      const id = await this.userServices.getIdFromUser(user)
+
+      const owner = await this.userServices.getUserById(id)
+      bookDto.owner = owner
+
+      bookDto.createdAt = String(Date.now())
       const book = this.bookFactoryService.createNewBook(bookDto);
       const createdBook = await this.bookServices.createBook(book);
 
@@ -163,10 +170,10 @@ export class BookController {
         await getDownloadURL(fileRef).then((url) => {
           filesURL.push(url);
           if (value === fileNames.length - 1) {
-            bookFound.bookImages.frontSideImage = filesURL[0];
-            bookFound.bookImages.rightSideImage = filesURL[1];
-            bookFound.bookImages.leftSideImage = filesURL[2];
-            bookFound.bookImages.backSideImage = filesURL[3];
+            bookFound.bookImages.frontSideImage = filesURL[0]
+            bookFound.bookImages.rightSideImage = filesURL[1]
+            bookFound.bookImages.leftSideImage = filesURL[2]
+            bookFound.bookImages.backSideImage = filesURL[3]
             this.bookImagesServices.updateBookImages(
               Number(idFromBookImage),
               bookFound.bookImages,
@@ -180,9 +187,13 @@ export class BookController {
     }
   }
 
-  @Get('userLibrary/:id')
-  async getUserLibrary(@Param('id') id: number) {
-    return await this.bookServices.getUserLibrary(id);
+  @Get('userLibrary/:token')
+  async getUserLibrary(@Param('token') token: string) {
+
+    const destructToken: any = jwt.decode(token);
+    const user = await this.userServices.findByEmail(destructToken.email)
+    const id = await this.userServices.getIdFromUser(user)
+    return await this.bookServices.getUserLibrary(Number(id))
   }
 
   @Post('exchangeBook/:book1/:book2')
@@ -200,17 +211,24 @@ export class BookController {
         book2: getBook2,
       };
 
-      this.autoRelationBooksServices.createExchangeBooks(
-        createExchangeBooksDto,
-      );
-      return 'Proposta de troca enviada';
+      getBook1.status = "Indisponível"
+      getBook2.status = "Indisponível"
+
+      await this.bookServices.updateBook(book2, getBook2)
+
+      this.autoRelationBooksServices.createExchangeBooks(createExchangeBooksDto);
+      return "Proposta de troca enviada"
     } catch (err) {
       return err.message;
     }
   }
 
-  @Post('find-category/:a')
-  async listBooksByCategory() {
-    return await this.bookServices.findAllBooksInCategory(['filosofia']);
+  @Get('tradeNotification/:id')
+  async createNotificationById(@Param('id') id: number) {
+    try {
+      return await this.autoRelationBooksServices.exchangeNotification(id)
+    } catch (err) {
+      return err.message
+    }
   }
 }

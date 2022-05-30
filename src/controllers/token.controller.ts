@@ -14,13 +14,8 @@ export class TokenController {
     @Put('refresh')
     async refreshToken(@Body() oldToken: RefreshTokenDto['token']) {
         try {
-             const user = await this.personalDataServices.refreshToken(oldToken)
-             const token = await this.authService.login(user)
-             return {
-                token,
-                user_id: jwt.verify(token.access_token, process.env.SECRET_KEY)
-              }
-             
+            const user = await this.personalDataServices.refreshToken(oldToken)
+            return await this.authService.login(user)
         } catch (error) {
             return error.message
         }

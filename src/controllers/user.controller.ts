@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { PersonalDataServices } from '../service/use-cases/personal-data/personal-data-services.service';
 import { PersonalDataFactoryService } from '../service/use-cases/personal-data/personal-data-factory.service';
 import { UserSituationFactoryService } from 'src/service/use-cases/userSituation';
@@ -24,13 +25,18 @@ import { UserServices } from 'src/service/use-cases/user/user-services.service';
 import { UserFactoryService } from 'src/service/use-cases/user';
 import { LocalAuthGuard } from 'src/frameworks/auth/local-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ref, uploadBytes, deleteObject, getDownloadURL } from 'firebase/storage';
+import {
+  ref,
+  uploadBytes,
+  deleteObject,
+  getDownloadURL,
+} from 'firebase/storage';
 import { storage } from '../firebase';
 import * as nodemailer from 'nodemailer';
 import { SMTP_CONFIG } from '../smtp/smtp-config';
 import { AuthService } from 'src/frameworks/auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import * as jwt from 'jsonwebtoken'
+import * as jwt from 'jsonwebtoken';
 
 const transport = nodemailer.createTransport({
   service: SMTP_CONFIG.service,
@@ -72,9 +78,7 @@ export class UserController {
             userDto.personalData,
           );
         const createdPersonalData =
-          await this.personalDataServices.createPersonalData(
-            personalData,
-          );
+          await this.personalDataServices.createPersonalData(personalData);
         userDto.personalData = createdPersonalData;
         const userSituation =
           this.userSituationFactoryService.createnewUserSituation(
@@ -112,7 +116,6 @@ export class UserController {
         return createUserResponse;
       } catch (err) {
         createUserResponse.success = false;
-        console.log(err)
         return err.message;
       }
     }
@@ -136,13 +139,16 @@ export class UserController {
     }
   }
 
-  @Put(':id')
+  @Put(':token')
   @UseInterceptors(FileInterceptor('profileImage'))
   async setProfilePic(
-    @Param('id') id: number,
+    @Param('token') token: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
     try {
+      const destructToken: any = jwt.decode(token);
+      const user = await this.userServices.findByEmail(destructToken.email)
+      const id = await this.userServices.getIdFromUser(user)
       const userFound = this.userServices.getUserById(id);
       if ((await userFound).picture != '') {
         const userPic = (await userFound).picture;
@@ -151,24 +157,20 @@ export class UserController {
           .then()
           .catch((error) => console.log(error));
       }
-      const fileName = Math.floor(Math.random() * 65536) + '_' + file.originalname;
+      const fileName =
+        Math.floor(Math.random() * 65536) + '_' + file.originalname;
       const fileRef = ref(storage, fileName);
-      uploadBytes(fileRef, file.buffer)
-        .then(async () => {
-          getDownloadURL(fileRef)
-            .then(async (url) => {
-              await this.userServices.setProfilePic(
-                id,
-                url,
-              )
-            })
-        })
+      uploadBytes(fileRef, file.buffer).then(async () => {
+        getDownloadURL(fileRef).then(async (url) => {
+          await this.userServices.setProfilePic(id, url);
+        });
+      });
       return 'Imagem trocada com sucesso!';
     } catch (err) {
       return {
         defaultError: err.message,
-        editedError: "Erro ao alterar imagem, por favor tente novamente"
-      }
+        editedError: 'Erro ao alterar imagem, por favor tente novamente',
+      };
     }
   }
 
@@ -188,8 +190,8 @@ export class UserController {
     } catch (err) {
       return {
         defaultError: err.message,
-        editedError: "Por favor, digite um número válido"
-      }
+        editedError: 'Por favor, digite um número válido',
+      };
     }
   }
 
@@ -261,7 +263,6 @@ export class UserController {
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
   googleAuthRedirect(@Req() req) {
-    console.log(req.user);
     this.userServices.createUser(req.user);
 
     if (!req.user) {
@@ -274,12 +275,15 @@ export class UserController {
     };
   }
 
-  @Get('/getUserById/:id')
-  async getUserById(@Param('id') id: number) {
+  @Get('/getUserByToken/:token')
+  async getUserById(@Param('token') token: string) {
     try {
-      return await this.userServices.getUserById(id)
+      const destructToken: any = jwt.decode(token);
+      const user = await this.userServices.findByEmail(destructToken.email)
+      const id = await this.userServices.getIdFromUser(user)
+      return await this.userServices.getUserById(id);
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 }

@@ -66,4 +66,4 @@ import { WishListServicesModule } from './service/use-cases/wish-list/wish-list-
     BookCategoriesServices,
   ],
 })
-export class AppModule {}
+export class AppModule { }

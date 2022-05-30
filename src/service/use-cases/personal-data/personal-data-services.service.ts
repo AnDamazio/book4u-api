@@ -1,11 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { PersonalData } from '../../../core/entities';
 import { IDataServices } from '../../../core/abstracts';
-import {
-  CreatePersonalDataDto,
-  LocationDto,
-  TelephoneDto,
-} from '../../../core/dtos';
+import { CreatePersonalDataDto, LocationDto } from '../../../core/dtos';
 import { PersonalDataFactoryService } from './personal-data-factory.service';
 import { AuthService } from 'src/frameworks/auth/auth.service';
 
@@ -14,7 +10,7 @@ export class PersonalDataServices {
   constructor(
     private dataServices: IDataServices,
     private personalDataFactoryService: PersonalDataFactoryService,
-  ) {}
+  ) { }
 
   async createPersonalData(
     createPersonalDataDto: CreatePersonalDataDto,
@@ -27,12 +23,10 @@ export class PersonalDataServices {
 
   async findByEmail(email: string): Promise<PersonalData> {
     try {
-      const personal_data = await this.dataServices.personalData.findOneByEmail(
-        email,
-      );
+      const personal_data = await this.dataServices.personalData.findOneByEmail(email);
       return personal_data;
     } catch (err) {
-      return err.message;
+      return err.message
     }
   }
 
@@ -64,18 +58,18 @@ export class PersonalDataServices {
 
   async insertToken(id: number, newUserToken: PersonalData): Promise<any> {
     try {
-      return await this.dataServices.personalData.insertToken(id, newUserToken);
+      return await this.dataServices.personalData.insertToken(id, newUserToken)
     } catch (err) {
-      return err.message;
+      return err.message
     }
   }
 
   async refreshToken(oldToken: string): Promise<PersonalData | HttpStatus> {
-    const token = await this.dataServices.personalData.findToken(oldToken);
+    const token = await this.dataServices.personalData.findToken(oldToken)
     if (token) {
-      return await this.dataServices.personalData.findOneByEmail(token.email);
+      return await this.dataServices.personalData.findOneByEmail(token.email)
     } else {
-      return HttpStatus.UNAUTHORIZED;
+      return HttpStatus.UNAUTHORIZED
     }
   }
 
@@ -98,9 +92,5 @@ export class PersonalDataServices {
       });
     }
     await this.dataServices.personalData.createAddress(locationDto);
-  }
-
-  async updateTelephone(telephoneDto: TelephoneDto): Promise<any> {
-    return await this.dataServices.personalData.createTelephone(telephoneDto);
   }
 }

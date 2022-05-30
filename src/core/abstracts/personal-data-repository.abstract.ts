@@ -20,7 +20,5 @@ export abstract class IPersonalDataRepository<T> {
 
   abstract findToken(oldToken: string): Promise<T>
 
-  abstract createAddress(location): Promise<UpdateResult>;
-
-  abstract createTelephone(telephone): Promise<UpdateResult>;
+  abstract createAddress(location): Promise<any>;
 }

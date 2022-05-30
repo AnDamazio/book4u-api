@@ -1,3 +1,4 @@
+import { UpdateResult } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Book } from '../../../core/entities';
 import { IDataServices } from '../../../core/abstracts';
@@ -10,7 +11,7 @@ export class BookServices {
   constructor(
     private bookServices: IDataServices,
     private bookFactoryService: BookFactoryService,
-  ) {}
+  ) { }
 
   async getAllBooks(): Promise<Book[]> {
     try {
@@ -47,5 +48,13 @@ export class BookServices {
 
   async findAllBooksInCategory(categories: string[]): Promise<Book[]> {
     return await this.bookServices.book.findBookByCategory(categories);
+}
+
+async updateBook(id: number, book: Book): Promise<UpdateResult> {
+  try {
+    return await this.bookServices.book.updateBook(id, book);
+  } catch (err) {
+    return err.message
   }
+}
 }
