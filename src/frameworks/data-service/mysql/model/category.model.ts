@@ -1,11 +1,25 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { Book } from './book.model';
-
+import { BookCategories } from './book-categories.model';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  OneToMany,
+} from 'typeorm';
 @Entity()
 export class Category {
   @PrimaryGeneratedColumn()
   id!: string;
 
-  @Column({ default: 'Filosofia' })
+  @Column()
   name!: string;
+
+  @OneToMany(
+    () => BookCategories,
+    (bookCategories) => bookCategories.category,
+    {
+      cascade: true,
+    },
+  )
+  bookCategories: BookCategories[];
 }

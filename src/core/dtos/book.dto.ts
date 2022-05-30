@@ -7,6 +7,7 @@ import {
   ValidateNested,
   IsArray,
   IsEnum,
+  IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateAuthorDto } from './author.dto';
@@ -17,6 +18,7 @@ import { CreateBookImagesDto } from './book-images.dto';
 import { CreateUserDto } from './user.dto';
 import { Condition, Status } from '../enums';
 import { Book } from '../entities';
+import { CreateBookCategoriesDto } from './book-categories.dto';
 
 export class CreateBookDto {
   @IsString()
@@ -67,12 +69,6 @@ export class CreateBookDto {
   @Type(() => CreatePublisherDto)
   publisher: CreatePublisherDto;
 
-  @IsNotEmpty()
-  @IsArray()
-  @ValidateNested()
-  @Type(() => CreateCategoryDto)
-  category: CreateCategoryDto[];
-
   @IsObject()
   @ValidateNested()
   @Type(() => CreateBookImagesDto)
@@ -81,4 +77,16 @@ export class CreateBookDto {
   @ValidateNested()
   @Type(() => CreateUserDto)
   owner: CreateUserDto;
+
+  @IsArray()
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CreateCategoryDto)
+  category?: CreateCategoryDto[];
+
+  @IsArray()
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CreateBookCategoriesDto)
+  bookCategories?: CreateBookCategoriesDto[];
 }

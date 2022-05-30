@@ -21,7 +21,10 @@ export class CategoryServices {
     if (await this.dataServices.category.checkIfExists(createCategoryDto)) {
       return [new Error('Erro')];
     } else {
-      return this.dataServices.category.findOneByName(createCategoryDto);
+      return (
+        await this.dataServices.category.findOneByName(createCategoryDto)
+      ).flat();
     }
   }
+
 }

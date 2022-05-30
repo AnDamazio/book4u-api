@@ -8,7 +8,8 @@ import {
   Publisher,
   UserSituation,
   BookImages,
-  AutoRelationBook
+  AutoRelationBook,
+  BookCategories,
 } from '../entities';
 import { IAuthorRepository } from './author-repository.abstract';
 import { IBookRepository } from './book-repository.abstract';
@@ -18,7 +19,7 @@ import { ICategoryRepository } from './category-repository.abstract';
 import { IPublisherRepository } from './publisher-repository.abstract';
 import { IUserRepository } from './user-repository-abstract';
 import { IUserSituationRepository } from './user-situation.abstract';
-import { IWishListRepository } from '.';
+import { IBookCategoriesRepository, IWishListRepository } from '.';
 import { WishList } from '../entities/wish-list.entity';
 import { IAutoRelationBookRepository } from './autoRelationbooks.abstract';
 
@@ -33,5 +34,6 @@ export abstract class IDataServices {
   abstract userSituation: IUserSituationRepository<UserSituation>;
   abstract bookImages: IBookImagesRepository<BookImages>;
   abstract wishList: IWishListRepository<WishList>;
-  abstract autoRelationBook: IAutoRelationBookRepository<AutoRelationBook>
+  abstract autoRelationBook: IAutoRelationBookRepository<AutoRelationBook>;
+  abstract bookCategories: IBookCategoriesRepository<BookCategories>;
 }

@@ -8,5 +8,6 @@ export * from './category.model';
 export * from './user-situation.model';
 export * from './book-images.model';
 export * from './wish.model';
-export * from './book-images.model'
-export * from './auto-relation-book.model'
+export * from './book-images.model';
+export * from './auto-relation-book.model';
+export * from './book-categories.model';

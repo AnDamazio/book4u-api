@@ -12,3 +12,4 @@ export * from './wish-list-repository.abstract';
 export * from './user-situation.abstract';
 export * from './book-images-repository.abstract';
 export * from './autoRelationbooks.abstract';
+export * from './book-categories.abstract';

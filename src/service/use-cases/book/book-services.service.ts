@@ -3,6 +3,7 @@ import { Book } from '../../../core/entities';
 import { IDataServices } from '../../../core/abstracts';
 import { CreateBookDto } from '../../../core/dtos';
 import { BookFactoryService } from './book-factory.service';
+import { CreateBookCategoriesDto } from 'src/core/dtos/book-categories.dto';
 
 @Injectable()
 export class BookServices {
@@ -38,9 +39,13 @@ export class BookServices {
 
   async getUserLibrary(id: number): Promise<Book[]> {
     try {
-      return await this.bookServices.book.getUserLibrary(id)
+      return await this.bookServices.book.getUserLibrary(id);
     } catch (err) {
-      return err.message
+      return err.message;
     }
+  }
+
+  async findAllBooksInCategory(categories: string[]): Promise<Book[]> {
+    return await this.bookServices.book.findBookByCategory(categories);
   }
 }
