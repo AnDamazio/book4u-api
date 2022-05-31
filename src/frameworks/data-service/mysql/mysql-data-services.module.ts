@@ -12,7 +12,8 @@ import {
   UserSituation,
   BookImages,
   Wish,
-  AutoRelationBook
+  AutoRelationBook,
+  BookCategories
 } from './model';
 import { MysqlDataServices } from './mysql-data-services.service';
 import 'dotenv/config';
@@ -31,7 +32,8 @@ import 'dotenv/config';
       UserSituation,
       BookImages,
       Wish,
-      AutoRelationBook
+      AutoRelationBook,
+      BookCategories
     ]),
     TypeOrmModule.forRoot({
       type: 'mysql',

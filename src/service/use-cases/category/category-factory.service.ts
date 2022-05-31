@@ -7,7 +7,7 @@ export class CategoryFactoryService {
   createNewCategory(createCategoryDto: CreateCategoryDto) {
     const newCategory = new Category();
     newCategory.name = createCategoryDto.name;
-    console.log(newCategory)
+    newCategory.bookCategories = createCategoryDto.bookCategories;
     return newCategory;
   }
 }

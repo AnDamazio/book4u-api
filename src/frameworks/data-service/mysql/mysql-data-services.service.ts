@@ -1,3 +1,4 @@
+import { BookCategories } from './model/book-categories.model';
 import { MysqlPersonalDataRepository } from './mysql-personal-data-repository';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -26,6 +27,7 @@ import { MysqlUserSituationRepository } from './mysql-user-situation.repository'
 import { MysqlWishListRepository } from './mysql-wish-list.repository';
 import { MysqlBookImagesRepository } from './mysql-book-images.repository';
 import { MysqlAutoRelationBookRepository } from './mysql-auto-relation-books.repository';
+import { MysqlBookCategoriesRepository } from './mysql-book-categories.repository';
 
 @Injectable()
 export class MysqlDataServices
@@ -42,6 +44,7 @@ export class MysqlDataServices
   bookImages: MysqlBookImagesRepository<BookImages>;
   wishList: MysqlWishListRepository<Wish>;
   autoRelationBook: MysqlAutoRelationBookRepository<AutoRelationBook>;
+  bookCategories: MysqlBookCategoriesRepository<BookCategories>;
 
   constructor(
     @InjectRepository(User) private UserRepository: Repository<User>,
@@ -63,6 +66,8 @@ export class MysqlDataServices
     private WishListRepository: Repository<Wish>,
     @InjectRepository(AutoRelationBook)
     private AutoRelationBookRepository: Repository<AutoRelationBook>,
+    @InjectRepository(BookCategories)
+    private BookCategoriesRepository: Repository<BookCategories>,
   ) {}
 
   onApplicationBootstrap() {
@@ -92,5 +97,8 @@ export class MysqlDataServices
       new MysqlAutoRelationBookRepository<AutoRelationBook>(
         this.AutoRelationBookRepository,
       );
+    this.bookCategories = new MysqlBookCategoriesRepository<BookCategories>(
+      this.BookCategoriesRepository,
+    );
   }
 }

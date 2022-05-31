@@ -2,10 +2,11 @@ import {
   CreateAuthorDto,
   CreatePublisherDto,
   CreateLanguageDto,
-  CreateCategoryDto,
   CreateBookImagesDto,
-  CreateUserDto
+  CreateUserDto,
+  CreateCategoryDto,
 } from '../dtos';
+import { CreateBookCategoriesDto } from '../dtos/book-categories.dto';
 
 export class Book {
   name: string;
@@ -14,11 +15,12 @@ export class Book {
   price: string;
   status: string;
   condition: string;
-  createdAt: string;
+  createdAt?: string;
   author: CreateAuthorDto;
   language: CreateLanguageDto;
   publisher: CreatePublisherDto;
-  category: CreateCategoryDto[];
   bookImages: CreateBookImagesDto;
   owner: CreateUserDto;
+  category?: CreateCategoryDto[];
+  bookCategories?: CreateBookCategoriesDto[];
 }

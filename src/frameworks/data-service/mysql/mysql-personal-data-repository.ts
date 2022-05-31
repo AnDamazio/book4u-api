@@ -48,7 +48,7 @@ export class MysqlPersonalDataRepository<T>
 
   async exchangePassword(
     id: number,
-    newUserPassword: T,
+    newUserPassword,
   ): Promise<UpdateResult> {
     return await this._repository.update(id, newUserPassword);
   }
@@ -57,7 +57,7 @@ export class MysqlPersonalDataRepository<T>
     return await this._repository.getId(personalData);
   }
 
-  async insertToken(id: number, newUserToken: T): Promise<UpdateResult> {
+  async insertToken(id: number, newUserToken): Promise<UpdateResult> {
     return await this._repository.update(id, newUserToken)
   }
 

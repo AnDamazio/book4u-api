@@ -18,7 +18,7 @@ export class MysqlAutoRelationBookRepository<T> implements IAutoRelationBookRepo
 
     async exchangeNotification(token: string): Promise<T> {
         return await this._repository.findOne({
-            relations: ['book2', 'book1', 'book2.owner', 'book2.owner.personalData', 'book1.owner', 'book1.owner.personalData'],
+            relations: ['book2', 'book1', 'book2.owner', 'book1.owner', 'book2.owner.personalData', 'book1.owner.personalData'],
             where: { book2: { owner: { personalData: { token: token } } } }
         })
     }
@@ -28,6 +28,6 @@ export class MysqlAutoRelationBookRepository<T> implements IAutoRelationBookRepo
     }
 
     async findExchangeById(id: number): Promise<T> {
-        return await this._repository.findOne(id, {relations: ['book2']})
+        return await this._repository.findOne(id, { relations: ['book2'] })
     }
 }

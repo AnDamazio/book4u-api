@@ -38,7 +38,7 @@ export class MysqlUserRepository<T> implements IUserRepository<T> {
     });
   }
 
-  async updateSituationUser(id: number, newUser: T): Promise<UpdateResult> {
+  async updateSituationUser(id: number, newUser): Promise<UpdateResult> {
     return await this._repository.update(id, newUser);
   }
 
@@ -54,7 +54,7 @@ export class MysqlUserRepository<T> implements IUserRepository<T> {
     }
   }
 
-  async updateNRegister(id: number, user: T): Promise<UpdateResult> {
+  async updateNRegister(id: number, user): Promise<UpdateResult> {
     return await this._repository.update(id, user);
   }
 }

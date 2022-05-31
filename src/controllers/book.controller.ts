@@ -1,19 +1,33 @@
-import { ExchangeSituation } from './../core/enums/exchange-situation.enum';
+import { ExchangeSituation } from "./../core/enums/exchange-situation.enum";
 import {
   AuthorServices,
   AuthorFactoryService,
-} from '../service/use-cases/author/';
-import { BookServices, BookFactoryService } from '../service/use-cases/book/';
-import { Controller, Post, Body, Get, Put, UseInterceptors, Param, UploadedFiles, UseGuards } from '@nestjs/common';
+} from "../service/use-cases/author/";
+import { BookServices, BookFactoryService } from "../service/use-cases/book/";
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Put,
+  UseInterceptors,
+  Param,
+  UploadedFiles,
+  UseGuards,
+} from "@nestjs/common";
 import {
   PublisherFactoryService,
   PublisherServices,
-} from 'src/service/use-cases/publisher';
-import { CreateBookDto, CreateBookResponseDto, CreateExchangeBooksDto } from '../core/dtos';
+} from "src/service/use-cases/publisher";
+import {
+  CreateBookDto,
+  CreateBookResponseDto,
+  CreateExchangeBooksDto,
+} from "../core/dtos";
 import {
   LanguageFactoryService,
   LanguageServices,
-} from 'src/service/use-cases/language';
+} from "src/service/use-cases/language";
 import {
   CategoryFactoryService,
   CategoryServices,
@@ -22,7 +36,7 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../firebase';
 import { BookImagesServices } from 'src/service/use-cases/bookImages';
-import { AutoRelationBooksServices, UserServices } from 'src/service';
+import { AutoRelationBooksServices, BookCategoriesFactoryService, BookCategoriesServices, UserServices } from 'src/service';
 import { JwtAuthGuard } from 'src/frameworks/auth/jwt-auth.guard';
 import * as jwt from 'jsonwebtoken'
 import { Status } from 'src/core';
@@ -40,13 +54,18 @@ export class BookController {
     private publisherFactoryService: PublisherFactoryService,
     private publisherServices: PublisherServices,
     private categoryServices: CategoryServices,
+    private bookCategoriesFactoryService: BookCategoriesFactoryService,
+    private bookCategoriesServices: BookCategoriesServices,
     private bookImagesServices: BookImagesServices,
     private userServices: UserServices,
     private autoRelationBooksServices: AutoRelationBooksServices
   ) { }
 
-  @Post(':token')
-  async createBook(@Body() bookDto: CreateBookDto, @Param('token') token: string) {
+  @Post(":token")
+  async createBook(
+    @Body() bookDto: CreateBookDto,
+    @Param("token") token: string
+  ) {
     const createBookResponse = new CreateBookResponseDto();
     try {
       const author = this.authorFactoryService.createNewAuthor(bookDto.author);
@@ -54,104 +73,130 @@ export class BookController {
       bookDto.author = createdAuthor;
 
       const language = this.languageFactoryService.createNewLanguage(
-        bookDto.language,
+        bookDto.language
       );
       const createdLanguage = await this.languageServices.createLanguage(
-        language,
+        language
       );
       bookDto.language = createdLanguage;
 
       const publisher = this.publisherFactoryService.createNewPublisher(
-        bookDto.publisher,
+        bookDto.publisher
       );
       const createdPublisher = await this.publisherServices.createPublisher(
-        publisher,
+        publisher
       );
       bookDto.publisher = createdPublisher;
-
       const category = await this.categoryServices.getCategory(
-        bookDto.category,
+        bookDto.category
       );
-      bookDto.category = category;
 
       const destructToken: any = jwt.decode(token);
-      const user = await this.userServices.findByEmail(destructToken.email)
-      const id = await this.userServices.getIdFromUser(user)
+      const user = await this.userServices.findByEmail(destructToken.email);
+      const id = await this.userServices.getIdFromUser(user);
 
-      const owner = await this.userServices.getUserById(id)
-      bookDto.owner = owner
+      const owner = await this.userServices.getUserById(id);
+      bookDto.owner = owner;
 
-      bookDto.createdAt = String(Date.now())
+      const date = new Date().toLocaleDateString();
+      const day = date.slice(0, 2);
+      const month = date.slice(3, 5);
+      const year = date.slice(6, 10);
+
+      bookDto.createdAt = `${year}-${month}-${day}`;
       const book = this.bookFactoryService.createNewBook(bookDto);
       const createdBook = await this.bookServices.createBook(book);
 
       createBookResponse.success = true;
       createBookResponse.createdBook = createdBook;
+      const categoriesArray = [];
+      for (let i = 0; i < category.length; i++) {
+        const categories = this.bookCategoriesFactoryService.createNewCategory({
+          book: { ...createdBook },
+          category: category[i],
+        });
+
+        categoriesArray.push(
+          await this.bookCategoriesServices.saveBookCategories(categories)
+        );
+      }
     } catch (err) {
       createBookResponse.success = false;
-      return err
+      return err;
     }
     return createBookResponse;
   }
 
-  @Get('list')
+  @Get("list")
   async bookList() {
     const books = await this.bookServices.getAllBooks();
     return books;
   }
 
-  @Put('sendBookImage/:id')
+  @Get("list-recent-books/:daysInterval")
+  async getRecentBooks(@Param('daysInterval') daysInterval: number) {
+    return await this.bookServices.findRecentBooks(daysInterval);
+  }
+
+  @Put("sendBookImage/:id")
   @UseInterceptors(AnyFilesInterceptor())
-  async updateBookImage(@Param('id') id: number, @UploadedFiles() files: Array<Express.Multer.File>) {
+  async updateBookImage(
+    @Param("id") id: number,
+    @UploadedFiles() files: Array<Express.Multer.File>
+  ) {
     try {
-      const bookFound = await this.bookServices.findBookByPk(id)
-      const idFromBookImage = await this.bookImagesServices.getIdFromBookImages(bookFound.bookImages)
+      const bookFound = await this.bookServices.findBookByPk(id);
+      const idFromBookImage = await this.bookImagesServices.getIdFromBookImages(
+        bookFound.bookImages
+      );
       const [file0, file1, file2, file3] = files;
-      bookFound.bookImages.frontSideImage = Math.floor(Math.random() * 65536) + '_' + file0.originalname;
-      bookFound.bookImages.rightSideImage = Math.floor(Math.random() * 65536) + '_' + file1.originalname;
-      bookFound.bookImages.leftSideImage = Math.floor(Math.random() * 65536) + '_' + file2.originalname;
-      bookFound.bookImages.backSideImage = Math.floor(Math.random() * 65536) + '_' + file3.originalname;
+      bookFound.bookImages.frontSideImage =
+        Math.floor(Math.random() * 65536) + "_" + file0.originalname;
+      bookFound.bookImages.rightSideImage =
+        Math.floor(Math.random() * 65536) + "_" + file1.originalname;
+      bookFound.bookImages.leftSideImage =
+        Math.floor(Math.random() * 65536) + "_" + file2.originalname;
+      bookFound.bookImages.backSideImage =
+        Math.floor(Math.random() * 65536) + "_" + file3.originalname;
 
       const fileNames = [
         bookFound.bookImages.frontSideImage,
         bookFound.bookImages.rightSideImage,
         bookFound.bookImages.leftSideImage,
-        bookFound.bookImages.backSideImage
-      ]
+        bookFound.bookImages.backSideImage,
+      ];
 
-      const filesURL = []
+      const filesURL = [];
 
       for (let value = 0; value <= 3; value++) {
         const fileRef = ref(storage, fileNames[value]);
-        await uploadBytes(fileRef, files[value].buffer)
-          .then(() => { })
+        await uploadBytes(fileRef, files[value].buffer).then(() => { });
         await getDownloadURL(fileRef).then((url) => {
-          filesURL.push(url)
+          filesURL.push(url);
           if (value === fileNames.length - 1) {
-            bookFound.bookImages.frontSideImage = filesURL[0]
-            bookFound.bookImages.rightSideImage = filesURL[1]
-            bookFound.bookImages.leftSideImage = filesURL[2]
-            bookFound.bookImages.backSideImage = filesURL[3]
+            bookFound.bookImages.frontSideImage = filesURL[0];
+            bookFound.bookImages.rightSideImage = filesURL[1];
+            bookFound.bookImages.leftSideImage = filesURL[2];
+            bookFound.bookImages.backSideImage = filesURL[3];
             this.bookImagesServices.updateBookImages(
               Number(idFromBookImage),
               bookFound.bookImages
             );
           }
-        })
+        });
       }
       return `Imagens inseridas com sucesso!`;
-
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 
   @Get('userLibrary/:token')
   async getUserLibrary(@Param('token') token: string) {
     const destructToken: any = jwt.decode(token);
-    const user = await this.userServices.findByEmail(destructToken.email)
-    const id = await this.userServices.getIdFromUser(user)
-    return await this.bookServices.getUserLibrary(Number(id))
+    const user = await this.userServices.findByEmail(destructToken.email);
+    const id = await this.userServices.getIdFromUser(user);
+    return await this.bookServices.getUserLibrary(Number(id));
   }
 
   @Post('exchangeBookWithBook/:book1/:book2')
@@ -178,7 +223,7 @@ export class BookController {
         return "Existe uma diferença de preço"
       }
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 
@@ -209,15 +254,22 @@ export class BookController {
     try {
       const findNotification = await this.autoRelationBooksServices.exchangeNotification(token)
       if (findNotification) {
-        const findBook = await this.autoRelationBooksServices.exchangeNotification(token)
         return {
-          text: `O usuário ${findBook.book1.owner.firstName} deseja realizar uma troca`,
-          user1Book: findBook.book1,
-          user2Book: findBook.book2
+          text: `O usuário ${findNotification.book1.owner.firstName} deseja realizar uma troca`,
+          user1Book: findNotification.book1,
+          user2Book: findNotification.book2
         }
+      }
+      else {
+        return 'Sem notificações'
       }
     } catch (err) {
       return err.message
     }
+  }
+
+  @Get("get-books-in/:category")
+  async a(@Param("category") category: string) {
+    return await this.bookServices.findAllBooksInCategory([category]);
   }
 }

@@ -16,9 +16,9 @@ export class BookFactoryService {
     newBook.author = createBookDto.author;
     newBook.language = createBookDto.language;
     newBook.publisher = createBookDto.publisher;
-    newBook.category = createBookDto.category;
     newBook.bookImages = createBookDto.bookImages;
     newBook.owner = createBookDto.owner;
+    newBook.bookCategories = createBookDto.bookCategories;
     return newBook;
   }
 }
