@@ -9,5 +9,6 @@ export class AutoRelationBooksFactoryService {
         newAutoRelationBook.situation = createExchangeBooksDto.situation;
         newAutoRelationBook.book1 = createExchangeBooksDto.book1;
         newAutoRelationBook.book2 = createExchangeBooksDto.book2;
+        newAutoRelationBook.createdAt = createExchangeBooksDto.createdAt
     }
 }

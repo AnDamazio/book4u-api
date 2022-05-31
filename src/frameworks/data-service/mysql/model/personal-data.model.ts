@@ -10,7 +10,6 @@ import { User } from './user.model';
 @Entity()
 @Unique(['cpf'])
 @Unique(['email'])
-@Unique(['rg'])
 @Unique(['cellphone'])
 @Unique(['telephone'])
 export class PersonalData {
@@ -31,9 +30,6 @@ export class PersonalData {
 
   @Column({ name: 'cpf' })
   cpf!: string;
-
-  @Column({ name: 'rg' })
-  rg!: string;
 
   @Column()
   cellphone!: string;

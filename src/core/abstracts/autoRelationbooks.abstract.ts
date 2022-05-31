@@ -3,7 +3,12 @@ import { UpdateResult } from "typeorm";
 export abstract class IAutoRelationBookRepository<T> {
     abstract createExchangeBooks(book: T): Promise<T>
 
-    abstract createExchangeBooks2(id: number, book: T): Promise<UpdateResult>
+    abstract updateExchangeBooks(id: number, book: T): Promise<UpdateResult>
 
-    abstract exchangeNotification(id: number): Promise<T>
+    abstract exchangeNotification(token: string): Promise<T>
+
+    abstract getIdFromExchangeBook(exchange: T): Promise<T>
+
+    abstract findExchangeById(id: number): Promise<T>
+
 }

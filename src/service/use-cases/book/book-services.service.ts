@@ -52,4 +52,12 @@ export class BookServices {
       return err.message
     }
   }
+
+  async getIdFromBook(book): Promise<number>{
+    try {
+      return await this.bookServices.book.getIdFromBook(book)
+    } catch (err) {
+      return err.message
+    }
+  }
 }

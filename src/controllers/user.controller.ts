@@ -126,11 +126,7 @@ export class UserController {
   async login(@Request() req) {
     if (req.user.user.userSituation.name == 'Confirmado') {
       try {
-        const token = await this.authService.login(req.user)
-        return {
-          token,
-          user_id: jwt.verify(token.access_token, process.env.SECRET_KEY)
-        }
+        return await this.authService.login(req.user)
       } catch (err) {
         return err.message;
       }
@@ -185,7 +181,11 @@ export class UserController {
           Number(getIdFromUser),
           (userFound.userSituation.name = 'CONFIRMADO'),
         );
-        return userFound.registerNumber;
+        const user = {
+          email: userFound.personalData.email,
+          password: userFound.personalData.password
+        }
+        return await this.authService.login(user)
       }
     } catch (err) {
       return {

@@ -27,4 +27,8 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
   async updateBook(id: number, book: T): Promise<UpdateResult> {
     return await this._repository.update(id, book);
   }
+
+  async getIdFromBook(book: T): Promise<number>{
+    return await this._repository.getId(book)
+  }
 }

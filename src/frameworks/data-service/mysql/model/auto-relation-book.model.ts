@@ -28,4 +28,7 @@ export class AutoRelationBook {
     @ManyToOne(() => Book, book => book.id)
     @JoinColumn()
     book2: Book;
+
+    @Column()
+    createdAt: string;
 }

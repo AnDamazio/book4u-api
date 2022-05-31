@@ -81,7 +81,4 @@ export class Book {
 
   @OneToMany(() => AutoRelationBook, (autoRelationBook) => autoRelationBook.id)
   autoRelationBook: AutoRelationBook[]
-
-  @ManyToOne(() => AutoRelationBook, (autoRelationBook) => autoRelationBook.book1 && autoRelationBook.book2)
-  autoRelationBooks: AutoRelationBook
 }

@@ -22,4 +22,7 @@ export class CreateExchangeBooksDto {
     @ValidateNested()
     @Type(() => CreateBookDto)
     book2: CreateBookDto;
+
+    @IsString()
+    createdAt: string;
 }

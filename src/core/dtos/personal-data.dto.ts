@@ -15,10 +15,6 @@ export class CreatePersonalDataDto {
   @IsNotEmpty()
   cpf: string;
 
-  @IsString()
-  @IsNotEmpty()
-  rg: string;
-
   @IsMobilePhone()
   @IsNotEmpty()
   cellphone: string;

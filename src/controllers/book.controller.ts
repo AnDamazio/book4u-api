@@ -18,7 +18,6 @@ import {
   CategoryFactoryService,
   CategoryServices,
 } from 'src/service/use-cases/category';
-
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../firebase';
@@ -26,8 +25,7 @@ import { BookImagesServices } from 'src/service/use-cases/bookImages';
 import { AutoRelationBooksServices, UserServices } from 'src/service';
 import { JwtAuthGuard } from 'src/frameworks/auth/jwt-auth.guard';
 import * as jwt from 'jsonwebtoken'
-
-
+import { Status } from 'src/core';
 
 @Controller('api/book')
 @UseGuards(JwtAuthGuard)
@@ -138,7 +136,6 @@ export class BookController {
               Number(idFromBookImage),
               bookFound.bookImages
             );
-
           }
         })
       }
@@ -151,42 +148,74 @@ export class BookController {
 
   @Get('userLibrary/:token')
   async getUserLibrary(@Param('token') token: string) {
-
     const destructToken: any = jwt.decode(token);
     const user = await this.userServices.findByEmail(destructToken.email)
     const id = await this.userServices.getIdFromUser(user)
     return await this.bookServices.getUserLibrary(Number(id))
   }
 
-  @Post('exchangeBook/:book1/:book2')
+  @Post('exchangeBookWithBook/:book1/:book2')
   async createExchangeBooks(@Param('book1') book1: number, @Param('book2') book2: number) {
     try {
       const getBook1 = await this.bookServices.findBookByPk(book1)
       const getBook2 = await this.bookServices.findBookByPk(book2)
-
-      const createExchangeBooksDto = {
-        situation: ExchangeSituation.PENDENTE,
-        book1: getBook1,
-        book2: getBook2,
+      if (getBook1.price === getBook2.price) {
+        const createExchangeBooksDto = {
+          situation: ExchangeSituation.PENDENTE,
+          book1: getBook1,
+          book2: getBook2,
+          createdAt: String(Date.now())
+        }
+        getBook1.status = "Indisponível"
+        await this.bookServices.updateBook(book1, getBook1)
+        await this.bookServices.updateBook(book2, getBook2)
+        const getIdFromExchange = await this.autoRelationBooksServices.createExchangeBooks(createExchangeBooksDto)
+        return {
+          text: "Proposta de troca enviada",
+          idFromExchange: await this.autoRelationBooksServices.getIdFromExchange(getIdFromExchange)
+        }
+      } else {
+        return "Existe uma diferença de preço"
       }
-
-      getBook1.status = "Indisponível"
-      getBook2.status = "Indisponível"
-
-      await this.bookServices.updateBook(book1, getBook1)
-      await this.bookServices.updateBook(book2, getBook2)
-
-      this.autoRelationBooksServices.createExchangeBooks(createExchangeBooksDto);
-      return "Proposta de troca enviada"
     } catch (err) {
       return err.message
     }
   }
 
-  @Get('tradeNotification/:id')
-  async createNotificationById(@Param('id') id: number) {
+  @Put('confirmExchangeBook/:id/:confirm')
+  async confirmExchangeBook(@Param('confirm') confirm: string, @Param('id') id: number) {
     try {
-      return await this.autoRelationBooksServices.exchangeNotification(id)
+      if (confirm === "Confirmado") {
+        const findedAutoRelation = await this.autoRelationBooksServices.findExchangeById(id)
+        findedAutoRelation.situation = ExchangeSituation.CONFIRMADO;
+        findedAutoRelation.book2.status = Status.INDISPONIVEL
+        const bookId = await this.bookServices.getIdFromBook(findedAutoRelation.book2)
+        await this.bookServices.updateBook(bookId, findedAutoRelation.book2);
+        await this.autoRelationBooksServices.updateExchangeBooks(id, findedAutoRelation)
+        return "Troca confirmada"
+      } else if (confirm === "Recusado") {
+        const findedAutoRelation = await this.autoRelationBooksServices.findExchangeById(id)
+        findedAutoRelation.situation = ExchangeSituation.RECUSADO
+        await this.autoRelationBooksServices.updateExchangeBooks(id, findedAutoRelation)
+        return "Troca Recusada"
+      }
+    } catch (err) {
+      return err.message
+    }
+  }
+
+  @Get('tradeNotification/:token')
+  async createNotificationByToken(@Param('token') token: string) {
+    try {
+      const findNotification = await this.autoRelationBooksServices.exchangeNotification(token)
+      if (findNotification) {
+        const findBook = await this.autoRelationBooksServices.exchangeNotification(token)
+        return {
+          text: `O usuário ${findBook.book1.owner.firstName} deseja realizar uma troca`,
+          user1Book: findBook.book1,
+          user2Book: findBook.book2
+        }
+      }
     } catch (err) {
       return err.message
     }
