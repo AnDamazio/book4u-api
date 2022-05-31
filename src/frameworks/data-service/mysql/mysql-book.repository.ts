@@ -49,4 +49,27 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
   async updateBook(id: number, book: T): Promise<UpdateResult> {
     return await this._repository.update(id, book);
   }
+
+  async findBooksByDate(dayInterval: number): Promise<T[]> {
+    const date = new Date();
+    const actualDate = new Date().toLocaleDateString();
+    const actualDay = actualDate.slice(0, 2);
+    const actualMonth = actualDate.slice(3, 5);
+    const actualYear = actualDate.slice(6, 10);
+    date.setHours(date.getHours() - dayInterval * 24);
+    const treatedDate = date.toLocaleDateString();
+    const day = treatedDate.slice(0, 2);
+    const month = treatedDate.slice(4, 5);
+    const year = treatedDate.slice(6, 10);
+
+    const books = await this._repository.query(
+      `SELECT * FROM book WHERE DATE(createdAt) > '${year}-${month}-${day}' AND DATE(createdAt) < '${actualYear}-${actualMonth}-${actualDay}';`
+    );
+
+    let findedBooks = [];
+    for (let i = 0; i < books.length; i++) {
+      findedBooks.push(await this.findBookByPk(books[i].id));
+    }
+    return findedBooks;
+  }
 }

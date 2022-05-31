@@ -1,5 +1,5 @@
-import { BookCategories } from './book-categories.model';
-import { Condition, Status } from '../../../../core/enums';
+import { BookCategories } from "./book-categories.model";
+import { Condition, Status } from "../../../../core/enums";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,13 +7,13 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-} from 'typeorm';
-import { Author } from './author.model';
-import { Language } from './language.model';
-import { Publisher } from './publisher.model';
-import { BookImages } from './book-images.model';
-import { User } from './user.model';
-import { AutoRelationBook } from './auto-relation-book.model';
+} from "typeorm";
+import { Author } from "./author.model";
+import { Language } from "./language.model";
+import { Publisher } from "./publisher.model";
+import { BookImages } from "./book-images.model";
+import { User } from "./user.model";
+import { AutoRelationBook } from "./auto-relation-book.model";
 
 @Entity()
 export class Book {
@@ -32,10 +32,10 @@ export class Book {
   @Column()
   price: string;
 
-  @Column({ type: 'enum', enum: Status, default: Status.DISPONIVEL })
+  @Column({ type: "enum", enum: Status, default: Status.DISPONIVEL })
   status!: Status;
 
-  @Column({ type: 'enum', enum: Condition, default: Condition.USADO })
+  @Column({ type: "enum", enum: Condition, default: Condition.USADO })
   condition!: Condition;
 
   @ManyToOne(() => Author, (author) => author.book)
@@ -54,8 +54,8 @@ export class Book {
 
   @OneToMany(() => BookCategories, (bookCategories) => bookCategories.book, {
     cascade: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
   })
   bookCategories: BookCategories[];
 
@@ -74,7 +74,7 @@ export class Book {
 
   @ManyToOne(
     () => AutoRelationBook,
-    (autoRelationBook) => autoRelationBook.book1 && autoRelationBook.book2,
+    (autoRelationBook) => autoRelationBook.book1 && autoRelationBook.book2
   )
   autoRelationBooks: AutoRelationBook;
 }

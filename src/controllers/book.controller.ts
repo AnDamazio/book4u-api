@@ -105,7 +105,12 @@ export class BookController {
       const owner = await this.userServices.getUserById(id);
       bookDto.owner = owner;
 
-      bookDto.createdAt = String(Date.now());
+      const date = new Date().toLocaleDateString();
+      const day = date.slice(0, 2);
+      const month = date.slice(3, 5);
+      const year = date.slice(6, 10);
+
+      bookDto.createdAt = `${year}-${month}-${day}`;
       const book = this.bookFactoryService.createNewBook(bookDto);
       const createdBook = await this.bookServices.createBook(book);
 
@@ -133,6 +138,11 @@ export class BookController {
   async bookList() {
     const books = await this.bookServices.getAllBooks();
     return books;
+  }
+
+  @Get("list-recent-books/:daysInterval")
+  async getRecentBooks(@Param('daysInterval') daysInterval: number) {
+    return await this.bookServices.findRecentBooks(daysInterval);
   }
 
   @Put("sendBookImage/:id")

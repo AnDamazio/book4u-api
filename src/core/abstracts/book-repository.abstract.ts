@@ -1,5 +1,5 @@
 import { BookCategories } from "../entities";
-import { UpdateResult } from 'typeorm';
+import { UpdateResult } from "typeorm";
 
 export abstract class IBookRepository<T> {
   abstract create(book: T): Promise<T>;
@@ -12,5 +12,7 @@ export abstract class IBookRepository<T> {
 
   abstract findBookByCategory(categories: string[]): Promise<any[]>;
 
-  abstract updateBook(id: number, book: T): Promise<UpdateResult>
+  abstract updateBook(id: number, book: T): Promise<UpdateResult>;
+
+  abstract findBooksByDate(dayInterval: number): Promise<T[]>;
 }

@@ -15,7 +15,7 @@ export class Book {
   price: string;
   status: string;
   condition: string;
-  createdAt: string;
+  createdAt?: string;
   author: CreateAuthorDto;
   language: CreateLanguageDto;
   publisher: CreatePublisherDto;
