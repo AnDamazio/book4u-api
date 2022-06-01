@@ -11,7 +11,7 @@ export class BookServices {
   constructor(
     private bookServices: IDataServices,
     private bookFactoryService: BookFactoryService
-  ) { }
+  ) {}
 
   async getAllBooks(): Promise<Book[]> {
     try {
@@ -46,8 +46,15 @@ export class BookServices {
     }
   }
 
-  async findAllBooksInCategory(categories: string[]): Promise<Book[]> {
-    return await this.bookServices.book.findBookByCategory(categories);
+  async findAllBooksInCategory(
+    categories: string[],
+    id: string
+  ): Promise<Book[]> {
+    const books = await this.bookServices.book.findBookByCategory(categories);
+
+    return books.filter((obj) => {
+      return obj.owner.id != id;
+    });
   }
 
   async updateBook(id: number, book: Book): Promise<UpdateResult> {
@@ -60,9 +67,9 @@ export class BookServices {
 
   async getIdFromBook(book): Promise<number> {
     try {
-      return await this.bookServices.book.getIdFromBook(book)
+      return await this.bookServices.book.getIdFromBook(book);
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 

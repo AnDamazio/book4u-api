@@ -31,17 +31,22 @@ import {
 import {
   CategoryFactoryService,
   CategoryServices,
-} from 'src/service/use-cases/category';
-import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '../firebase';
-import { BookImagesServices } from 'src/service/use-cases/bookImages';
-import { AutoRelationBooksServices, BookCategoriesFactoryService, BookCategoriesServices, UserServices } from 'src/service';
-import { JwtAuthGuard } from 'src/frameworks/auth/jwt-auth.guard';
-import * as jwt from 'jsonwebtoken'
-import { Status } from 'src/core';
+} from "src/service/use-cases/category";
+import { AnyFilesInterceptor } from "@nestjs/platform-express";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase";
+import { BookImagesServices } from "src/service/use-cases/bookImages";
+import {
+  AutoRelationBooksServices,
+  BookCategoriesFactoryService,
+  BookCategoriesServices,
+  UserServices,
+} from "src/service";
+import { JwtAuthGuard } from "src/frameworks/auth/jwt-auth.guard";
+import * as jwt from "jsonwebtoken";
+import { Status } from "src/core";
 
-@Controller('api/book')
+@Controller("api/book")
 @UseGuards(JwtAuthGuard)
 export class BookController {
   constructor(
@@ -59,7 +64,7 @@ export class BookController {
     private bookImagesServices: BookImagesServices,
     private userServices: UserServices,
     private autoRelationBooksServices: AutoRelationBooksServices
-  ) { }
+  ) {}
 
   @Post(":token")
   async createBook(
@@ -119,6 +124,7 @@ export class BookController {
         categoriesArray.push(
           await this.bookCategoriesServices.saveBookCategories(categories)
         );
+        console.log(categoriesArray);
       }
     } catch (err) {
       createBookResponse.success = false;
@@ -134,7 +140,7 @@ export class BookController {
   }
 
   @Get("list-recent-books/:daysInterval")
-  async getRecentBooks(@Param('daysInterval') daysInterval: number) {
+  async getRecentBooks(@Param("daysInterval") daysInterval: number) {
     return await this.bookServices.findRecentBooks(daysInterval);
   }
 
@@ -170,7 +176,7 @@ export class BookController {
 
       for (let value = 0; value <= 3; value++) {
         const fileRef = ref(storage, fileNames[value]);
-        await uploadBytes(fileRef, files[value].buffer).then(() => { });
+        await uploadBytes(fileRef, files[value].buffer).then(() => {});
         await getDownloadURL(fileRef).then((url) => {
           filesURL.push(url);
           if (value === fileNames.length - 1) {
@@ -191,85 +197,115 @@ export class BookController {
     }
   }
 
-  @Get('userLibrary/:token')
-  async getUserLibrary(@Param('token') token: string) {
+  @Get("userLibrary/:token")
+  async getUserLibrary(@Param("token") token: string) {
     const destructToken: any = jwt.decode(token);
     const user = await this.userServices.findByEmail(destructToken.email);
     const id = await this.userServices.getIdFromUser(user);
     return await this.bookServices.getUserLibrary(Number(id));
   }
 
-  @Post('exchangeBookWithBook/:book1/:book2')
-  async createExchangeBooks(@Param('book1') book1: number, @Param('book2') book2: number) {
+  @Post("exchangeBookWithBook/:book1/:book2")
+  async createExchangeBooks(
+    @Param("book1") book1: number,
+    @Param("book2") book2: number
+  ) {
     try {
-      const getBook1 = await this.bookServices.findBookByPk(book1)
-      const getBook2 = await this.bookServices.findBookByPk(book2)
+      const getBook1 = await this.bookServices.findBookByPk(book1);
+      const getBook2 = await this.bookServices.findBookByPk(book2);
       if (getBook1.price === getBook2.price) {
         const createExchangeBooksDto = {
           situation: ExchangeSituation.PENDENTE,
           book1: getBook1,
           book2: getBook2,
-          createdAt: String(Date.now())
-        }
-        getBook1.status = "Indisponível"
-        await this.bookServices.updateBook(book1, getBook1)
-        await this.bookServices.updateBook(book2, getBook2)
-        const getIdFromExchange = await this.autoRelationBooksServices.createExchangeBooks(createExchangeBooksDto)
+          createdAt: String(Date.now()),
+        };
+        getBook1.status = "Indisponível";
+        await this.bookServices.updateBook(book1, getBook1);
+        await this.bookServices.updateBook(book2, getBook2);
+        const getIdFromExchange =
+          await this.autoRelationBooksServices.createExchangeBooks(
+            createExchangeBooksDto
+          );
         return {
           text: "Proposta de troca enviada",
-          idFromExchange: await this.autoRelationBooksServices.getIdFromExchange(getIdFromExchange)
-        }
+          idFromExchange:
+            await this.autoRelationBooksServices.getIdFromExchange(
+              getIdFromExchange
+            ),
+        };
       } else {
-        return "Existe uma diferença de preço"
+        return "Existe uma diferença de preço";
       }
     } catch (err) {
       return err.message;
     }
   }
 
-  @Put('confirmExchangeBook/:id/:confirm')
-  async confirmExchangeBook(@Param('confirm') confirm: string, @Param('id') id: number) {
+  @Put("confirmExchangeBook/:id/:confirm")
+  async confirmExchangeBook(
+    @Param("confirm") confirm: string,
+    @Param("id") id: number
+  ) {
     try {
       if (confirm === "Confirmado") {
-        const findedAutoRelation = await this.autoRelationBooksServices.findExchangeById(id)
+        const findedAutoRelation =
+          await this.autoRelationBooksServices.findExchangeById(id);
         findedAutoRelation.situation = ExchangeSituation.CONFIRMADO;
-        findedAutoRelation.book2.status = Status.INDISPONIVEL
-        const bookId = await this.bookServices.getIdFromBook(findedAutoRelation.book2)
+        findedAutoRelation.book2.status = Status.INDISPONIVEL;
+        const bookId = await this.bookServices.getIdFromBook(
+          findedAutoRelation.book2
+        );
         await this.bookServices.updateBook(bookId, findedAutoRelation.book2);
-        await this.autoRelationBooksServices.updateExchangeBooks(id, findedAutoRelation)
-        return "Troca confirmada"
+        await this.autoRelationBooksServices.updateExchangeBooks(
+          id,
+          findedAutoRelation
+        );
+        return "Troca confirmada";
       } else if (confirm === "Recusado") {
-        const findedAutoRelation = await this.autoRelationBooksServices.findExchangeById(id)
-        findedAutoRelation.situation = ExchangeSituation.RECUSADO
-        await this.autoRelationBooksServices.updateExchangeBooks(id, findedAutoRelation)
-        return "Troca Recusada"
+        const findedAutoRelation =
+          await this.autoRelationBooksServices.findExchangeById(id);
+        findedAutoRelation.situation = ExchangeSituation.RECUSADO;
+        await this.autoRelationBooksServices.updateExchangeBooks(
+          id,
+          findedAutoRelation
+        );
+        return "Troca Recusada";
       }
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 
-  @Get('tradeNotification/:token')
-  async createNotificationByToken(@Param('token') token: string) {
+  @Get("tradeNotification/:token")
+  async createNotificationByToken(@Param("token") token: string) {
     try {
-      const findNotification = await this.autoRelationBooksServices.exchangeNotification(token)
+      const findNotification =
+        await this.autoRelationBooksServices.exchangeNotification(token);
       if (findNotification) {
         return {
           text: `O usuário ${findNotification.book1.owner.firstName} deseja realizar uma troca`,
           user1Book: findNotification.book1,
-          user2Book: findNotification.book2
-        }
-      }
-      else {
-        return 'Sem notificações'
+          user2Book: findNotification.book2,
+        };
+      } else {
+        return "Sem notificações";
       }
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 
-  @Get("get-books-in/:category")
-  async a(@Param("category") category: string) {
-    return await this.bookServices.findAllBooksInCategory([category]);
+  @Get("get-books-in/:category/:token")
+  async a(@Param("category") category: string, @Param("token") token: string) {
+    const destructToken: any = jwt.decode(token);
+    const user = await this.userServices.findByEmail(destructToken.email);
+    const id = await this.userServices.getIdFromUser(user);
+    console.log(id);
+
+    return await this.bookServices.findAllBooksInCategory(
+      [category],
+      id as unknown as string
+    );
   }
 }
