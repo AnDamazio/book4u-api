@@ -6,6 +6,9 @@ export class PersonalData {
   email: string;
   password: string;
   token: string;
-  address: string;
+  streetName: string;
   complement: string;
+  district: string;
+  houseNumber: string;
+  zipCode: string;
 }

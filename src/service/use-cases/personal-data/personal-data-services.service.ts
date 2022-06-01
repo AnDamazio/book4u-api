@@ -1,32 +1,34 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { PersonalData } from '../../../core/entities';
-import { IDataServices } from '../../../core/abstracts';
-import { CreatePersonalDataDto, LocationDto } from '../../../core/dtos';
-import { PersonalDataFactoryService } from './personal-data-factory.service';
-import { AuthService } from 'src/frameworks/auth/auth.service';
+import { forwardRef, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { PersonalData } from "../../../core/entities";
+import { IDataServices } from "../../../core/abstracts";
+import { CreatePersonalDataDto, PartialPersonalDataDto } from "../../../core/dtos";
+import { PersonalDataFactoryService } from "./personal-data-factory.service";
+import { AuthService } from "src/frameworks/auth/auth.service";
 
 @Injectable()
 export class PersonalDataServices {
   constructor(
     private dataServices: IDataServices,
-    private personalDataFactoryService: PersonalDataFactoryService,
-  ) { }
+    private personalDataFactoryService: PersonalDataFactoryService
+  ) {}
 
   async createPersonalData(
-    createPersonalDataDto: CreatePersonalDataDto,
+    createPersonalDataDto: CreatePersonalDataDto
   ): Promise<PersonalData> {
     const personalData = this.personalDataFactoryService.createNewPersonalData(
-      createPersonalDataDto,
+      createPersonalDataDto
     );
     return this.dataServices.personalData.create(await personalData);
   }
 
   async findByEmail(email: string): Promise<PersonalData> {
     try {
-      const personal_data = await this.dataServices.personalData.findOneByEmail(email);
+      const personal_data = await this.dataServices.personalData.findOneByEmail(
+        email
+      );
       return personal_data;
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 
@@ -40,57 +42,40 @@ export class PersonalDataServices {
 
   async exchangePassword(
     id: number,
-    newUserPassword: PersonalData,
+    newUserPassword: PersonalData
   ): Promise<any | Error> {
     return await this.dataServices.personalData.exchangePassword(
       id,
-      newUserPassword,
+      newUserPassword
     );
   }
 
   async getIdFromPersonalData(
-    personalData: PersonalData,
+    personalData: PersonalData
   ): Promise<PersonalData> {
     return await this.dataServices.personalData.getIdFromPersonalData(
-      personalData,
+      personalData
     );
   }
 
   async insertToken(id: number, newUserToken: PersonalData): Promise<any> {
     try {
-      return await this.dataServices.personalData.insertToken(id, newUserToken)
+      return await this.dataServices.personalData.insertToken(id, newUserToken);
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 
   async refreshToken(oldToken: string): Promise<PersonalData | HttpStatus> {
-    const token = await this.dataServices.personalData.findToken(oldToken)
+    const token = await this.dataServices.personalData.findToken(oldToken);
     if (token) {
-      return await this.dataServices.personalData.findOneByEmail(token.email)
+      return await this.dataServices.personalData.findOneByEmail(token.email);
     } else {
-      return HttpStatus.UNAUTHORIZED
+      return HttpStatus.UNAUTHORIZED;
     }
   }
 
-  async updateAddress(locationDto: LocationDto): Promise<any> {
-    if (locationDto.address == '' && locationDto.complement == '') {
-      throw new Error('Nenhum endereço ou completo inseridos');
-    }
-    if (locationDto.address != '' && locationDto.complement == '') {
-      const { id, address } = locationDto;
-      return await this.dataServices.personalData.createAddress({
-        id,
-        address,
-      });
-    }
-    if (locationDto.address == '' && locationDto.complement != '') {
-      const { id, complement } = locationDto;
-      return await this.dataServices.personalData.createAddress({
-        id,
-        complement,
-      });
-    }
-    await this.dataServices.personalData.createAddress(locationDto);
+  async updatePersonalData(locationDto: PartialPersonalDataDto): Promise<any> {
+     await this.dataServices.personalData.updateData(locationDto);
   }
 }

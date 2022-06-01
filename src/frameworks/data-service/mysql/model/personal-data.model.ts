@@ -24,10 +24,19 @@ export class PersonalData {
   password!: string;
 
   @Column({ nullable: true })
-  address: string;
+  streetName: string;
 
   @Column({ nullable: true })
   complement: string;
+
+  @Column({ nullable: true })
+  zipCode: string;
+
+  @Column({ nullable: true })
+  houseNumber: string;
+
+  @Column({ nullable: true })
+  district: string;
 
   @Column({ name: 'cpf' })
   cpf!: string;

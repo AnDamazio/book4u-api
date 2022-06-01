@@ -1,4 +1,4 @@
-import { IsEmpty, MaxLength, MinLength } from 'class-validator';
+import { IsEmpty, IsOptional, MaxLength, MinLength } from "class-validator";
 import {
   IsString,
   IsNotEmpty,
@@ -6,9 +6,8 @@ import {
   IsPhoneNumber,
   Validate,
   IsMobilePhone,
-} from 'class-validator/cjs';
-import { IsNull } from 'typeorm';
-import { IsCpf } from '../validations/cpf-validation';
+} from "class-validator/cjs";
+import { IsCpf } from "../validations/cpf-validation";
 export class CreatePersonalDataDto {
   @IsString()
   @Validate(IsCpf)
@@ -23,18 +22,39 @@ export class CreatePersonalDataDto {
   @IsNotEmpty()
   cellphone: string;
 
-  @IsPhoneNumber('BR')
+  @IsPhoneNumber("BR")
+  @IsOptional()
   telephone: string;
 
   @IsString()
+  @IsOptional()
   @MinLength(0)
   @MaxLength(50)
-  address: string;
+  streetName: string;
 
   @IsString()
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(50)
+  district: string;
+
+  @IsString()
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(10)
+  houseNumber: string;
+
+  @IsString()
+  @IsOptional()
   @MinLength(0)
   @MaxLength(50)
   complement: string;
+
+  @IsString()
+  @IsOptional()
+  @MinLength(8)
+  @MaxLength(8)
+  zipCode: string;
 
   @IsEmail()
   @IsNotEmpty()

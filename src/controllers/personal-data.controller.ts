@@ -1,23 +1,36 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { PersonalDataServices } from 'src/service';
-import { LocationDto, CreateLocationResponseDto } from 'src/core';
-@Controller('api/personal-data')
+import { Body, Controller, Param, Post } from "@nestjs/common";
+import { PersonalDataServices, UserServices } from "src/service";
+import { PartialPersonalDataDto, PartialResponse } from "src/core";
+import * as jwt from "jsonwebtoken";
+@Controller("api/personal-data/:token")
 export class PersonalDataController {
-  constructor(private personalDataServices: PersonalDataServices) { }
+  constructor(
+    private personalDataServices: PersonalDataServices,
+    private userServices: UserServices
+  ) {}
   @Post()
-  async createPersonalData(@Body() locationDto: LocationDto) {
-    const locationResponse = new CreateLocationResponseDto();
+  async createPersonalData(
+    @Body() partialPersonalData: PartialPersonalDataDto,
+    @Param("token") token: string
+  ) {
+    let partialResponse = new PartialResponse();
+    const destructToken: any = jwt.decode(token);
+    const user = await this.userServices.findByEmail(destructToken.email);
+    const id = await this.userServices.getIdFromUser(user);
+    partialPersonalData.id = id as unknown as string;
+
+    const keyNames = Object.keys(partialPersonalData);
+
+    keyNames.forEach((element) => {
+      if (partialPersonalData[element] == null || partialPersonalData[element] == undefined || partialPersonalData[element] == "") {
+        partialPersonalData[element] = user.personalData[element];
+      }
+    });
     try {
-      await this.personalDataServices.updateAddress(locationDto);
-      locationResponse.success = true;
-      locationResponse.createdLocation = {
-        address: locationDto.address,
-        complement: locationDto.complement,
-      };
-      return locationResponse;
+      await this.personalDataServices.updatePersonalData(partialPersonalData);
+      return (partialResponse.success = true);
     } catch (error) {
-      locationResponse.success = false;
-      return location;
+      return (partialResponse.success = false);
     }
   }
 }

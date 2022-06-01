@@ -1,4 +1,3 @@
-export class CreateLocationResponseDto {
+export class PartialResponse {
   success: boolean;
-  createdLocation: { address: string, complement: string };
 }

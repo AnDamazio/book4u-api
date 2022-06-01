@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { PersonalData } from '../../../core/entities';
-import { CreatePersonalDataDto } from '../../../core/dtos';
-import * as bcrypt from 'bcrypt';
+import { Injectable } from "@nestjs/common";
+import { PersonalData } from "../../../core/entities";
+import { CreatePersonalDataDto } from "../../../core/dtos";
+import * as bcrypt from "bcrypt";
 @Injectable()
 export class PersonalDataFactoryService {
   async encryptPassword(password: string) {
@@ -17,7 +17,10 @@ export class PersonalDataFactoryService {
     newPersonalData.rg = createPersonalDataDto.rg;
     newPersonalData.cellphone = createPersonalDataDto.cellphone;
     newPersonalData.telephone = createPersonalDataDto.telephone;
-    newPersonalData.address = createPersonalDataDto.address;
+    newPersonalData.streetName = createPersonalDataDto.streetName;
+    newPersonalData.district = createPersonalDataDto.district;
+    newPersonalData.houseNumber = createPersonalDataDto.houseNumber;
+    newPersonalData.zipCode = createPersonalDataDto.zipCode;
     newPersonalData.complement = createPersonalDataDto.complement;
     newPersonalData.token = createPersonalDataDto.token;
     return newPersonalData;
