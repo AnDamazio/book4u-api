@@ -5,7 +5,7 @@ import { JwtAuthGuard } from "src/frameworks/auth/jwt-auth.guard";
 @Controller("api/category")
 @UseGuards(JwtAuthGuard)
 export class CategoryController {
-  constructor(private categoryServices: IDataServices) {}
+  constructor(private categoryServices: IDataServices) { }
 
   @Get("list-all")
   async listCategories() {

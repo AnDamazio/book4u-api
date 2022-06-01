@@ -11,7 +11,7 @@ export class BookServices {
   constructor(
     private bookServices: IDataServices,
     private bookFactoryService: BookFactoryService
-  ) {}
+  ) { }
 
   async getAllBooks(): Promise<Book[]> {
     try {
@@ -55,6 +55,14 @@ export class BookServices {
       return await this.bookServices.book.updateBook(id, book);
     } catch (err) {
       return err.message;
+    }
+  }
+
+  async getIdFromBook(book): Promise<number> {
+    try {
+      return await this.bookServices.book.getIdFromBook(book)
+    } catch (err) {
+      return err.message
     }
   }
 

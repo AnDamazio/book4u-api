@@ -2,8 +2,6 @@ import { AuthService } from 'src/frameworks/auth/auth.service';
 import { Body, Controller, Put } from "@nestjs/common";
 import { RefreshTokenDto } from "src/core/dtos/refresh-token.dto";
 import { PersonalDataServices } from "src/service/use-cases/personal-data";
-import * as jwt from 'jsonwebtoken'
-
 @Controller('token')
 export class TokenController {
     constructor(

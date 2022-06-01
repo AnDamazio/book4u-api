@@ -9,8 +9,6 @@ export class MysqlBookCategoriesRepository<T> implements IBookCategoriesReposito
     }
 
     async saveRelation(book): Promise<T> {
-        console.log("teste")
-        console.log(book)
         return await this._repository.save(book)
     }
 }

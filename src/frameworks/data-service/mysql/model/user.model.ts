@@ -31,6 +31,9 @@ export class User {
   @Column()
   registerNumber: string;
 
+  @Column()
+  Credits: string;
+
   @OneToOne(() => PersonalData)
   @JoinColumn()
   personalData!: PersonalData;

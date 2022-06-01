@@ -68,13 +68,4 @@ export class Book {
   @ManyToOne(() => User, (user) => user.book, { cascade: true })
   @JoinColumn()
   owner: User;
-
-  @OneToMany(() => AutoRelationBook, (autoRelationBook) => autoRelationBook.id)
-  autoRelationBook: AutoRelationBook[];
-
-  @ManyToOne(
-    () => AutoRelationBook,
-    (autoRelationBook) => autoRelationBook.book1 && autoRelationBook.book2
-  )
-  autoRelationBooks: AutoRelationBook;
 }

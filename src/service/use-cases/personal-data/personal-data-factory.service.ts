@@ -14,7 +14,6 @@ export class PersonalDataFactoryService {
     newPersonalData.email = createPersonalDataDto.email;
     newPersonalData.password = createPersonalDataDto.password;
     newPersonalData.cpf = createPersonalDataDto.cpf;
-    newPersonalData.rg = createPersonalDataDto.rg;
     newPersonalData.cellphone = createPersonalDataDto.cellphone;
     newPersonalData.telephone = createPersonalDataDto.telephone;
     newPersonalData.streetName = createPersonalDataDto.streetName;
