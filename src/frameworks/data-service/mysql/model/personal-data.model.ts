@@ -37,6 +37,12 @@ export class PersonalData {
   @Column({ nullable: true })
   district: string;
 
+  @Column()
+  city: string;
+
+  @Column()
+  state: string;
+
   @Column({ name: 'cpf' })
   cpf!: string;
 

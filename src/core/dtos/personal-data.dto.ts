@@ -37,6 +37,18 @@ export class CreatePersonalDataDto {
   @IsString()
   @IsOptional()
   @MinLength(0)
+  @MaxLength(50)
+  city: string;
+
+  @IsString()
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(50)
+  state: string;
+
+  @IsString()
+  @IsOptional()
+  @MinLength(0)
   @MaxLength(10)
   houseNumber: string;
 

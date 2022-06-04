@@ -22,6 +22,8 @@ export class PersonalDataFactoryService {
     newPersonalData.zipCode = createPersonalDataDto.zipCode;
     newPersonalData.complement = createPersonalDataDto.complement;
     newPersonalData.token = createPersonalDataDto.token;
+    newPersonalData.city = createPersonalDataDto.city;
+    newPersonalData.state = createPersonalDataDto.state;
     return newPersonalData;
   }
 }

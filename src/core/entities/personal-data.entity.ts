@@ -10,4 +10,6 @@ export class PersonalData {
   district: string;
   houseNumber: string;
   zipCode: string;
+  city: string;
+  state: string;
 }
