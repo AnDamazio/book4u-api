@@ -7,14 +7,14 @@ import {
   ManyToOne,
   Unique,
   OneToMany,
-} from 'typeorm';
-import { Book } from './book.model';
-import { PersonalData } from './personal-data.model';
-import { UserSituation } from './user-situation.model';
-import { Wish } from './wish.model';
+} from "typeorm";
+import { Book } from "./book.model";
+import { PersonalData } from "./personal-data.model";
+import { UserSituation } from "./user-situation.model";
+import { Wish } from "./wish.model";
 
 @Entity()
-@Unique(['registerNumber'])
+@Unique(["registerNumber"])
 export class User {
   @PrimaryGeneratedColumn()
   id!: string;
@@ -31,8 +31,8 @@ export class User {
   @Column()
   registerNumber: string;
 
-  @Column()
-  Credits: string;
+  @Column({ default: "0" })
+  credits: string;
 
   @OneToOne(() => PersonalData)
   @JoinColumn()
