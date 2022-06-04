@@ -1,7 +1,10 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { PersonalData } from "../../../core/entities";
 import { IDataServices } from "../../../core/abstracts";
-import { CreatePersonalDataDto, PartialPersonalDataDto } from "../../../core/dtos";
+import {
+  CreatePersonalDataDto,
+  PartialPersonalDataDto,
+} from "../../../core/dtos";
 import { PersonalDataFactoryService } from "./personal-data-factory.service";
 import { AuthService } from "src/frameworks/auth/auth.service";
 
@@ -76,6 +79,10 @@ export class PersonalDataServices {
   }
 
   async updatePersonalData(locationDto: PartialPersonalDataDto): Promise<any> {
-     await this.dataServices.personalData.updateData(locationDto);
+    await this.dataServices.personalData.updateData(locationDto);
+  }
+
+  async rollBackPersonalData(personaData: PersonalData): Promise<any> {
+    await this.dataServices.personalData.rollBack(personaData);
   }
 }

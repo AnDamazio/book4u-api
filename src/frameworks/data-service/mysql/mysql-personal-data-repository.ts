@@ -46,10 +46,7 @@ export class MysqlPersonalDataRepository<T>
     return await this._repository.findOne({ where: { id: id } });
   }
 
-  async exchangePassword(
-    id: number,
-    newUserPassword,
-  ): Promise<UpdateResult> {
+  async exchangePassword(id: number, newUserPassword): Promise<UpdateResult> {
     return await this._repository.update(id, newUserPassword);
   }
 
@@ -58,7 +55,7 @@ export class MysqlPersonalDataRepository<T>
   }
 
   async insertToken(id: number, newUserToken): Promise<UpdateResult> {
-    return await this._repository.update(id, newUserToken)
+    return await this._repository.update(id, newUserToken);
   }
 
   async findToken(token: string): Promise<T> {
@@ -75,5 +72,9 @@ export class MysqlPersonalDataRepository<T>
       location.id,
       location as unknown as QueryDeepPartialEntity<T>
     );
+  }
+
+  async rollBack(personalData) {
+    return await this._repository.delete(personalData);
   }
 }

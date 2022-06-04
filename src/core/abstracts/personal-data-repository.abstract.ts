@@ -1,4 +1,4 @@
-import { UpdateResult } from 'typeorm';
+import { UpdateResult } from "typeorm";
 
 export abstract class IPersonalDataRepository<T> {
   abstract create(personalData: T): Promise<T>;
@@ -11,14 +11,16 @@ export abstract class IPersonalDataRepository<T> {
 
   abstract exchangePassword(
     id: number,
-    newPasswordUser: T,
+    newPasswordUser: T
   ): Promise<UpdateResult | Error>;
 
   abstract getIdFromPersonalData(personalData: T): Promise<T>;
 
-  abstract insertToken(id: number, newUserToken: T): Promise<UpdateResult>
+  abstract insertToken(id: number, newUserToken: T): Promise<UpdateResult>;
 
-  abstract findToken(oldToken: string): Promise<T>
+  abstract findToken(oldToken: string): Promise<T>;
 
   abstract updateData(personalData): Promise<any>;
+
+  abstract rollBack(personalData): Promise<any>;
 }
