@@ -3,20 +3,20 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Unique,
-  OneToOne
-} from 'typeorm';
-import { User } from './user.model';
+  OneToOne,
+} from "typeorm";
+import { User } from "./user.model";
 
 @Entity()
-@Unique(['cpf'])
-@Unique(['email'])
-@Unique(['cellphone'])
-@Unique(['telephone'])
+@Unique(["cpf"])
+@Unique(["email"])
+@Unique(["cellphone"])
+@Unique(["telephone"])
 export class PersonalData {
   @PrimaryGeneratedColumn()
   id!: string;
 
-  @Column({ name: 'email' })
+  @Column({ name: "email" })
   email!: string;
 
   @Column()
@@ -37,13 +37,13 @@ export class PersonalData {
   @Column({ nullable: true })
   district: string;
 
-  @Column()
+  @Column({ nullable: true })
   city: string;
 
-  @Column()
+  @Column({ nullable: true })
   state: string;
 
-  @Column({ name: 'cpf' })
+  @Column({ name: "cpf" })
   cpf!: string;
 
   @Column()
