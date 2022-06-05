@@ -4,7 +4,7 @@ import { UpdateResult } from "typeorm";
 export abstract class IBookRepository<T> {
   abstract create(book: T): Promise<T>;
 
-  abstract findAll(): Promise<T[]>;
+  abstract findAll(id: number): Promise<T[]>;
 
   abstract findBookByPk(id: number): Promise<T>;
 

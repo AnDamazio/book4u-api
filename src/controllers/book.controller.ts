@@ -133,9 +133,14 @@ export class BookController {
     return createBookResponse;
   }
 
-  @Get("list")
-  async bookList() {
-    const books = await this.bookServices.getAllBooks();
+  @Get("list/:token")
+  async bookList(@Param("token") token: string) {
+    const destructToken: any = jwt.decode(token);
+    const user = await this.userServices.findByEmail(destructToken.email);
+    const id = await this.userServices.getIdFromUser(user);
+
+    console.log(id);
+    const books = await this.bookServices.getAllBooks(id);
     return books;
   }
 

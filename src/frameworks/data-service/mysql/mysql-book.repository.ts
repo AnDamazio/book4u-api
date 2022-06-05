@@ -1,4 +1,4 @@
-import { Repository, UpdateResult } from "typeorm";
+import { Not, Repository, UpdateResult } from "typeorm";
 import { IBookRepository } from "src/core";
 import { CreateBookCategoriesDto } from "src/core/dtos/book-categories.dto";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
@@ -10,8 +10,9 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
     this._repository = repository;
   }
 
-  async findAll(): Promise<T[]> {
+  async findAll(id: number): Promise<T[]> {
     return await this._repository.find({
+      where: { owner: Not(id) },
       relations: ["bookImages", "owner", "author", "language", "publisher"],
     });
   }
@@ -51,7 +52,7 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
   }
 
   async getIdFromBook(book: T): Promise<number> {
-    return await this._repository.getId(book)
+    return await this._repository.getId(book);
   }
 
   async findBooksByDate(dayInterval: number): Promise<T[]> {

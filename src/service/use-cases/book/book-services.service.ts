@@ -13,9 +13,9 @@ export class BookServices {
     private bookFactoryService: BookFactoryService
   ) {}
 
-  async getAllBooks(): Promise<Book[]> {
+  async getAllBooks(id: any): Promise<Book[]> {
     try {
-      return await this.bookServices.book.findAll();
+      return await this.bookServices.book.findAll(id);
     } catch (err) {
       return err.message;
     }
