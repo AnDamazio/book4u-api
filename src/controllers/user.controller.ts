@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { PersonalDataServices } from "../service/use-cases/personal-data/personal-data-services.service";
-import { PersonalDataFactoryService } from "../service/use-cases/personal-data/personal-data-factory.service";
-import { UserSituationFactoryService } from "src/service/use-cases/userSituation";
-import { UserSituationServices } from "src/service/use-cases/userSituation";
+import { PersonalDataServices } from '../service/use-cases/personal-data/personal-data-services.service';
+import { PersonalDataFactoryService } from '../service/use-cases/personal-data/personal-data-factory.service';
+import { UserSituationFactoryService } from 'src/service/use-cases/userSituation';
+import { UserSituationServices } from 'src/service/use-cases/userSituation';
 import {
   Controller,
   Post,
@@ -15,29 +15,29 @@ import {
   Put,
   Get,
   Req,
-} from "@nestjs/common";
+} from '@nestjs/common';
 import {
   CreatePersonalDataDto,
   CreateUserDto,
   CreateUserResponseDto,
-} from "../core/dtos";
-import { UserServices } from "src/service/use-cases/user/user-services.service";
-import { UserFactoryService } from "src/service/use-cases/user";
-import { LocalAuthGuard } from "src/frameworks/auth/local-auth.guard";
-import { FileInterceptor } from "@nestjs/platform-express";
+} from '../core/dtos';
+import { UserServices } from 'src/service/use-cases/user/user-services.service';
+import { UserFactoryService } from 'src/service/use-cases/user';
+import { LocalAuthGuard } from 'src/frameworks/auth/local-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ref,
   uploadBytes,
   deleteObject,
   getDownloadURL,
-} from "firebase/storage";
-import { storage } from "../firebase";
-import * as nodemailer from "nodemailer";
-import { SMTP_CONFIG } from "../smtp/smtp-config";
-import { AuthService } from "src/frameworks/auth/auth.service";
-import { AuthGuard } from "@nestjs/passport";
-import * as jwt from "jsonwebtoken";
-import { getManager } from "typeorm";
+} from 'firebase/storage';
+import { storage } from '../firebase';
+import * as nodemailer from 'nodemailer';
+import { SMTP_CONFIG } from '../smtp/smtp-config';
+import { AuthService } from 'src/frameworks/auth/auth.service';
+import { AuthGuard } from '@nestjs/passport';
+import * as jwt from 'jsonwebtoken';
+import { PictureDto } from '../core/dtos'
 
 const transport = nodemailer.createTransport({
   service: SMTP_CONFIG.service,
@@ -53,7 +53,7 @@ const transport = nodemailer.createTransport({
   },
 });
 
-@Controller("api/user")
+@Controller('api/user')
 export class UserController {
   constructor(
     private userServices: UserServices,
@@ -62,52 +62,48 @@ export class UserController {
     private personalDataServices: PersonalDataServices,
     private personalDataFactoryService: PersonalDataFactoryService,
     private userSituationServices: UserSituationServices,
-    private userSituationFactoryService: UserSituationFactoryService
-  ) {}
+    private userSituationFactoryService: UserSituationFactoryService,
+  ) { }
 
   @Post()
   async createUser(@Body() userDto: CreateUserDto) {
     const createUserResponse = new CreateUserResponseDto();
     {
-      const userSituation =
-        this.userSituationFactoryService.createnewUserSituation(
-          userDto.userSituation
-        );
-      const createdUserSituation =
-        await this.userSituationServices.createUserSituation(userSituation);
-      userDto.userSituation = createdUserSituation;
-
-      userDto.personalData.password =
-        await this.personalDataFactoryService.encryptPassword(
-          userDto.personalData.password
-        );
-      const personalData =
-        await this.personalDataFactoryService.createNewPersonalData(
-          userDto.personalData
-        );
-
-      function generateNewNumber() {
-        const nGenerated = String(Math.floor(Math.random() * 3000) + 1);
-        if (nGenerated.length == 4) {
-          userDto.registerNumber = nGenerated;
-        } else {
-          generateNewNumber();
-        }
-      }
-      generateNewNumber();
-      let createdPersonalData = new CreatePersonalDataDto();
-      let user = new CreateUserDto();
-
-      createdPersonalData = await this.personalDataServices.createPersonalData(
-        personalData
-      );
-      userDto.personalData = createdPersonalData;
-
-      user = this.userFactoryService.createNewUser(userDto);
-
       try {
+        userDto.personalData.password =
+          await this.personalDataFactoryService.encryptPassword(
+            userDto.personalData.password,
+          );
+        const personalData =
+          await this.personalDataFactoryService.createNewPersonalData(
+            userDto.personalData,
+          );
+        const createdPersonalData =
+          await this.personalDataServices.createPersonalData(personalData);
+        userDto.personalData = createdPersonalData;
+        const userSituation =
+          this.userSituationFactoryService.createnewUserSituation(
+            userDto.userSituation,
+          );
+        const createdUserSituation =
+          await this.userSituationServices.createUserSituation(userSituation);
+        userDto.userSituation = createdUserSituation;
+
+
+        const user = this.userFactoryService.createNewUser(userDto);
+        function generateNewNumber() {
+          const nGenerated = String(Math.floor(Math.random() * 3000) + 1);
+          if (nGenerated.length == 4) {
+            user.registerNumber = nGenerated;
+          } else {
+            generateNewNumber();
+          }
+        }
+        generateNewNumber();
+
         const createdUser = await this.userServices.createUser(user);
         createUserResponse.createdUser = createdUser;
+
         transport
           .sendMail({
             text: `Obrigado por se cadastrar no Book4U, SEJA BEM VINDO! Aqui está seu código de verificação ${user.registerNumber}`,
@@ -117,67 +113,56 @@ export class UserController {
           })
           .then((param) => console.log(param))
           .catch((error) => console.log(error));
-        return createUserResponse;
-      } catch (error) {
-        createUserResponse.success = false;
-        this.personalDataServices.rollBackPersonalData(createdPersonalData);
 
-        return error.message;
+        return createUserResponse;
+      } catch (err) {
+        createUserResponse.success = false;
+        return err.message;
       }
     }
   }
 
   @UseGuards(LocalAuthGuard)
-  @Post("auth/login")
+  @Post('auth/login')
   async login(@Request() req) {
-    if (req.user.user.userSituation.name == "Confirmado") {
+    if (req.user.user.userSituation.name == 'Confirmado') {
       try {
-        return await this.authService.login(req.user);
+        return await this.authService.login(req.user)
       } catch (err) {
         return err.message;
       }
     } else {
-      return "E-mail pendente";
+      return 'E-mail pendente';
     }
   }
 
-  @Put(":token")
-  @UseInterceptors(FileInterceptor("profileImage"))
+  @Put(':token')
   async setProfilePic(
-    @Param("token") token: string,
-    @UploadedFile() file: Express.Multer.File
+    @Body() pictureDto: PictureDto,
+    @Param('token') token: string,
   ) {
     try {
       const destructToken: any = jwt.decode(token);
-      const user = await this.userServices.findByEmail(destructToken.email);
-      const id = await this.userServices.getIdFromUser(user);
-      const userFound = this.userServices.getUserById(id);
-      if ((await userFound).picture != "") {
-        const userPic = (await userFound).picture;
-        const fileRef = ref(storage, userPic);
-        deleteObject(fileRef)
-          .then()
-          .catch((error) => console.log(error));
+      const user = await this.userServices.findByEmail(destructToken.email)
+      const id = await this.userServices.getIdFromUser(user)
+      const userFound = await this.userServices.getUserById(id);
+      if (userFound) {
+        userFound.picture = pictureDto.picture;
+        await this.userServices.updateNRegister(Number(id), userFound)
+        return 'Imagem trocada com sucesso!';
+      } else {
+        return "Usuário não encontrado"
       }
-      const fileName =
-        Math.floor(Math.random() * 65536) + "_" + file.originalname;
-      const fileRef = ref(storage, fileName);
-      uploadBytes(fileRef, file.buffer).then(async () => {
-        getDownloadURL(fileRef).then(async (url) => {
-          await this.userServices.setProfilePic(id, url);
-        });
-      });
-      return "Imagem trocada com sucesso!";
     } catch (err) {
       return {
         defaultError: err.message,
-        editedError: "Erro ao alterar imagem, por favor tente novamente",
+        editedError: 'Erro ao alterar imagem, por favor tente novamente',
       };
     }
   }
 
-  @Put("confirmRegistration/:rNumber")
-  async confirmRegistration(@Param("rNumber") rNumber: string) {
+  @Put('confirmRegistration/:rNumber')
+  async confirmRegistration(@Param('rNumber') rNumber: string) {
     try {
       await this.userSituationServices.insertEnumValue();
       const userFound = await this.userServices.getUserByNRegister(rNumber);
@@ -185,24 +170,24 @@ export class UserController {
       if (userFound.registerNumber == rNumber) {
         await this.userServices.setSituationUser(
           Number(getIdFromUser),
-          (userFound.userSituation.name = "CONFIRMADO")
+          (userFound.userSituation.name = 'CONFIRMADO'),
         );
         const user = {
           email: userFound.personalData.email,
-          password: userFound.personalData.password,
-        };
-        return await this.authService.login(user);
+          password: userFound.personalData.password
+        }
+        return await this.authService.login(user)
       }
     } catch (err) {
       return {
         defaultError: err.message,
-        editedError: "Por favor, digite um número válido",
+        editedError: 'Por favor, digite um número válido',
       };
     }
   }
 
-  @Put("resendRNumber/:email")
-  async resendRNumber(@Param("email") email: string) {
+  @Put('resendRNumber/:email')
+  async resendRNumber(@Param('email') email: string) {
     const userFound = await this.userServices.findByEmail(email);
     const getIdFromUser = await this.userServices.getIdFromUser(userFound);
     try {
@@ -226,25 +211,25 @@ export class UserController {
           .then(
             await this.userServices.updateNRegister(
               Number(getIdFromUser),
-              userFound
-            )
+              userFound,
+            ),
           )
           .catch((error) => {
             return error;
           });
         return userFound.registerNumber;
       } else {
-        return "Usuário não encontrado";
+        return 'Usuário não encontrado';
       }
     } catch (err) {
       return err.message;
     }
   }
 
-  @Put("exchangePassword/:email")
+  @Put('exchangePassword/:email')
   async exchangePassword(
-    @Param("email") email: string,
-    @Body("password") password: CreatePersonalDataDto["password"]
+    @Param('email') email: string,
+    @Body('password') password: CreatePersonalDataDto['password'],
   ) {
     const userFound = await this.personalDataServices.findByEmail(email);
     const getIdFromPersonalData =
@@ -254,39 +239,39 @@ export class UserController {
         await this.personalDataFactoryService.encryptPassword(String(password));
       await this.personalDataServices.exchangePassword(
         Number(getIdFromPersonalData),
-        userFound
+        userFound,
       );
-      return "Senha alterada com sucesso";
+      return 'Senha alterada com sucesso';
     } else {
-      return "Erro ao alterar dado de situação de usuário para confirmado";
+      return 'Erro ao alterar dado de situação de usuário para confirmado';
     }
   }
 
-  @Get("google")
-  @UseGuards(AuthGuard("google"))
-  async googleAuth(@Req() req) {}
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) { }
 
-  @Get("google/redirect")
-  @UseGuards(AuthGuard("google"))
+  @Get('google/redirect')
+  @UseGuards(AuthGuard('google'))
   googleAuthRedirect(@Req() req) {
     this.userServices.createUser(req.user);
 
     if (!req.user) {
-      return "No user from google";
+      return 'No user from google';
     }
 
     return {
-      message: "User information from google",
+      message: 'User information from google',
       user: req.user,
     };
   }
 
-  @Get("/getUserByToken/:token")
-  async getUserById(@Param("token") token: string) {
+  @Get('/getUserByToken/:token')
+  async getUserById(@Param('token') token: string) {
     try {
       const destructToken: any = jwt.decode(token);
-      const user = await this.userServices.findByEmail(destructToken.email);
-      const id = await this.userServices.getIdFromUser(user);
+      const user = await this.userServices.findByEmail(destructToken.email)
+      const id = await this.userServices.getIdFromUser(user)
       return await this.userServices.getUserById(id);
     } catch (err) {
       return err.message;
