@@ -37,6 +37,7 @@ import { SMTP_CONFIG } from '../smtp/smtp-config';
 import { AuthService } from 'src/frameworks/auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import * as jwt from 'jsonwebtoken';
+import { PictureDto } from '../core/dtos'
 
 const transport = nodemailer.createTransport({
   service: SMTP_CONFIG.service,
@@ -136,32 +137,23 @@ export class UserController {
   }
 
   @Put(':token')
-  @UseInterceptors(FileInterceptor('profileImage'))
   async setProfilePic(
+    @Body() pictureDto: PictureDto,
     @Param('token') token: string,
-    @UploadedFile() file: Express.Multer.File,
   ) {
     try {
       const destructToken: any = jwt.decode(token);
       const user = await this.userServices.findByEmail(destructToken.email)
       const id = await this.userServices.getIdFromUser(user)
-      const userFound = this.userServices.getUserById(id);
-      if ((await userFound).picture != '') {
-        const userPic = (await userFound).picture;
-        const fileRef = ref(storage, userPic);
-        deleteObject(fileRef)
-          .then()
-          .catch((error) => console.log(error));
-      }
-      const fileName =
-        Math.floor(Math.random() * 65536) + '_' + file.originalname;
-      const fileRef = ref(storage, fileName);
-      uploadBytes(fileRef, file.buffer).then(async () => {
-        getDownloadURL(fileRef).then(async (url) => {
-          await this.userServices.setProfilePic(id, url);
-        });
-      });
-      return 'Imagem trocada com sucesso!';
+      const userFound = await this.userServices.getUserById(id);
+     if(userFound) {
+       userFound.picture = pictureDto.picture;
+       console.log(userFound)
+       await this.userServices.updateNRegister(Number(id), userFound)
+       return 'Imagem trocada com sucesso!';
+     } else {
+       return "Usuário não encontrado"
+     }
     } catch (err) {
       return {
         defaultError: err.message,

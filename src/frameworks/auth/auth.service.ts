@@ -31,8 +31,9 @@ export class AuthService {
     const payload = { email: user.email, sub: user.id };
     const token = this.jwtService.sign(payload)
     const personalDataFound = await this.personalDataServices.findByEmail(user.email)
+    const id = await this.personalDataServices.getIdFromPersonalData(personalDataFound)
     personalDataFound.token = token
-    await this.personalDataServices.insertToken(Number(user.id), personalDataFound)
+    await this.personalDataServices.insertToken(Number(id), personalDataFound)
     await this.personalDataServices.refreshToken(token)
     return {
       access_token: token

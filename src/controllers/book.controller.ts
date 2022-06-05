@@ -21,6 +21,7 @@ import {
 } from "src/service/use-cases/publisher";
 import {
   CreateBookDto,
+  CreateBookImagesDto,
   CreateBookResponseDto,
   CreateExchangeBooksDto,
 } from "../core/dtos";
@@ -33,8 +34,6 @@ import {
   CategoryServices,
 } from 'src/service/use-cases/category';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '../firebase';
 import { BookImagesServices } from 'src/service/use-cases/bookImages';
 import { AutoRelationBooksServices, BookCategoriesFactoryService, BookCategoriesServices, UserServices } from 'src/service';
 import { JwtAuthGuard } from 'src/frameworks/auth/jwt-auth.guard';
@@ -139,52 +138,16 @@ export class BookController {
   }
 
   @Put("sendBookImage/:id")
-  @UseInterceptors(AnyFilesInterceptor())
-  async updateBookImage(
-    @Param("id") id: number,
-    @UploadedFiles() files: Array<Express.Multer.File>
+  async updateBookImage(@Body() bookImages: CreateBookImagesDto, @Param("id") id: number,
   ) {
     try {
       const bookFound = await this.bookServices.findBookByPk(id);
-      const idFromBookImage = await this.bookImagesServices.getIdFromBookImages(
-        bookFound.bookImages
-      );
-      const [file0, file1, file2, file3] = files;
-      bookFound.bookImages.frontSideImage =
-        Math.floor(Math.random() * 65536) + "_" + file0.originalname;
-      bookFound.bookImages.rightSideImage =
-        Math.floor(Math.random() * 65536) + "_" + file1.originalname;
-      bookFound.bookImages.leftSideImage =
-        Math.floor(Math.random() * 65536) + "_" + file2.originalname;
-      bookFound.bookImages.backSideImage =
-        Math.floor(Math.random() * 65536) + "_" + file3.originalname;
-
-      const fileNames = [
-        bookFound.bookImages.frontSideImage,
-        bookFound.bookImages.rightSideImage,
-        bookFound.bookImages.leftSideImage,
-        bookFound.bookImages.backSideImage,
-      ];
-
-      const filesURL = [];
-
-      for (let value = 0; value <= 3; value++) {
-        const fileRef = ref(storage, fileNames[value]);
-        await uploadBytes(fileRef, files[value].buffer).then(() => { });
-        await getDownloadURL(fileRef).then((url) => {
-          filesURL.push(url);
-          if (value === fileNames.length - 1) {
-            bookFound.bookImages.frontSideImage = filesURL[0];
-            bookFound.bookImages.rightSideImage = filesURL[1];
-            bookFound.bookImages.leftSideImage = filesURL[2];
-            bookFound.bookImages.backSideImage = filesURL[3];
-            this.bookImagesServices.updateBookImages(
-              Number(idFromBookImage),
-              bookFound.bookImages
-            );
-          }
-        });
-      }
+      const idFromBookImage = await this.bookImagesServices.getIdFromBookImages(bookFound.bookImages);
+      bookFound.bookImages.backSideImage = bookImages.backSideImage;
+      bookFound.bookImages.frontSideImage = bookImages.frontSideImage;
+      bookFound.bookImages.leftSideImage = bookImages.leftSideImage;
+      bookFound.bookImages.rightSideImage = bookImages.rightSideImage;
+      await this.bookImagesServices.updateBookImages(Number(idFromBookImage), bookFound.bookImages);
       return `Imagens inseridas com sucesso!`;
     } catch (err) {
       return err.message;
