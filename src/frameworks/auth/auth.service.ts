@@ -13,7 +13,6 @@ export class AuthService {
   ) {}
 
   async validatePassword(pass: string, passHash: string) {
-    console.log(pass, passHash);
     return bcrypt.compareSync(pass, passHash);
   }
 
@@ -21,7 +20,6 @@ export class AuthService {
     const userData = await this.personalDataServices.findUserDataByEmail(
       username
     );
-    console.log(userData);
 
     if (userData && (await this.validatePassword(pass, userData.password))) {
       const { password, ...result } = userData;
