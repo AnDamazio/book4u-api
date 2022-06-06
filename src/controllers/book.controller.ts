@@ -129,13 +129,15 @@ export class BookController {
 
   @Get("list/:token")
   async bookList(@Param("token") token: string) {
-    const destructToken: any = jwt.decode(token);
-    const user = await this.userServices.findByEmail(destructToken.email);
-    const id = await this.userServices.getIdFromUser(user);
-
-    console.log(id);
-    const books = await this.bookServices.getAllBooks(id);
-    return books;
+    try {
+      const destructToken: any = jwt.decode(token);
+      const user = await this.userServices.findByEmail(destructToken.email);
+      const id = await this.userServices.getIdFromUser(user);
+      const books = await this.bookServices.getAllBooks(id);
+      return books;
+    } catch (err) {
+      return err.message
+    }
   }
 
   @Get("list-recent-books/:daysInterval")

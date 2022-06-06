@@ -19,7 +19,7 @@ export class PersonalData {
   @Column({ name: "email" })
   email!: string;
 
-  @Column()
+  @Column({ select: false })
   password!: string;
 
   @Column({ nullable: true })
@@ -43,7 +43,7 @@ export class PersonalData {
   @Column({ nullable: true })
   state: string;
 
-  @Column({ name: "cpf" })
+  @Column({ name: "cpf", select: false })
   cpf!: string;
 
   @Column()

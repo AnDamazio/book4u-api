@@ -11,10 +11,12 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
   }
 
   async findAll(id: number): Promise<T[]> {
-    return await this._repository.find({
+    const books = await this._repository.find({
       where: { owner: Not(id) },
-      relations: ["bookImages", "owner", "author", "language", "publisher"],
+      relations: ["bookImages", "owner", "author", "language", "publisher", "owner.personalData"],
     });
+    console.log(books)
+    return books
   }
 
   async create(book): Promise<T> {
