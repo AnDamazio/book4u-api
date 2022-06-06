@@ -118,7 +118,6 @@ export class BookController {
         categoriesArray.push(
           await this.bookCategoriesServices.saveBookCategories(categories)
         );
-        console.log(categoriesArray);
       }
     } catch (err) {
       createBookResponse.success = false;
@@ -266,7 +265,6 @@ export class BookController {
     const destructToken: any = jwt.decode(token);
     const user = await this.userServices.findByEmail(destructToken.email);
     const id = await this.userServices.getIdFromUser(user);
-    console.log(id);
 
     return await this.bookServices.findAllBooksInCategory(
       [category],

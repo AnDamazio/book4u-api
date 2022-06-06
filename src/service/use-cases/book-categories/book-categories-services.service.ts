@@ -9,7 +9,6 @@ export class BookCategoriesServices {
   async saveBookCategories(
     bookCategories: CreateBookCategoriesDto,
   ): Promise<CreateBookCategoriesDto> {
-    console.log(bookCategories);
     return await this.dataServices.bookCategories.saveRelation(bookCategories);
   }
 }
