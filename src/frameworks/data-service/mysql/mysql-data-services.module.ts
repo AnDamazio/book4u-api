@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { IDataServices } from 'src/core';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { IDataServices } from "src/core";
 import {
   User,
   PersonalData,
@@ -13,10 +13,10 @@ import {
   BookImages,
   Wish,
   AutoRelationBook,
-  BookCategories
-} from './model';
-import { MysqlDataServices } from './mysql-data-services.service';
-import 'dotenv/config';
+  BookCategories,
+} from "./model";
+import { MysqlDataServices } from "./mysql-data-services.service";
+import "dotenv/config";
 
 @Module({
   imports: [
@@ -33,16 +33,16 @@ import 'dotenv/config';
       BookImages,
       Wish,
       AutoRelationBook,
-      BookCategories
+      BookCategories,
     ]),
     TypeOrmModule.forRoot({
-      type: 'mysql',
+      type: "mysql",
       host: process.env.DATABASE_HOST,
       port: Number(process.env.DATABASE_PORT),
       username: process.env.DATABASE_USERNAME,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: [__dirname + '/../**/*.model{.ts,.js}'],
+      entities: [__dirname + "/../**/*.model{.ts,.js}"],
       synchronize: true,
     }),
   ],
@@ -54,4 +54,4 @@ import 'dotenv/config';
   ],
   exports: [IDataServices],
 })
-export class MysqlDataServicesModule { }
+export class MysqlDataServicesModule {}

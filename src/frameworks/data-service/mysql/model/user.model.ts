@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { Book } from "./book.model";
 import { PersonalData } from "./personal-data.model";
+import { Request } from "./request.model";
 import { UserSituation } from "./user-situation.model";
 import { Wish } from "./wish.model";
 
@@ -33,6 +34,10 @@ export class User {
 
   @Column({ default: "0" })
   credits: string;
+
+  @OneToMany(() => Request, (request) => request.user)
+  @JoinColumn()
+  request: Request;
 
   @OneToOne(() => PersonalData)
   @JoinColumn()

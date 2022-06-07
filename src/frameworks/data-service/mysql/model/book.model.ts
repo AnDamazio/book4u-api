@@ -26,7 +26,7 @@ export class Book {
   @Column()
   pagesQuantity!: number;
 
-  @Column()
+  @Column({ length: 1000 })
   synopsis!: string;
 
   @Column()
