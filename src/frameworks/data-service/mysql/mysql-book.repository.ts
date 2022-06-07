@@ -15,7 +15,6 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
       where: { owner: Not(id) },
       relations: ["bookImages", "owner", "author", "language", "publisher", "owner.personalData"],
     });
-    console.log(books)
     return books
   }
 

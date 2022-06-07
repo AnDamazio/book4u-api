@@ -148,7 +148,7 @@ export class UserController {
       const userFound = await this.userServices.getUserById(id);
       if (userFound) {
         userFound.picture = pictureDto.picture;
-        await this.userServices.updateNRegister(Number(id), userFound)
+        await this.userServices.updateUser(Number(id), userFound)
         return 'Imagem trocada com sucesso!';
       } else {
         return "Usuário não encontrado"
@@ -209,7 +209,7 @@ export class UserController {
             to: userFound.personalData.email,
           })
           .then(
-            await this.userServices.updateNRegister(
+            await this.userServices.updateUser(
               Number(getIdFromUser),
               userFound,
             ),

@@ -8,7 +8,7 @@ export class UserServices {
   constructor(
     private dataServices: IDataServices,
     private userFactoryService: UserFactoryService,
-  ) {}
+  ) { }
 
   getAllUsers(): Promise<User[]> {
     return this.dataServices.user.findAll();
@@ -69,8 +69,8 @@ export class UserServices {
     return personal_data;
   }
 
-  async updateNRegister(id: number, newUser: User): Promise<any> {
-    return await this.dataServices.user.updateNRegister(id, newUser);
+  async updateUser(id: number, newUser: User): Promise<any> {
+    return await this.dataServices.user.updateUser(id, newUser);
   }
 
 }

@@ -177,30 +177,26 @@ export class BookController {
     try {
       const getBook1 = await this.bookServices.findBookByPk(book1);
       const getBook2 = await this.bookServices.findBookByPk(book2);
-      if (getBook1.price === getBook2.price) {
-        const createExchangeBooksDto = {
-          situation: ExchangeSituation.PENDENTE,
-          book1: getBook1,
-          book2: getBook2,
-          createdAt: String(Date.now()),
-        };
-        getBook1.status = "Indisponível";
-        await this.bookServices.updateBook(book1, getBook1);
-        await this.bookServices.updateBook(book2, getBook2);
-        const getIdFromExchange =
-          await this.autoRelationBooksServices.createExchangeBooks(
-            createExchangeBooksDto
-          );
-        return {
-          text: "Proposta de troca enviada",
-          idFromExchange:
-            await this.autoRelationBooksServices.getIdFromExchange(
-              getIdFromExchange
-            ),
-        };
-      } else {
-        return "Existe uma diferença de preço";
-      }
+      const createExchangeBooksDto = {
+        situation: ExchangeSituation.PENDENTE,
+        book1: getBook1,
+        book2: getBook2,
+        createdAt: String(Date.now()),
+      };
+      getBook1.status = "Indisponível";
+      await this.bookServices.updateBook(book1, getBook1);
+      await this.bookServices.updateBook(book2, getBook2);
+      const getIdFromExchange =
+        await this.autoRelationBooksServices.createExchangeBooks(
+          createExchangeBooksDto
+        );
+      return {
+        text: "Proposta de troca enviada",
+        idFromExchange:
+          await this.autoRelationBooksServices.getIdFromExchange(
+            getIdFromExchange
+          ),
+      };
     } catch (err) {
       return err.message;
     }
@@ -212,24 +208,37 @@ export class BookController {
     @Param("id") id: number
   ) {
     try {
+      const findedAutoRelation = await this.autoRelationBooksServices.findExchangeById(id);
       if (confirm === "Confirmado") {
-        const findedAutoRelation =
-          await this.autoRelationBooksServices.findExchangeById(id);
         findedAutoRelation.situation = ExchangeSituation.CONFIRMADO;
         findedAutoRelation.book2.status = Status.INDISPONIVEL;
-        const bookId = await this.bookServices.getIdFromBook(
-          findedAutoRelation.book2
-        );
+        const bookId = await this.bookServices.getIdFromBook(findedAutoRelation.book2)
         await this.bookServices.updateBook(bookId, findedAutoRelation.book2);
-        await this.autoRelationBooksServices.updateExchangeBooks(
-          id,
-          findedAutoRelation
-        );
-        return "Troca confirmada";
+        await this.autoRelationBooksServices.updateExchangeBooks(id, findedAutoRelation);
+
+        if (findedAutoRelation.book1.price > findedAutoRelation.book2.price) {
+          const calcPoints = (Number(findedAutoRelation.book1.price) - Number(findedAutoRelation.book2.price))
+          const pointsToString = String(Number(findedAutoRelation.book1.owner.credits) + calcPoints)
+          findedAutoRelation.book1.owner.credits = pointsToString;
+          const userId = await this.userServices.getIdFromUser(findedAutoRelation.book1.owner)
+          await this.userServices.updateUser(Number(userId), findedAutoRelation.book1.owner)
+          return "Troca confirmada";
+
+        } else if (findedAutoRelation.book2.price > findedAutoRelation.book1.price) {
+          const calcPoints = (Number(findedAutoRelation.book2.price) - Number(findedAutoRelation.book1.price))
+          const pointsToString = String(Number(findedAutoRelation.book2.owner.credits) + calcPoints)
+          findedAutoRelation.book2.owner.credits = pointsToString;
+          const userId = await this.userServices.getIdFromUser(findedAutoRelation.book2.owner)
+          await this.userServices.updateUser(Number(userId), findedAutoRelation.book2.owner)
+          return "Troca confirmada";
+        }
+
+        return "Troca confirmada"
       } else if (confirm === "Recusado") {
-        const findedAutoRelation =
-          await this.autoRelationBooksServices.findExchangeById(id);
         findedAutoRelation.situation = ExchangeSituation.RECUSADO;
+        findedAutoRelation.book1.status = "Disponível";
+        const bookId = await this.bookServices.getIdFromBook(findedAutoRelation.book1)
+        await this.bookServices.updateBook(Number(bookId), findedAutoRelation.book1)
         await this.autoRelationBooksServices.updateExchangeBooks(
           id,
           findedAutoRelation

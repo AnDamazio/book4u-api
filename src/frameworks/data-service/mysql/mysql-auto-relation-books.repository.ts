@@ -28,6 +28,6 @@ export class MysqlAutoRelationBookRepository<T> implements IAutoRelationBookRepo
     }
 
     async findExchangeById(id: number): Promise<T> {
-        return await this._repository.findOne(id, { relations: ['book2'] })
+        return await this._repository.findOne(id, { relations: ['book2', 'book1', 'book2.owner', 'book1.owner'] })
     }
 }
