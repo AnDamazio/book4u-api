@@ -10,9 +10,7 @@ import {
   Body,
   Get,
   Put,
-  UseInterceptors,
   Param,
-  UploadedFiles,
   UseGuards,
 } from "@nestjs/common";
 import {
@@ -23,7 +21,6 @@ import {
   CreateBookDto,
   CreateBookImagesDto,
   CreateBookResponseDto,
-  CreateExchangeBooksDto,
 } from "../core/dtos";
 import {
   LanguageFactoryService,
@@ -35,7 +32,7 @@ import {
 } from 'src/service/use-cases/category';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { BookImagesServices } from 'src/service/use-cases/bookImages';
-import { AutoRelationBooksServices, BookCategoriesFactoryService, BookCategoriesServices, UserServices } from 'src/service';
+import { BookCategoriesFactoryService, BookCategoriesServices, RequestServices, UserServices } from 'src/service';
 import { JwtAuthGuard } from 'src/frameworks/auth/jwt-auth.guard';
 import * as jwt from 'jsonwebtoken'
 import { Status } from 'src/core';
@@ -57,7 +54,7 @@ export class BookController {
     private bookCategoriesServices: BookCategoriesServices,
     private bookImagesServices: BookImagesServices,
     private userServices: UserServices,
-    private autoRelationBooksServices: AutoRelationBooksServices
+    private requestServices: RequestServices
   ) { }
 
   @Post(":token")
@@ -187,13 +184,13 @@ export class BookController {
       await this.bookServices.updateBook(book1, getBook1);
       await this.bookServices.updateBook(book2, getBook2);
       const getIdFromExchange =
-        await this.autoRelationBooksServices.createExchangeBooks(
+        await this.requestServices.createExchangeBooks(
           createExchangeBooksDto
         );
       return {
         text: "Proposta de troca enviada",
         idFromExchange:
-          await this.autoRelationBooksServices.getIdFromExchange(
+          await this.requestServices.getIdFromExchange(
             getIdFromExchange
           ),
       };
@@ -208,13 +205,13 @@ export class BookController {
     @Param("id") id: number
   ) {
     try {
-      const findedAutoRelation = await this.autoRelationBooksServices.findExchangeById(id);
+      const findedAutoRelation = await this.requestServices.findExchangeById(id);
       if (confirm === "Confirmado") {
         findedAutoRelation.situation = ExchangeSituation.CONFIRMADO;
         findedAutoRelation.book2.status = Status.INDISPONIVEL;
         const bookId = await this.bookServices.getIdFromBook(findedAutoRelation.book2)
         await this.bookServices.updateBook(bookId, findedAutoRelation.book2);
-        await this.autoRelationBooksServices.updateExchangeBooks(id, findedAutoRelation);
+        await this.requestServices.updateExchangeBooks(id, findedAutoRelation);
 
         if (findedAutoRelation.book1.price > findedAutoRelation.book2.price) {
           const calcPoints = (Number(findedAutoRelation.book1.price) - Number(findedAutoRelation.book2.price))
@@ -232,14 +229,13 @@ export class BookController {
           await this.userServices.updateUser(Number(userId), findedAutoRelation.book2.owner)
           return "Troca confirmada";
         }
-
         return "Troca confirmada"
       } else if (confirm === "Recusado") {
         findedAutoRelation.situation = ExchangeSituation.RECUSADO;
         findedAutoRelation.book1.status = "Disponível";
         const bookId = await this.bookServices.getIdFromBook(findedAutoRelation.book1)
         await this.bookServices.updateBook(Number(bookId), findedAutoRelation.book1)
-        await this.autoRelationBooksServices.updateExchangeBooks(
+        await this.requestServices.updateExchangeBooks(
           id,
           findedAutoRelation
         );
@@ -254,7 +250,7 @@ export class BookController {
   async createNotificationByToken(@Param("token") token: string) {
     try {
       const findNotification =
-        await this.autoRelationBooksServices.exchangeNotification(token);
+        await this.requestServices.exchangeNotification(token);
       if (findNotification) {
         return {
           text: `O usuário ${findNotification.book1.owner.firstName} deseja realizar uma troca`,

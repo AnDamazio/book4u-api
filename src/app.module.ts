@@ -1,11 +1,9 @@
-import { AutoRelationBooksServicesModule } from "./service/use-cases/autoRelationBooks/autoRelationBooks.module";
 import { PersonalDataController } from "./controllers/personal-data.controller";
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UserController } from "./controllers/user.controller";
 import {
-  AutoRelationBooksServices,
   BookCategoriesServices,
   PersonalDataServices,
   UserServices,
@@ -29,6 +27,7 @@ import { WishListServices } from "./service/use-cases/wish-list";
 import { WishListController } from "./controllers/wish-list.controller";
 import { WishListServicesModule } from "./service/use-cases/wish-list/wish-list-services.module";
 import { CategoryController } from "./controllers/category.controller";
+import { RequestServices, RequestServicesModule } from "./service/use-cases/request";
 
 @Module({
   imports: [
@@ -44,7 +43,7 @@ import { CategoryController } from "./controllers/category.controller";
     BookImagesServicesModule,
     WishListServicesModule,
     AuthModule,
-    AutoRelationBooksServicesModule,
+    RequestServicesModule,
     BookCategoriesServicesModule,
     CategoryServicesModule,
   ],
@@ -65,7 +64,7 @@ import { CategoryController } from "./controllers/category.controller";
     WishListServices,
     AuthModule,
     BookServices,
-    AutoRelationBooksServices,
+    RequestServices,
     BookCategoriesServices,
     CategoryServices
   ],

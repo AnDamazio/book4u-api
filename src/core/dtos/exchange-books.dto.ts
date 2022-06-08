@@ -3,7 +3,7 @@ import { IsString, IsNotEmpty, IsEnum, IsNotEmptyObject, IsObject, ValidateNeste
 import { CreateBookDto } from '.';
 import { ExchangeSituation } from '../enums';
 
-export class CreateExchangeBooksDto {
+export class RequestDto {
     @IsString()
     @IsNotEmpty()
     @IsEnum(ExchangeSituation)

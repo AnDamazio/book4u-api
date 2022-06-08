@@ -3,14 +3,16 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    OneToMany,
     ManyToOne,
-    JoinColumn
+    JoinColumn,
+    OneToMany
 } from 'typeorm';
 import { Book } from './book.model';
+import { ExchangeHistory } from './exchange-history.model';
+import { User } from './user.model';
 
 @Entity()
-export class AutoRelationBook {
+export class Request {
     @PrimaryGeneratedColumn()
     id!: string;
 
@@ -31,4 +33,11 @@ export class AutoRelationBook {
 
     @Column()
     createdAt: string;
+
+    @OneToMany(
+        () => ExchangeHistory,
+        (exchangeHistory) => exchangeHistory.request
+      )
+      @JoinColumn()
+      exchangeHistory: ExchangeHistory;
 }

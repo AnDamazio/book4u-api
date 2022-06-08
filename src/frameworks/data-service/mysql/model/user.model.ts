@@ -9,7 +9,9 @@ import {
   OneToMany,
 } from "typeorm";
 import { Book } from "./book.model";
+import { ExchangeHistory } from "./exchange-history.model";
 import { PersonalData } from "./personal-data.model";
+import { Request } from "./request.model";
 import { UserSituation } from "./user-situation.model";
 import { Wish } from "./wish.model";
 
@@ -47,4 +49,7 @@ export class User {
 
   @OneToMany(() => Book, (book) => book.owner)
   book: Book[];
+
+  @ManyToOne(() => ExchangeHistory, (exchange) => exchange.id)
+  exchangeHistory: ExchangeHistory;
 }

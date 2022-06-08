@@ -8,6 +8,6 @@ export * from './use-cases/personal-data';
 export * from './use-cases/publisher';
 export * from './use-cases/user';
 export * from './use-cases/userSituation';
-export * from './use-cases/autoRelationBooks';
+export * from './use-cases/request';
 export * from './use-cases/book-categories';
 export * from './use-cases/book-categories';

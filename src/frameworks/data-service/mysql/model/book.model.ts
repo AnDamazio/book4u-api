@@ -13,7 +13,6 @@ import { Language } from "./language.model";
 import { Publisher } from "./publisher.model";
 import { BookImages } from "./book-images.model";
 import { User } from "./user.model";
-import { AutoRelationBook } from "./auto-relation-book.model";
 
 @Entity()
 export class Book {
@@ -26,7 +25,7 @@ export class Book {
   @Column()
   pagesQuantity!: number;
 
-  @Column()
+  @Column({ length: 1000 })
   synopsis!: string;
 
   @Column()

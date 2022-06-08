@@ -1,7 +1,7 @@
 import { Repository, UpdateResult } from 'typeorm';
-import { IAutoRelationBookRepository } from 'src/core';
+import { IRequestRepository } from 'src/core';
 
-export class MysqlAutoRelationBookRepository<T> implements IAutoRelationBookRepository<T> {
+export class MysqlRequestRepository<T> implements IRequestRepository<T> {
     private _repository: Repository<T>;
 
     constructor(repository: Repository<T>) {

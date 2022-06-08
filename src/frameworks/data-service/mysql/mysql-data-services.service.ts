@@ -13,7 +13,7 @@ import {
   BookImages,
   Wish,
   Category,
-  AutoRelationBook,
+  Request,
 } from './model';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { IDataServices } from 'src/core';
@@ -26,7 +26,7 @@ import { MysqlCategoryRepository } from './mysql-category.repository';
 import { MysqlUserSituationRepository } from './mysql-user-situation.repository';
 import { MysqlWishListRepository } from './mysql-wish-list.repository';
 import { MysqlBookImagesRepository } from './mysql-book-images.repository';
-import { MysqlAutoRelationBookRepository } from './mysql-auto-relation-books.repository';
+import { MysqlRequestRepository } from './mysql-request.repository';
 import { MysqlBookCategoriesRepository } from './mysql-book-categories.repository';
 
 @Injectable()
@@ -43,7 +43,7 @@ export class MysqlDataServices
   userSituation: MysqlUserSituationRepository<UserSituation>;
   bookImages: MysqlBookImagesRepository<BookImages>;
   wishList: MysqlWishListRepository<Wish>;
-  autoRelationBook: MysqlAutoRelationBookRepository<AutoRelationBook>;
+  request: MysqlRequestRepository<Request>;
   bookCategories: MysqlBookCategoriesRepository<BookCategories>;
 
   constructor(
@@ -64,8 +64,8 @@ export class MysqlDataServices
     private BookImagesRepository: Repository<BookImages>,
     @InjectRepository(Wish)
     private WishListRepository: Repository<Wish>,
-    @InjectRepository(AutoRelationBook)
-    private AutoRelationBookRepository: Repository<AutoRelationBook>,
+    @InjectRepository(Request)
+    private RequestRepository: Repository<Request>,
     @InjectRepository(BookCategories)
     private BookCategoriesRepository: Repository<BookCategories>,
   ) {}
@@ -93,9 +93,9 @@ export class MysqlDataServices
       this.BookImagesRepository,
     );
     this.wishList = new MysqlWishListRepository<Wish>(this.WishListRepository);
-    this.autoRelationBook =
-      new MysqlAutoRelationBookRepository<AutoRelationBook>(
-        this.AutoRelationBookRepository,
+    this.request =
+      new MysqlRequestRepository<Request>(
+        this.RequestRepository,
       );
     this.bookCategories = new MysqlBookCategoriesRepository<BookCategories>(
       this.BookCategoriesRepository,

@@ -10,7 +10,7 @@ export class AuthService {
     private jwtService: JwtService,
     @Inject(forwardRef(() => PersonalDataServices))
     private personalDataServices: PersonalDataServices
-  ) {}
+  ) { }
 
   async validatePassword(pass: string, passHash: string) {
     return bcrypt.compareSync(pass, passHash);
@@ -45,3 +45,4 @@ export class AuthService {
     };
   }
 }
+

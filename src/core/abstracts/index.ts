@@ -11,5 +11,5 @@ export * from './book-images-repository.abstract';
 export * from './wish-list-repository.abstract';
 export * from './user-situation.abstract';
 export * from './book-images-repository.abstract';
-export * from './autoRelationbooks.abstract';
+export * from './request-repository.abstract';
 export * from './book-categories.abstract';
