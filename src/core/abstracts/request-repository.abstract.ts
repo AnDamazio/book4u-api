@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { UpdateResult } from "typeorm";
 
 export abstract class IRequestRepository<T> {
@@ -12,3 +13,12 @@ export abstract class IRequestRepository<T> {
     abstract findExchangeById(id: number): Promise<T>
 
 }
+=======
+export abstract class IRequestRepository<T> {
+  abstract create(request: T): Promise<T>;
+
+  abstract findAllRequest(id: string): Promise<T[]>;
+
+  abstract deleteRequest(id: string): Promise<any>;
+}
+>>>>>>> 0587f5a94a366ffcb70a7556f72868f380c5b4be

@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 import { Book } from './book.model';
 import { ExchangeHistory } from './exchange-history.model';
-import { User } from './user.model';
 
 @Entity()
 export class Request {

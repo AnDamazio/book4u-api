@@ -54,4 +54,4 @@ import "dotenv/config";
   ],
   exports: [IDataServices],
 })
-export class MysqlDataServicesModule {}
+export class MysqlDataServicesModule { }

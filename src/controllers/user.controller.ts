@@ -10,11 +10,8 @@ import {
   Request,
   UseGuards,
   Param,
-  UseInterceptors,
-  UploadedFile,
   Put,
   Get,
-  Req,
 } from "@nestjs/common";
 import {
   CreatePersonalDataDto,
@@ -24,11 +21,9 @@ import {
 import { UserServices } from "src/service/use-cases/user/user-services.service";
 import { UserFactoryService } from "src/service/use-cases/user";
 import { LocalAuthGuard } from "src/frameworks/auth/local-auth.guard";
-import { FileInterceptor } from "@nestjs/platform-express";
 import * as nodemailer from "nodemailer";
 import { SMTP_CONFIG } from "../smtp/smtp-config";
 import { AuthService } from "src/frameworks/auth/auth.service";
-import { AuthGuard } from "@nestjs/passport";
 import * as jwt from "jsonwebtoken";
 import { PictureDto } from "../core/dtos";
 
@@ -236,25 +231,6 @@ export class UserController {
     }
   }
 
-  @Get("google")
-  @UseGuards(AuthGuard("google"))
-  async googleAuth(@Req() req) { }
-
-  @Get("google/redirect")
-  @UseGuards(AuthGuard("google"))
-  googleAuthRedirect(@Req() req) {
-    this.userServices.createUser(req.user);
-
-    if (!req.user) {
-      return "No user from google";
-    }
-
-    return {
-      message: "User information from google",
-      user: req.user,
-    };
-  }
-
   @Get("/getUserByToken/:token")
   async getUserById(@Param("token") token: string) {
     try {
@@ -267,3 +243,4 @@ export class UserController {
     }
   }
 }
+
