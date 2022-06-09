@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToOne,
+  OneToMany,
 } from "typeorm";
 import { Request } from "./request.model";
 import { User } from "./user.model";
@@ -18,7 +19,7 @@ export class ExchangeHistory {
   @Column()
   exchangeDate: string;
 
-  @ManyToOne(() => Request, (request) => request.exchangeHistory)
+  @OneToMany(() => Request, (request) => request.exchangeHistory)
   @JoinColumn()
   request: Request[];
 }
