@@ -12,3 +12,4 @@ export * from "./book-images.model";
 export * from "./book-categories.model";
 export * from "./request.model";
 export * from "./exchange-history.model";
+export * from './exchange-with-credit.model'

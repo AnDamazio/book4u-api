@@ -5,7 +5,9 @@ export abstract class IRequestRepository<T> {
 
   abstract updateExchangeBooks(id: number, book: T): Promise<UpdateResult>
 
-  abstract exchangeNotification(token: string): Promise<T>
+  abstract exchangeNotificationOwner1(token: string): Promise<T[]>
+
+  abstract exchangeNotificationOwner2(token: string): Promise<T[]>
 
   abstract getIdFromExchangeBook(exchange: T): Promise<T>
 

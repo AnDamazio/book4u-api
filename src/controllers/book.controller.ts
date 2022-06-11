@@ -54,7 +54,7 @@ export class BookController {
     private bookCategoriesServices: BookCategoriesServices,
     private bookImagesServices: BookImagesServices,
     private userServices: UserServices,
-    private requestServices: RequestServices
+
   ) { }
 
   @Post(":token")
@@ -166,104 +166,6 @@ export class BookController {
     return await this.bookServices.getUserLibrary(Number(id));
   }
 
-  @Post("exchangeBookWithBook/:book1/:book2")
-  async createExchangeBooks(
-    @Param("book1") book1: number,
-    @Param("book2") book2: number
-  ) {
-    try {
-      const getBook1 = await this.bookServices.findBookByPk(book1);
-      const getBook2 = await this.bookServices.findBookByPk(book2);
-      const createExchangeBooksDto = {
-        situation: ExchangeSituation.PENDENTE,
-        book1: getBook1,
-        book2: getBook2,
-        createdAt: String(Date.now()),
-      };
-      getBook1.status = "Indisponível";
-      await this.bookServices.updateBook(book1, getBook1);
-      await this.bookServices.updateBook(book2, getBook2);
-      const getIdFromExchange =
-        await this.requestServices.createExchangeBooks(
-          createExchangeBooksDto
-        );
-      return {
-        text: "Proposta de troca enviada",
-        idFromExchange:
-          await this.requestServices.getIdFromExchange(
-            getIdFromExchange
-          ),
-      };
-    } catch (err) {
-      return err.message;
-    }
-  }
-
-  @Put("confirmExchangeBook/:id/:confirm")
-  async confirmExchangeBook(
-    @Param("confirm") confirm: string,
-    @Param("id") id: number
-  ) {
-    try {
-      const findedAutoRelation = await this.requestServices.findExchangeById(id);
-      if (confirm === "Confirmado") {
-        findedAutoRelation.situation = ExchangeSituation.CONFIRMADO;
-        findedAutoRelation.book2.status = Status.INDISPONIVEL;
-        const bookId = await this.bookServices.getIdFromBook(findedAutoRelation.book2)
-        await this.bookServices.updateBook(bookId, findedAutoRelation.book2);
-        await this.requestServices.updateExchangeBooks(id, findedAutoRelation);
-
-        if (findedAutoRelation.book1.price > findedAutoRelation.book2.price) {
-          const calcPoints = (Number(findedAutoRelation.book1.price) - Number(findedAutoRelation.book2.price))
-          const pointsToString = String(Number(findedAutoRelation.book1.owner.credits) + calcPoints)
-          findedAutoRelation.book1.owner.credits = pointsToString;
-          const userId = await this.userServices.getIdFromUser(findedAutoRelation.book1.owner)
-          await this.userServices.updateUser(Number(userId), findedAutoRelation.book1.owner)
-          return "Troca confirmada";
-
-        } else if (findedAutoRelation.book2.price > findedAutoRelation.book1.price) {
-          const calcPoints = (Number(findedAutoRelation.book2.price) - Number(findedAutoRelation.book1.price))
-          const pointsToString = String(Number(findedAutoRelation.book2.owner.credits) + calcPoints)
-          findedAutoRelation.book2.owner.credits = pointsToString;
-          const userId = await this.userServices.getIdFromUser(findedAutoRelation.book2.owner)
-          await this.userServices.updateUser(Number(userId), findedAutoRelation.book2.owner)
-          return "Troca confirmada";
-        }
-        return "Troca confirmada"
-      } else if (confirm === "Recusado") {
-        findedAutoRelation.situation = ExchangeSituation.RECUSADO;
-        findedAutoRelation.book1.status = "Disponível";
-        const bookId = await this.bookServices.getIdFromBook(findedAutoRelation.book1)
-        await this.bookServices.updateBook(Number(bookId), findedAutoRelation.book1)
-        await this.requestServices.updateExchangeBooks(
-          id,
-          findedAutoRelation
-        );
-        return "Troca Recusada";
-      }
-    } catch (err) {
-      return err.message;
-    }
-  }
-
-  @Get("tradeNotification/:token")
-  async createNotificationByToken(@Param("token") token: string) {
-    try {
-      const findNotification =
-        await this.requestServices.exchangeNotification(token);
-      if (findNotification) {
-        return {
-          text: `O usuário ${findNotification.book1.owner.firstName} deseja realizar uma troca`,
-          user1Book: findNotification.book1,
-          user2Book: findNotification.book2,
-        };
-      } else {
-        return "Sem notificações";
-      }
-    } catch (err) {
-      return err.message;
-    }
-  }
 
   @Get("get-books-in/:category/:token")
   async a(@Param("category") category: string, @Param("token") token: string) {

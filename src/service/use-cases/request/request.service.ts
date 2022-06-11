@@ -18,9 +18,17 @@ export class RequestServices {
     );
   }
 
-  async exchangeNotification(token: string): Promise<Request> {
+  async exchangeNotificationOwner1(token: string): Promise<Request[]> {
     try {
-      return await this.dataServices.request.exchangeNotification(token)
+      return await this.dataServices.request.exchangeNotificationOwner1(token)
+    } catch (err) {
+      return err.message
+    }
+  }
+
+  async exchangeNotificationOwner2(token: string): Promise<Request[]> {
+    try {
+      return await this.dataServices.request.exchangeNotificationOwner2(token)
     } catch (err) {
       return err.message
     }

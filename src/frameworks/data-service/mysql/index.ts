@@ -10,3 +10,4 @@ export * from './mysql-publisher.repository';
 export * from './mysql-category.repository';
 export * from './mysql-user-situation.repository'
 export * from './mysql-book-images.repository'
+export * from './mysql-exchange-with-credit.repository'

@@ -33,10 +33,9 @@ export class Request {
   @Column()
   createdAt: string;
 
-  @ManyToOne(
+  @OneToMany(
     () => ExchangeHistory,
     (exchangeHistory) => exchangeHistory.request
   )
-  @JoinColumn()
   exchangeHistory: ExchangeHistory;
 }

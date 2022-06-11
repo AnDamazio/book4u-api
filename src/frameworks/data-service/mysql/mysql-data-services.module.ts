@@ -14,6 +14,7 @@ import {
   Wish,
   Request,
   BookCategories,
+  ExchangeWithCredit
 } from "./model";
 import { MysqlDataServices } from "./mysql-data-services.service";
 import "dotenv/config";
@@ -34,6 +35,7 @@ import "dotenv/config";
       Wish,
       Request,
       BookCategories,
+      ExchangeWithCredit
     ]),
     TypeOrmModule.forRoot({
       type: "mysql",

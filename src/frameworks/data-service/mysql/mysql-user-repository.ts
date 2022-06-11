@@ -27,7 +27,7 @@ export class MysqlUserRepository<T> implements IUserRepository<T> {
     return await this._repository.update(id, fileName);
   }
 
-  async getIdFromUser(user: T): Promise<T> {
+  async getIdFromUser(user: T): Promise<Number | String> {
     return await this._repository.getId(user);
   }
 

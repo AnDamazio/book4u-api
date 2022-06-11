@@ -11,3 +11,4 @@ export * from "./wish-list.entity";
 export * from "./book-categories.entity";
 export * from "./exchange-history.entity";
 export * from './request.entity'
+export * from './exchange-with-credit.entity'

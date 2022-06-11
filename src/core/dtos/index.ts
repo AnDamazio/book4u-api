@@ -16,3 +16,4 @@ export * from "./create-personal-data-response.dto";
 export * from "./partial-personal-data.dto";
 export * from "./exchange-books.dto";
 export * from "./picture.dto";
+export * from './exchange-with-credit.dto'

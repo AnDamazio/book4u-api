@@ -14,6 +14,7 @@ import {
   Wish,
   Category,
   Request,
+  ExchangeWithCredit
 } from './model';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { IDataServices } from 'src/core';
@@ -28,11 +29,11 @@ import { MysqlWishListRepository } from './mysql-wish-list.repository';
 import { MysqlBookImagesRepository } from './mysql-book-images.repository';
 import { MysqlRequestRepository } from './mysql-request.repository';
 import { MysqlBookCategoriesRepository } from './mysql-book-categories.repository';
+import { MysqlExchangeWithCreditRepository } from './mysql-exchange-with-credit.repository';
 
 @Injectable()
 export class MysqlDataServices
-  implements IDataServices, OnApplicationBootstrap
-{
+  implements IDataServices, OnApplicationBootstrap {
   user: MysqlUserRepository<User>;
   personalData: MysqlPersonalDataRepository<PersonalData>;
   book: MysqlBookRepository<Book>;
@@ -45,6 +46,7 @@ export class MysqlDataServices
   wishList: MysqlWishListRepository<Wish>;
   request: MysqlRequestRepository<Request>;
   bookCategories: MysqlBookCategoriesRepository<BookCategories>;
+  exchangeWithCredit: MysqlExchangeWithCreditRepository<ExchangeWithCredit>;
 
   constructor(
     @InjectRepository(User) private UserRepository: Repository<User>,
@@ -68,7 +70,9 @@ export class MysqlDataServices
     private RequestRepository: Repository<Request>,
     @InjectRepository(BookCategories)
     private BookCategoriesRepository: Repository<BookCategories>,
-  ) {}
+    @InjectRepository(ExchangeWithCredit)
+    private ExchangeWithCreditRepository: Repository<ExchangeWithCredit>,
+  ) { }
 
   onApplicationBootstrap() {
     this.user = new MysqlUserRepository<User>(this.UserRepository);
@@ -100,5 +104,8 @@ export class MysqlDataServices
     this.bookCategories = new MysqlBookCategoriesRepository<BookCategories>(
       this.BookCategoriesRepository,
     );
+    this.exchangeWithCredit = new MysqlExchangeWithCreditRepository<ExchangeWithCredit>(
+      this.ExchangeWithCreditRepository,
+    )
   }
 }

@@ -8,6 +8,7 @@ import {
   OneToOne,
   OneToMany,
 } from "typeorm";
+import { ExchangeWithCredit } from "./exchange-with-credit.model";
 import { Request } from "./request.model";
 import { User } from "./user.model";
 
@@ -19,7 +20,11 @@ export class ExchangeHistory {
   @Column()
   exchangeDate: string;
 
-  @OneToMany(() => Request, (request) => request.exchangeHistory)
+  @ManyToOne(() => Request, (request) => request.exchangeHistory)
   @JoinColumn()
   request: Request[];
+
+  @ManyToOne(() => ExchangeWithCredit, (exchangeWithCredit) => exchangeWithCredit.exchangeHistory)
+  @JoinColumn()
+  exchangeWithCredit: ExchangeWithCredit[];
 }

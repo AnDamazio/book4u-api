@@ -28,6 +28,8 @@ import { WishListController } from "./controllers/wish-list.controller";
 import { WishListServicesModule } from "./service/use-cases/wish-list/wish-list-services.module";
 import { CategoryController } from "./controllers/category.controller";
 import { RequestServices, RequestServicesModule } from "./service/use-cases/request";
+import { ExchangeWithCreditServices, ExchangeWithCreditServicesModule } from "./service/use-cases/exchange-with-credit";
+import { ExchangeController } from "./controllers/exchange.controller";
 
 @Module({
   imports: [
@@ -46,6 +48,7 @@ import { RequestServices, RequestServicesModule } from "./service/use-cases/requ
     RequestServicesModule,
     BookCategoriesServicesModule,
     CategoryServicesModule,
+    ExchangeWithCreditServicesModule
   ],
   controllers: [
     AppController,
@@ -55,6 +58,7 @@ import { RequestServices, RequestServicesModule } from "./service/use-cases/requ
     PersonalDataController,
     WishListController,
     CategoryController,
+    ExchangeController
   ],
   providers: [
     AppService,
@@ -66,7 +70,8 @@ import { RequestServices, RequestServicesModule } from "./service/use-cases/requ
     BookServices,
     RequestServices,
     BookCategoriesServices,
-    CategoryServices
+    CategoryServices,
+    ExchangeWithCreditServices
   ],
 })
-export class AppModule {}
+export class AppModule { }

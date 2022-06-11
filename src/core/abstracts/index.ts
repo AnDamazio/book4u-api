@@ -13,3 +13,4 @@ export * from './user-situation.abstract';
 export * from './book-images-repository.abstract';
 export * from './request-repository.abstract';
 export * from './book-categories.abstract';
+export * from './exchange-with-credit.abstract'

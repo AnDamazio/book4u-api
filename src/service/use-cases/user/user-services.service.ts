@@ -60,11 +60,11 @@ export class UserServices {
     }
   }
 
-  async getIdFromUser(user: User): Promise<User> {
+  async getIdFromUser(user: User): Promise<Number | String> {
     return await this.dataServices.user.getIdFromUser(user);
   }
 
-  findByEmail(email: string): Promise<User> {
+  async findByEmail(email: string): Promise<User> {
     const personal_data = this.dataServices.user.findOneByEmail(email);
     return personal_data;
   }

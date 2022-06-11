@@ -13,7 +13,7 @@ export abstract class IUserRepository<T> {
 
   abstract updateSituationUser(id: number, newUser: T): Promise<UpdateResult | Error>
 
-  abstract getIdFromUser(user: T): Promise<T>;
+  abstract getIdFromUser(user: T): Promise<Number | String>;
 
   abstract findOneByEmail(email: string): Promise<T>;
 
