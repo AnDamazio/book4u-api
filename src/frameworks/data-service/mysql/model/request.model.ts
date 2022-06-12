@@ -35,7 +35,10 @@ export class Request {
 
   @OneToMany(
     () => ExchangeHistory,
-    (exchangeHistory) => exchangeHistory.request
+    (exchangeHistory) => exchangeHistory.request,
+    {
+      cascade: true,
+    }
   )
   exchangeHistory: ExchangeHistory;
 }

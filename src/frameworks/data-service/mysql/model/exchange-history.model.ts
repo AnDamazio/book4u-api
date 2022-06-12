@@ -1,3 +1,4 @@
+import { ExchangeType } from "src/core";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -20,11 +21,31 @@ export class ExchangeHistory {
   @Column()
   exchangeDate: string;
 
-  @ManyToOne(() => Request, (request) => request.exchangeHistory)
+  @Column({
+    type: "enum",
+    enum: ExchangeType,
+  })
+  exchangeType: ExchangeType;
+
+  @ManyToOne(() => Request, (request) => request.exchangeHistory, {
+    nullable: true,
+  })
   @JoinColumn()
   request: Request[];
 
-  @ManyToOne(() => ExchangeWithCredit, (exchangeWithCredit) => exchangeWithCredit.exchangeHistory)
+  @ManyToOne(
+    () => ExchangeWithCredit,
+    (exchangeWithCredit) => exchangeWithCredit.exchangeHistory,
+    {
+      nullable: true,
+      eager: true,
+    }
+  )
   @JoinColumn()
   exchangeWithCredit: ExchangeWithCredit[];
+
+  @OneToMany(() => User, (user) => user.exchangeHistory, {
+    nullable: true,
+  })
+  user: User[];
 }
