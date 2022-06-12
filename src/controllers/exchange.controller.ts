@@ -115,17 +115,21 @@ export class ExchangeController {
             if (findNotification.length > 0) {
                 return await Promise.all(findNotification.map(async (notifications) => {
                     const id = await this.requestServices.getIdFromExchange(notifications)
+                    const userId = await this.userServices.getIdFromUser(notifications.book2.owner)
+                    const userFound = await this.userServices.getUserById(Number(userId))
                     return {
                         tradeId: id,
                         situation: notifications.situation,
                         bookRequired: {
                             name: notifications.book2.name,
+                            bookImages: notifications.book2.bookImages,
                             owner: notifications.book2.owner.firstName + " " + notifications.book2.owner.lastName,
-                            ownerPicture: notifications.book2.owner.picture,
-                            ownerState: notifications.book2.owner.personalData.state || '',
-                            ownerCity: notifications.book2.owner.personalData.city || ''
+                            ownerPicture: userFound.picture,
+                            ownerState: userFound.personalData.state || '',
+                            ownerCity: userFound.personalData.city || ''
                         }
                     }
+
                 }))
             } else {
                 return "Sem notificações";
@@ -142,26 +146,16 @@ export class ExchangeController {
             if (findNotification.length > 0) {
                 return await Promise.all(findNotification.map(async (notifications) => {
                     const id = await this.requestServices.getIdFromExchange(notifications)
-                    if (notifications.book2.owner.personalData.token == token) {
-                        return {
-                            text: `O usuário ${notifications.book1.owner.firstName + " " + notifications.book1.owner.lastName} deseja realizar uma troca`,
-                            tradeId: id,
-                            bookOffered: {
-                                name: notifications.book1.name,
-                                bookImages: notifications.book1.bookImages,
-                                owner1: notifications.book1.owner.firstName + " " + notifications.book1.owner.lastName,
-                                owner1Picture: notifications.book1.owner.picture,
-                                owner1State: notifications.book1.owner.personalData.state || '',
-                                owner1City: notifications.book1.owner.personalData.city || ''
-                            },
-                            requiredBook: {
-                                name: notifications.book2.name,
-                                bookImages: notifications.book2.bookImages,
-                                owner2: notifications.book2.owner.firstName + " " + notifications.book2.owner.lastName,
-                                owner2Picture: notifications.book2.owner.picture,
-                                owner2State: notifications.book1.owner.personalData.state || '',
-                                owner2City: notifications.book1.owner.personalData.city || ''
-                            }
+                    const userId = await this.userServices.getIdFromUser(notifications.book1.owner)
+                    const userFound = await this.userServices.getUserById(Number(userId))
+                    return {
+                        tradeId: id,
+                        situation: notifications.situation,
+                        userRequested: {
+                            owner: userFound.firstName + " " + userFound.lastName,
+                            picture: userFound.picture,
+                            state: userFound.personalData.state || '',
+                            city: userFound.personalData.city || ''
                         }
                     }
                 }))
@@ -288,18 +282,57 @@ export class ExchangeController {
                             userPicture: notifications.user.picture,
                             userCity: notifications.user.personalData.city || '',
                             userState: notifications.user.personalData.state || ''
-                        },
-                        requiredBook: {
-                            name: notifications.book.name,
-                            bookImages: notifications.book.bookImages,
-                            owner: notifications.book.owner.firstName + " " + notifications.book.owner.lastName,
-                            ownerPicture: notifications.book.owner.picture
                         }
                     }
                 }
                 ))
             } else {
                 return "Nenhum pedido de troca"
+            }
+        } catch (err) {
+            return err.message
+        }
+    }
+
+    @Get("getRequestById/:id")
+    async getRequestById(@Param('id') id: string) {
+        try {
+            const exchangeFound = await this.requestServices.findExchangeById(Number(id))
+            return {
+                bookOffered: {
+                    name: exchangeFound.book1.name,
+                    author: exchangeFound.book1.author,
+                    price: exchangeFound.book1.price,
+                    images: exchangeFound.book1.bookImages,
+                    owner: exchangeFound.book1.owner
+                },
+                requiredBook: {
+                    name: exchangeFound.book2.name,
+                    author: exchangeFound.book2.author,
+                    price: exchangeFound.book2.price,
+                    images: exchangeFound.book2.bookImages,
+                    owner: exchangeFound.book2.owner
+                }
+            }
+        } catch (err) {
+            return err.message
+        }
+    }
+
+    @Get("getCreditRequestById/:id")
+    async getCreditRequestById(@Param('id') id: string) {
+        try {
+            const exchangeCreditFound = await this.exchangeWithCreditServices.findById(Number(id))
+            return {
+                creditToReceive: exchangeCreditFound.book.price,
+                buyerUser: exchangeCreditFound.user.firstName + " " + exchangeCreditFound.user.lastName,
+                requiredBook: {
+                    name: exchangeCreditFound.book.name,
+                    author: exchangeCreditFound.book.author,
+                    price: exchangeCreditFound.book.price,
+                    images: exchangeCreditFound.book.bookImages,
+                    owner: exchangeCreditFound.book.owner
+                },
             }
         } catch (err) {
             return err.message

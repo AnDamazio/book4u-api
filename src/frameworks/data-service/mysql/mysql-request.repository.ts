@@ -18,14 +18,14 @@ export class MysqlRequestRepository<T> implements IRequestRepository<T> {
 
   async exchangeNotificationOwner1(token: string): Promise<T[]> {
     return await this._repository.find({
-      relations: ['book2', 'book1', 'book2.owner', 'book1.owner', 'book1.owner.personalData', 'book1.bookImages', 'book2.bookImages', 'book2.owner.personalData'],
+      relations: ['book2', 'book1', 'book2.owner', 'book1.owner', 'book1.owner.personalData', 'book1.bookImages', 'book2.bookImages', 'book1.author', 'book2.author'],
       where: { book1: { owner: { personalData: { token: token } } } }
     })
   }
 
   async exchangeNotificationOwner2(token: string): Promise<T[]> {
     return await this._repository.find({
-      relations: ['book2', 'book1', 'book2.owner', 'book1.owner', 'book2.owner.personalData', 'book1.bookImages', 'book2.bookImages', 'book1.owner.personalData'],
+      relations: ['book2', 'book1', 'book2.owner', 'book1.owner', 'book2.owner.personalData', 'book1.bookImages', 'book2.bookImages', 'book1.author', 'book2.author'],
       where: { book2: { owner: { personalData: { token: token } } } }
     })
   }
@@ -35,6 +35,6 @@ export class MysqlRequestRepository<T> implements IRequestRepository<T> {
   }
 
   async findExchangeById(id: number): Promise<T> {
-    return await this._repository.findOne(id, { relations: ['book2', 'book1', 'book2.owner', 'book1.owner'] })
+    return await this._repository.findOne(id, { relations: ['book2', 'book1', 'book2.owner', 'book1.owner', 'book1.bookImages', 'book2.bookImages', 'book1.author', 'book2.author'] })
   }
 }
