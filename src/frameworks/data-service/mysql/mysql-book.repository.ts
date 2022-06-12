@@ -30,7 +30,7 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
 
   async getUserLibrary(id: number): Promise<T[]> {
     return await this._repository.find({
-      where: { owner: id },
+      where: [{ owner: id, status: 'Disponível' }],
       relations: ["bookImages", "owner", "author", "language", "publisher"],
     });
   }
