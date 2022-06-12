@@ -19,7 +19,10 @@ import { BookServicesModule } from "./service/use-cases/book/book-services.modul
 import { AuthorServicesModule } from "./service/use-cases/author";
 import { LanguageServicesModule } from "./service/use-cases/language";
 import { PublisherServicesModule } from "./service/use-cases/publisher/publisher-services.module";
-import { CategoryServices, CategoryServicesModule } from "./service/use-cases/category";
+import {
+  CategoryServices,
+  CategoryServicesModule,
+} from "./service/use-cases/category";
 import { UserSituationServicesModule } from "./service/use-cases/userSituation";
 import { BookImagesServicesModule } from "./service/use-cases/bookImages";
 import { TokenController } from "./controllers/token.controller";
@@ -27,9 +30,19 @@ import { WishListServices } from "./service/use-cases/wish-list";
 import { WishListController } from "./controllers/wish-list.controller";
 import { WishListServicesModule } from "./service/use-cases/wish-list/wish-list-services.module";
 import { CategoryController } from "./controllers/category.controller";
-import { RequestServices, RequestServicesModule } from "./service/use-cases/request";
-import { ExchangeWithCreditServices, ExchangeWithCreditServicesModule } from "./service/use-cases/exchange-with-credit";
+import {
+  RequestServices,
+  RequestServicesModule,
+} from "./service/use-cases/request";
+import {
+  ExchangeWithCreditServices,
+  ExchangeWithCreditServicesModule,
+} from "./service/use-cases/exchange-with-credit";
 import { ExchangeController } from "./controllers/exchange.controller";
+import {
+  ExchangeHistoryServices,
+  ExchangeHistoryServicesModule,
+} from "./service/use-cases/exchange-history";
 
 @Module({
   imports: [
@@ -48,7 +61,8 @@ import { ExchangeController } from "./controllers/exchange.controller";
     RequestServicesModule,
     BookCategoriesServicesModule,
     CategoryServicesModule,
-    ExchangeWithCreditServicesModule
+    ExchangeWithCreditServicesModule,
+    ExchangeHistoryServicesModule,
   ],
   controllers: [
     AppController,
@@ -58,7 +72,7 @@ import { ExchangeController } from "./controllers/exchange.controller";
     PersonalDataController,
     WishListController,
     CategoryController,
-    ExchangeController
+    ExchangeController,
   ],
   providers: [
     AppService,
@@ -71,7 +85,8 @@ import { ExchangeController } from "./controllers/exchange.controller";
     RequestServices,
     BookCategoriesServices,
     CategoryServices,
-    ExchangeWithCreditServices
+    ExchangeWithCreditServices,
+    ExchangeHistoryServices,
   ],
 })
-export class AppModule { }
+export class AppModule {}

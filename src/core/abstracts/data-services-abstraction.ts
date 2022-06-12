@@ -1,4 +1,4 @@
-import { IBookImagesRepository, IPersonalDataRepository } from 'src/core';
+import { IBookImagesRepository, IPersonalDataRepository } from "src/core";
 import {
   User,
   PersonalData,
@@ -10,20 +10,22 @@ import {
   BookImages,
   Request,
   BookCategories,
-  ExchangeWithCredit
-} from '../entities';
-import { IAuthorRepository } from './author-repository.abstract';
-import { IBookRepository } from './book-repository.abstract';
-import { ILanguageRepository } from './language-repository.abstract';
-import { Category } from 'src/frameworks/data-service/mysql/model/category.model';
-import { ICategoryRepository } from './category-repository.abstract';
-import { IPublisherRepository } from './publisher-repository.abstract';
-import { IUserRepository } from './user-repository-abstract';
-import { IUserSituationRepository } from './user-situation.abstract';
-import { IBookCategoriesRepository, IWishListRepository } from '.';
-import { WishList } from '../entities/wish-list.entity';
-import { IRequestRepository } from './request-repository.abstract';
-import { IExchangeWithCreditRepository } from './exchange-with-credit.abstract'
+  ExchangeWithCredit,
+  ExchangeHistory,
+} from "../entities";
+import { IAuthorRepository } from "./author-repository.abstract";
+import { IBookRepository } from "./book-repository.abstract";
+import { ILanguageRepository } from "./language-repository.abstract";
+import { Category } from "src/frameworks/data-service/mysql/model/category.model";
+import { ICategoryRepository } from "./category-repository.abstract";
+import { IPublisherRepository } from "./publisher-repository.abstract";
+import { IUserRepository } from "./user-repository-abstract";
+import { IUserSituationRepository } from "./user-situation.abstract";
+import { IBookCategoriesRepository, IWishListRepository } from ".";
+import { WishList } from "../entities/wish-list.entity";
+import { IRequestRepository } from "./request-repository.abstract";
+import { IExchangeWithCreditRepository } from "./exchange-with-credit.abstract";
+import { IExchangeHistoryRepository } from "./exchange-history-repository.abstract";
 
 export abstract class IDataServices {
   abstract user: IUserRepository<User>;
@@ -38,5 +40,6 @@ export abstract class IDataServices {
   abstract wishList: IWishListRepository<WishList>;
   abstract request: IRequestRepository<Request>;
   abstract bookCategories: IBookCategoriesRepository<BookCategories>;
-  abstract exchangeWithCredit: IExchangeWithCreditRepository<ExchangeWithCredit>
+  abstract exchangeWithCredit: IExchangeWithCreditRepository<ExchangeWithCredit>;
+  abstract exchangeHistory: IExchangeHistoryRepository<ExchangeHistory>;
 }
