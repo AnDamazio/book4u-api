@@ -1,7 +1,12 @@
 import { UserServices } from "src/service";
 import { JwtAuthGuard } from "src/frameworks/auth/jwt-auth.guard";
 import * as jwt from "jsonwebtoken";
-import { Status } from "src/core";
+import {
+  ExchangeHistory,
+  ExchangeHistoryDto,
+  ExchangeType,
+  Status,
+} from "src/core";
 import {
   Controller,
   Post,
@@ -15,6 +20,7 @@ import { BookServices, BookFactoryService } from "../service/use-cases/book/";
 import { ExchangeWithCreditServices } from "../service/use-cases/exchange-with-credit";
 import { RequestServices } from "../service/use-cases/request";
 import { ExchangeSituation } from "./../core/enums/exchange-situation.enum";
+import { ExchangeHistoryServices } from "src/service/use-cases/exchange-history";
 
 @Controller("api/exchange")
 @UseGuards(JwtAuthGuard)
@@ -23,7 +29,8 @@ export class ExchangeController {
     private bookServices: BookServices,
     private userServices: UserServices,
     private exchangeWithCreditServices: ExchangeWithCreditServices,
-    private requestServices: RequestServices
+    private requestServices: RequestServices,
+    private exchangeHistory: ExchangeHistoryServices
   ) {}
 
   @Post("exchangeBookWithBook/:book1/:book2")
@@ -66,6 +73,7 @@ export class ExchangeController {
       const findedAutoRelation = await this.requestServices.findExchangeById(
         id
       );
+      const exchangeHistory = new ExchangeHistoryDto();
       if (confirm === "Confirmado") {
         findedAutoRelation.situation = ExchangeSituation.CONFIRMADO;
         findedAutoRelation.book2.status = Status.INDISPONIVEL;
@@ -110,6 +118,13 @@ export class ExchangeController {
           );
           return "Troca confirmada";
         }
+        exchangeHistory.exchangeDate = "";
+        exchangeHistory.request = [findedAutoRelation];
+        exchangeHistory.exchangeWithCredit = [];
+        exchangeHistory.user = [findedAutoRelation.book1.owner];
+        exchangeHistory.exchangeType = ExchangeType.LIVRO;
+        console.log("funfou");
+        console.log(await this.exchangeHistory.saveRegistry(exchangeHistory));
         return "Troca confirmada";
       } else if (confirm === "Recusado") {
         findedAutoRelation.situation = ExchangeSituation.RECUSADO;
@@ -255,7 +270,7 @@ export class ExchangeController {
     @Param("id") id: number
   ) {
     try {
-      console.log("oi");
+      const exchangeHistory = new ExchangeHistoryDto();
       const findedCreditExchange =
         await this.exchangeWithCreditServices.findById(Number(id));
       if (confirm === "Confirmado") {
@@ -290,6 +305,15 @@ export class ExchangeController {
           id,
           findedCreditExchange
         );
+
+        exchangeHistory.exchangeDate = "";
+        exchangeHistory.request = [];
+        console.log(findedCreditExchange);
+        exchangeHistory.exchangeWithCredit = [findedCreditExchange];
+        exchangeHistory.user = [findedCreditExchange.user];
+        exchangeHistory.exchangeType = ExchangeType.PONTOS;
+        console.log("funfou");
+        console.log(await this.exchangeHistory.saveRegistry(exchangeHistory));
 
         return "Solicitação confirmada";
       } else if (confirm === "Recusado") {
