@@ -43,4 +43,8 @@ export class MysqlExchangeHistoryRepository<T>
       }
     }
   }
+
+  async findOne(userId: number): Promise<any> {
+    return Promise;
+  }
 }
