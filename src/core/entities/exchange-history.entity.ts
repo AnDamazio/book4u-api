@@ -1,7 +1,7 @@
+import { ExchangeWithCredit } from ".";
 import { User } from "./user.entity";
-
 export class ExchangeHistory {
   exchangeDate: string;
-  request: string;
-  user: User[];
+  request?: Request[];
+  exchangeWithCredit?: ExchangeWithCredit[];
 }

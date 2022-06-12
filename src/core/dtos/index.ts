@@ -14,6 +14,7 @@ export * from "./refresh-token.dto";
 export * from "./google-user.dto";
 export * from "./create-personal-data-response.dto";
 export * from "./partial-personal-data.dto";
-export * from "./exchange-books.dto";
+export * from "./request-books.dto";
 export * from "./picture.dto";
-export * from './exchange-with-credit.dto'
+export * from "./exchange-with-credit.dto";
+export * from "./exchange-history.dto";
