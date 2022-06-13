@@ -73,7 +73,7 @@ export class ExchangeController {
       const findedAutoRelation = await this.requestServices.findExchangeById(
         id
       );
-      const exchangeHistory = new ExchangeHistoryDto();
+      let exchangeHistory = new ExchangeHistoryDto();
       if (confirm === "Confirmado") {
         findedAutoRelation.situation = ExchangeSituation.CONFIRMADO;
         findedAutoRelation.book2.status = Status.INDISPONIVEL;
@@ -118,13 +118,27 @@ export class ExchangeController {
           );
           return "Troca confirmada";
         }
+
         exchangeHistory.exchangeDate = "";
         exchangeHistory.request = [findedAutoRelation];
         exchangeHistory.exchangeWithCredit = [];
-        exchangeHistory.user = [findedAutoRelation.book1.owner];
+        exchangeHistory.user = [
+          findedAutoRelation.book1.owner,
+          findedAutoRelation.book2.owner,
+        ];
+        console.log(
+          findedAutoRelation.book1.owner,
+          findedAutoRelation.book2.owner
+        );
         exchangeHistory.exchangeType = ExchangeType.LIVRO;
-        console.log("funfou");
-        console.log(await this.exchangeHistory.saveRegistry(exchangeHistory));
+        await this.exchangeHistory.saveRegistry(exchangeHistory);
+
+        // exchangeHistory.exchangeDate = "";
+        // exchangeHistory.request = [findedAutoRelation];
+        // exchangeHistory.exchangeWithCredit = [];
+        // exchangeHistory.user = [findedAutoRelation.book2.owner];
+        // exchangeHistory.exchangeType = ExchangeType.LIVRO;
+        // await this.exchangeHistory.saveRegistry(exchangeHistory);
         return "Troca confirmada";
       } else if (confirm === "Recusado") {
         findedAutoRelation.situation = ExchangeSituation.RECUSADO;

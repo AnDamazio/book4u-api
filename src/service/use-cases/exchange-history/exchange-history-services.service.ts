@@ -9,4 +9,8 @@ export class ExchangeHistoryServices {
   async saveRegistry(exchangeHistory: ExchangeHistoryDto) {
     return await this.dataServices.exchangeHistory.create(exchangeHistory);
   }
+
+  async findHistory(userId: number) {
+    return await this.dataServices.exchangeHistory.findOne(userId);
+  }
 }
