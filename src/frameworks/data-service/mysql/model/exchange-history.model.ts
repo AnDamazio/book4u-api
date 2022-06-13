@@ -44,7 +44,7 @@ export class ExchangeHistory {
   @JoinColumn()
   exchangeWithCredit: ExchangeWithCredit[];
 
-  @OneToMany(() => User, (user) => user.exchangeHistory, {
+  @ManyToOne(() => User, (user) => user.exchangeHistory, {
     nullable: true,
   })
   user: User[];

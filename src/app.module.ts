@@ -43,6 +43,7 @@ import {
   ExchangeHistoryServices,
   ExchangeHistoryServicesModule,
 } from "./service/use-cases/exchange-history";
+import { HistoryController } from "./controllers/history.controller";
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import {
     WishListController,
     CategoryController,
     ExchangeController,
+    HistoryController
   ],
   providers: [
     AppService,

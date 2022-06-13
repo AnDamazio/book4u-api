@@ -50,6 +50,6 @@ export class User {
   @OneToMany(() => Book, (book) => book.owner)
   book: Book[];
 
-  @ManyToOne(() => ExchangeHistory, (exchange) => exchange.user)
+  @OneToMany(() => ExchangeHistory, (exchange) => exchange.user)
   exchangeHistory: ExchangeHistory;
 }
