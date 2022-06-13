@@ -50,14 +50,14 @@ export class MysqlExchangeHistoryRepository<T>
   async findOne(userId: number): Promise<any> {
     const historyArray = [];
 
-    const book1 = await this._repository.query(`select book.*
+    let book1 = await this._repository.query(`select book.*
       from exchange_history
       cross join request
       cross join book
       where exchange_history.userId = ${userId} and request.id = exchange_history.requestId and book.id = request.book1Id
       group by exchange_history.id;`);
 
-    const book2 = await this._repository.query(`select book.*
+    let book2 = await this._repository.query(`select book.*
     from exchange_history
     cross join request
     cross join book
@@ -67,6 +67,16 @@ export class MysqlExchangeHistoryRepository<T>
     for (let i = 0; i < book1.length; i++) {
       const history = new HistoryResponseDto();
 
+      const images1 = await this._repository.query(`select book_images.*
+      from book
+      cross join book_images
+      where book_images.id = book.bookImagesId and book.id = ${book1[i].id};`);
+
+      const images2 = await this._repository.query(`select book_images.*
+      from book
+      cross join book_images
+      where book_images.id = book.bookImagesId and book.id = ${book2[i].id};`);
+
       const dono1 = await this._repository.query(`
     select user.firstName, user.lastName, user.picture, personal_data.streetName, personal_data.complement,
     personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state
@@ -75,6 +85,9 @@ export class MysqlExchangeHistoryRepository<T>
     cross join book
     where book.ownerId = ${book1[i].ownerId} and personal_data.id = user.personalDataId and user.id = ${book1[i].ownerId}
     group by user.id;`);
+
+      book1[i].imagesId = await images1;
+      book2[i].imagesId = await images2;
 
       history.solicitante = dono1[0];
       history.ofertado = await book1[i];
