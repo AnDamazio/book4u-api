@@ -19,7 +19,7 @@ export class ExchangeController {
     private exchangeWithCreditServices: ExchangeWithCreditServices,
     private requestServices: RequestServices,
     private exchangeHistory: ExchangeHistoryServices
-  ) {}
+  ) { }
 
   @Post("exchangeBookWithBook/:book1/:book2")
   async createExchangeBooks(
@@ -58,9 +58,7 @@ export class ExchangeController {
     @Param("id") id: number
   ) {
     try {
-      const findedAutoRelation = await this.requestServices.findExchangeById(
-        id
-      );
+      const findedAutoRelation = await this.requestServices.findExchangeById(id);
       let exchangeHistory = new ExchangeHistoryDto();
       if (confirm === "Confirmado") {
         findedAutoRelation.situation = ExchangeSituation.CONFIRMADO;
@@ -114,19 +112,9 @@ export class ExchangeController {
           findedAutoRelation.book1.owner,
           findedAutoRelation.book2.owner,
         ];
-        console.log(
-          findedAutoRelation.book1.owner,
-          findedAutoRelation.book2.owner
-        );
         exchangeHistory.exchangeType = ExchangeType.LIVRO;
         await this.exchangeHistory.saveRegistry(exchangeHistory);
 
-        // exchangeHistory.exchangeDate = "";
-        // exchangeHistory.request = [findedAutoRelation];
-        // exchangeHistory.exchangeWithCredit = [];
-        // exchangeHistory.user = [findedAutoRelation.book2.owner];
-        // exchangeHistory.exchangeType = ExchangeType.LIVRO;
-        // await this.exchangeHistory.saveRegistry(exchangeHistory);
         return "Troca confirmada";
       } else if (confirm === "Recusado") {
         findedAutoRelation.situation = ExchangeSituation.RECUSADO;
@@ -149,26 +137,24 @@ export class ExchangeController {
   @Get("exchangeInfo/:token")
   async getExhangeInfoNotification(@Param("token") token: string) {
     try {
-      const findNotification =
-        await this.requestServices.exchangeNotificationOwner1(token);
+      const findNotification = await this.requestServices.exchangeNotificationOwner1(token);
       if (findNotification.length > 0) {
         return await Promise.all(
           findNotification.map(async (notifications) => {
-            const id = await this.requestServices.getIdFromExchange(
-              notifications
-            );
+            const id = await this.requestServices.getIdFromExchange(notifications);
+            const userId = await this.userServices.getIdFromUser(notifications.book2.owner)
+            const userFound = await this.userServices.getUserById(Number(userId))
             return {
               tradeId: id,
               situation: notifications.situation,
               bookRequired: {
                 name: notifications.book2.name,
-                owner:
-                  notifications.book2.owner.firstName +
-                  " " +
-                  notifications.book2.owner.lastName,
+                bookImages: notifications.book2.bookImages,
+                author: notifications.book2.author,
+                owner: notifications.book2.owner.firstName + " " + notifications.book2.owner.lastName,
                 ownerPicture: notifications.book2.owner.picture,
-                ownerState: notifications.book2.owner.personalData.state || "",
-                ownerCity: notifications.book2.owner.personalData.city || "",
+                ownerState: userFound.personalData.state || "",
+                ownerCity: userFound.personalData.city || "",
               },
             };
           })
@@ -182,52 +168,26 @@ export class ExchangeController {
   }
 
   @Get("exchangeRequestNotification/:token")
-  async getExchangeInfoNotification(@Param("token") token: string) {
+  async getExchangeRequestNotification(@Param("token") token: string) {
     try {
-      const findNotification =
-        await this.requestServices.exchangeNotificationOwner2(token);
+      const findNotification = await this.requestServices.exchangeNotificationOwner2(token);
       if (findNotification.length > 0) {
         return await Promise.all(
           findNotification.map(async (notifications) => {
-            const id = await this.requestServices.getIdFromExchange(
-              notifications
-            );
-            if (notifications.book2.owner.personalData.token == token) {
-              return {
-                text: `O usuário ${
-                  notifications.book1.owner.firstName +
-                  " " +
-                  notifications.book1.owner.lastName
-                } deseja realizar uma troca`,
-                tradeId: id,
-                bookOffered: {
-                  name: notifications.book1.name,
-                  bookImages: notifications.book1.bookImages,
-                  owner1:
-                    notifications.book1.owner.firstName +
-                    " " +
-                    notifications.book1.owner.lastName,
-                  owner1Picture: notifications.book1.owner.picture,
-                  owner1State:
-                    notifications.book1.owner.personalData.state || "",
-                  owner1City: notifications.book1.owner.personalData.city || "",
-                },
-                requiredBook: {
-                  name: notifications.book2.name,
-                  bookImages: notifications.book2.bookImages,
-                  owner2:
-                    notifications.book2.owner.firstName +
-                    " " +
-                    notifications.book2.owner.lastName,
-                  owner2Picture: notifications.book2.owner.picture,
-                  owner2State:
-                    notifications.book1.owner.personalData.state || "",
-                  owner2City: notifications.book1.owner.personalData.city || "",
-                },
-              };
+            const id = await this.requestServices.getIdFromExchange(notifications);
+            const userId = await this.userServices.getIdFromUser(notifications.book1.owner)
+            const userFound = await this.userServices.getUserById(Number(userId))
+            return {
+              tradeId: id,
+              situation: notifications.situation,
+              userRequested: {
+                owner: userFound.firstName + " " + userFound.lastName,
+                picture: userFound.picture,
+                state: userFound.personalData.state || '',
+                city: userFound.personalData.city || ''
+              }
             }
-          })
-        );
+          }))
       } else {
         return "Nenhum pedido de troca";
       }
@@ -279,65 +239,141 @@ export class ExchangeController {
       const findedCreditExchange =
         await this.exchangeWithCreditServices.findById(Number(id));
       if (confirm === "Confirmado") {
-        const buyerId = await this.userServices.getIdFromUser(
-          findedCreditExchange.user
-        );
-        console.log(buyerId);
+        const buyerId = await this.userServices.getIdFromUser(findedCreditExchange.user);
         const buyerFound = await this.userServices.getUserById(buyerId);
-        console.log(buyerFound);
-        const buyerCredit =
-          Number(buyerFound.credits) - Number(findedCreditExchange.book.price);
+        const buyerCredit = Number(buyerFound.credits) - Number(findedCreditExchange.book.price);
         buyerFound.credits = String(buyerCredit);
-
         await this.userServices.updateUser(Number(buyerId), buyerFound);
 
-        const sellerId = await this.userServices.getIdFromUser(
-          findedCreditExchange.book.owner
-        );
+        const sellerId = await this.userServices.getIdFromUser(findedCreditExchange.book.owner);
         const sellerFound = await this.userServices.getUserById(sellerId);
-        const sellerCredit =
-          Number(sellerFound.credits) + Number(findedCreditExchange.book.price);
+        const sellerCredit = Number(sellerFound.credits) + Number(findedCreditExchange.book.price);
         sellerFound.credits = String(sellerCredit);
         await this.userServices.updateUser(Number(sellerId), sellerFound);
 
         findedCreditExchange.situation = ExchangeSituation.CONFIRMADO;
         findedCreditExchange.book.status = Status.INDISPONIVEL;
-        const bookId = await this.bookServices.getIdFromBook(
-          findedCreditExchange.book
-        );
+        const bookId = await this.bookServices.getIdFromBook(findedCreditExchange.book);
         await this.bookServices.updateBook(bookId, findedCreditExchange.book);
-        await this.exchangeWithCreditServices.updateExchangeBooks(
-          id,
-          findedCreditExchange
-        );
+        await this.exchangeWithCreditServices.updateExchangeBooks(id, findedCreditExchange);
 
         exchangeHistory.exchangeDate = "";
         exchangeHistory.request = [];
-        console.log(findedCreditExchange);
         exchangeHistory.exchangeWithCredit = [findedCreditExchange];
         exchangeHistory.user = [findedCreditExchange.user];
         exchangeHistory.exchangeType = ExchangeType.PONTOS;
-        console.log("funfou");
-        console.log(await this.exchangeHistory.saveRegistry(exchangeHistory));
 
         return "Solicitação confirmada";
       } else if (confirm === "Recusado") {
         findedCreditExchange.situation = ExchangeSituation.RECUSADO;
-        const bookId = await this.bookServices.getIdFromBook(
-          findedCreditExchange.book
-        );
-        await this.bookServices.updateBook(
-          Number(bookId),
-          findedCreditExchange.book
-        );
-        await this.requestServices.updateExchangeBooks(
-          id,
-          findedCreditExchange
-        );
+        const bookId = await this.bookServices.getIdFromBook(findedCreditExchange.book);
+        await this.bookServices.updateBook(Number(bookId), findedCreditExchange.book);
+        await this.requestServices.updateExchangeBooks(id, findedCreditExchange);
         return "Solicitação Recusada";
       }
     } catch (err) {
       return err.message;
+    }
+  }
+
+  @Get("creditExchangeInfo/:token")
+  async getCreditExhangeInfoNotification(@Param("token") token: string) {
+    try {
+      const findNotification = await this.exchangeWithCreditServices.exchangeNotificationBuyer(token)
+      if (findNotification.length > 0) {
+        return await Promise.all(findNotification.map(async (notifications) => {
+          const id = await this.exchangeWithCreditServices.getIdFromExchange(notifications)
+          return {
+            tradeId: id,
+            situation: notifications.situation,
+            bookRequired: {
+              bookName: notifications.book.name,
+              author: notifications.book.author,
+              bookImages: notifications.book.bookImages,
+              owner: notifications.book.owner.firstName + " " + notifications.book.owner.lastName,
+              picture: notifications.book.owner.picture,
+              state: notifications.user.personalData.state || '',
+              city: notifications.user.personalData.city || ''
+            }
+          }
+        }))
+      } else {
+        return "Sem notificações";
+      }
+    } catch (err) {
+      return err.message;
+    }
+  }
+
+  @Get("creditExchangeRequestNotification/:token")
+  async getCreditExchangeInfoNotification(@Param('token') token: string) {
+    try {
+      const findNotification = await this.exchangeWithCreditServices.exchangeNotificationOwner(token);
+      if (findNotification.length > 0) {
+        return await Promise.all(findNotification.map(async (notifications) => {
+          const id = await this.requestServices.getIdFromExchange(notifications)
+          return {
+            tradeId: id,
+            situation: notifications.situation,
+            creditsToReceive: notifications.book.price,
+            userRequested: {
+              user: notifications.user.firstName + " " + notifications.user.lastName,
+              picture: notifications.user.picture,
+              state: notifications.user.personalData.state || '',
+              city: notifications.user.personalData.city || ''
+            }
+          }
+        }))
+      } else {
+        return "Nenhum pedido de troca"
+      }
+    } catch (err) {
+      return err.message
+    }
+  }
+
+  @Get("getRequestById/:id")
+  async getRequestById(@Param('id') id: string) {
+    try {
+      const exchangeFound = await this.requestServices.findExchangeById(Number(id))
+      return {
+        bookOffered: {
+          name: exchangeFound.book1.name,
+          author: exchangeFound.book1.author,
+          price: exchangeFound.book1.price,
+          images: exchangeFound.book1.bookImages,
+          owner: exchangeFound.book1.owner
+        },
+        requiredBook: {
+          name: exchangeFound.book2.name,
+          author: exchangeFound.book2.author,
+          price: exchangeFound.book2.price,
+          images: exchangeFound.book2.bookImages,
+          owner: exchangeFound.book2.owner
+        }
+      }
+    } catch (err) {
+      return err.message
+    }
+  }
+
+  @Get("getCreditRequestById/:id")
+  async getCreditRequestById(@Param('id') id: string) {
+    try {
+      const exchangeCreditFound = await this.exchangeWithCreditServices.findById(Number(id))
+      return {
+        creditToReceive: exchangeCreditFound.book.price,
+        buyerUser: exchangeCreditFound.user.firstName + " " + exchangeCreditFound.user.lastName,
+        requiredBook: {
+          name: exchangeCreditFound.book.name,
+          author: exchangeCreditFound.book.author,
+          price: exchangeCreditFound.book.price,
+          images: exchangeCreditFound.book.bookImages,
+          owner: exchangeCreditFound.book.owner
+        },
+      }
+    } catch (err) {
+      return err.message
     }
   }
 }
