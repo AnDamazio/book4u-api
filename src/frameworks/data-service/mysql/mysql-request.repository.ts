@@ -35,6 +35,6 @@ export class MysqlRequestRepository<T> implements IRequestRepository<T> {
   }
 
   async findExchangeById(id: number): Promise<T> {
-    return await this._repository.findOne(id, { relations: ['book2', 'book1', 'book2.owner', 'book1.owner', 'book1.bookImages', 'book2.bookImages', 'book1.author', 'book2.author'] })
+    return await this._repository.findOne(id, { relations: ['book2', 'book1', 'book2.owner', 'book1.owner', 'book1.bookImages', 'book2.bookImages', 'book1.author', 'book2.author', 'book1.owner.personalData'] })
   }
 }
