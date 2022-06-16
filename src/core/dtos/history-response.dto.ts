@@ -4,4 +4,5 @@ export class HistoryResponseDto {
   solicitante: any;
   ofertado: any;
   recebido: any;
+  exchangeDate: any;
 }

@@ -66,6 +66,11 @@ export class MysqlExchangeHistoryRepository<T>
 
     for (let i = 0; i < book1.length; i++) {
       const history = new HistoryResponseDto();
+      const historyDatabase = await this._repository
+        .query(`select * from exchange_history
+      cross join request
+      where exchange_history.userId = ${userId} and request.id = exchange_history.requestId
+      group by exchange_history.id;`);
 
       const images1 = await this._repository.query(`select book_images.*
       from book
@@ -89,6 +94,7 @@ export class MysqlExchangeHistoryRepository<T>
       book1[i].imagesId = await images1;
       book2[i].imagesId = await images2;
 
+      history.exchangeDate = historyDatabase[i].exchangeDate;
       history.solicitante = dono1[0];
       history.ofertado = await book1[i];
       history.recebido = await book2[i];
@@ -133,6 +139,7 @@ export class MysqlExchangeHistoryRepository<T>
       where book.ownerId = ${book[0].ownerId} and personal_data.id = user.personalDataId and user.id = ${book[0].ownerId}
       group by user.id;`);
 
+      historyResponse.exchangeDate = history.exchangeDate;
       historyResponse.ofertado = await book;
       historyResponse.recebido = await book.price;
       historyResponse.solicitante = await dono;
