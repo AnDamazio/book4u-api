@@ -263,7 +263,7 @@ export class ExchangeController {
         exchangeHistory.user = [findedCreditExchange.user];
         exchangeHistory.exchangeType = ExchangeType.PONTOS;
 
-        exchangeHistory.user = [findedCreditExchange.user];
+        exchangeHistory.user = [findedCreditExchange.book.owner];
         console.log(await this.exchangeHistory.saveRegistry(exchangeHistory));
 
         return "Solicitação confirmada";
