@@ -149,7 +149,7 @@ export class ExchangeController {
               situation: notifications.situation,
               bookRequired: {
                 name: notifications.book2.name,
-                bookImages: notifications.book2.bookImages,
+                bookImage: notifications.book2.bookImages.frontSideImage,
                 author: notifications.book2.author,
                 owner: notifications.book2.owner.firstName + " " + notifications.book2.owner.lastName,
                 ownerPicture: notifications.book2.owner.picture,
@@ -289,7 +289,7 @@ export class ExchangeController {
             bookRequired: {
               bookName: notifications.book.name,
               author: notifications.book.author,
-              bookImages: notifications.book.bookImages,
+              bookImage: notifications.book.bookImages.frontSideImage,
               owner: notifications.book.owner.firstName + " " + notifications.book.owner.lastName,
               picture: notifications.book.owner.picture,
               state: notifications.user.personalData.state || '',
@@ -341,15 +341,19 @@ export class ExchangeController {
           name: exchangeFound.book1.name,
           author: exchangeFound.book1.author,
           price: exchangeFound.book1.price,
-          images: exchangeFound.book1.bookImages,
-          owner: exchangeFound.book1.owner
+          bookImage: exchangeFound.book1.bookImages.frontSideImage,
+          owner: exchangeFound.book1.owner.firstName + " " + exchangeFound.book1.owner.lastName,
+          ownerCity: exchangeFound.book1.owner.personalData.city || "",
+          ownerState: exchangeFound.book1.owner.personalData.state || "",
+          ownerHouseNumber: exchangeFound.book1.owner.personalData.houseNumber,
+          ownerStreet: exchangeFound.book1.owner.personalData.streetName,
         },
         requiredBook: {
           name: exchangeFound.book2.name,
           author: exchangeFound.book2.author,
           price: exchangeFound.book2.price,
-          images: exchangeFound.book2.bookImages,
-          owner: exchangeFound.book2.owner
+          bookImage: exchangeFound.book2.bookImages.frontSideImage,
+          owner: exchangeFound.book2.owner.firstName + " " + exchangeFound.book2.owner.lastName,
         }
       }
     } catch (err) {
@@ -364,11 +368,15 @@ export class ExchangeController {
       return {
         creditToReceive: exchangeCreditFound.book.price,
         buyerUser: exchangeCreditFound.user.firstName + " " + exchangeCreditFound.user.lastName,
+        buyerCity: exchangeCreditFound.user.personalData.city,
+        buyerState: exchangeCreditFound.user.personalData.state,
+        buyerHouseNumber: exchangeCreditFound.user.personalData.houseNumber,
+        buyerStreet: exchangeCreditFound.user.personalData.streetName,
         requiredBook: {
           name: exchangeCreditFound.book.name,
           author: exchangeCreditFound.book.author,
           price: exchangeCreditFound.book.price,
-          images: exchangeCreditFound.book.bookImages,
+          bookImage: exchangeCreditFound.book.bookImages.frontSideImage,
           owner: exchangeCreditFound.book.owner
         },
       }
