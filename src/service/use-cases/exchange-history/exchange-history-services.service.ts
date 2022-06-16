@@ -13,4 +13,10 @@ export class ExchangeHistoryServices {
   async findHistory(userId: number) {
     return await this.dataServices.exchangeHistory.findOne(userId);
   }
+
+  async findHistoryCredits(userId: number) {
+    return await this.dataServices.exchangeHistory.findOneCreditExchanges(
+      userId
+    );
+  }
 }

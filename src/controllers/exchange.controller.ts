@@ -320,6 +320,9 @@ export class ExchangeController {
         console.log("funfou");
         console.log(await this.exchangeHistory.saveRegistry(exchangeHistory));
 
+        exchangeHistory.user = [findedCreditExchange.user];
+        console.log(await this.exchangeHistory.saveRegistry(exchangeHistory));
+
         return "Solicitação confirmada";
       } else if (confirm === "Recusado") {
         findedCreditExchange.situation = ExchangeSituation.RECUSADO;

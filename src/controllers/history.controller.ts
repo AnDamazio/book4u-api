@@ -27,8 +27,15 @@ export class HistoryController {
       );
       const id = await this.userServices.getIdFromUser(userFound);
       const user = await this.userServices.getUserById(id);
-
-      return await this.historyServices.findHistory(id as unknown as number);
+      console.log(
+        await this.historyServices.findHistoryCredits(id as unknown as number)
+      );
+      return {
+        book: await this.historyServices.findHistory(id as unknown as number),
+        credits: await this.historyServices.findHistoryCredits(
+          id as unknown as number
+        ),
+      };
     } catch (error) {
       return error.message;
     }

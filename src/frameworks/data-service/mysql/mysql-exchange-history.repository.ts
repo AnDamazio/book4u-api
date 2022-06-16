@@ -78,13 +78,13 @@ export class MysqlExchangeHistoryRepository<T>
       where book_images.id = book.bookImagesId and book.id = ${book2[i].id};`);
 
       const dono1 = await this._repository.query(`
-    select user.firstName, user.lastName, user.picture, personal_data.streetName, personal_data.complement,
-    personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state
-    from user
-    cross join personal_data
-    cross join book
-    where book.ownerId = ${book1[i].ownerId} and personal_data.id = user.personalDataId and user.id = ${book1[i].ownerId}
-    group by user.id;`);
+      select user.firstName, user.lastName, user.picture, personal_data.streetName, personal_data.complement,
+      personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state
+      from user
+      cross join personal_data
+      cross join book
+      where book.ownerId = ${book1[i].ownerId} and personal_data.id = user.personalDataId and user.id = ${book1[i].ownerId}
+      group by user.id;`);
 
       book1[i].imagesId = await images1;
       book2[i].imagesId = await images2;
@@ -94,6 +94,49 @@ export class MysqlExchangeHistoryRepository<T>
       history.recebido = await book2[i];
 
       historyArray.push(history);
+    }
+    return historyArray;
+  }
+
+  async findOneCreditExchanges(userId: number): Promise<any> {
+    let history = await this._repository.query(`select * from exchange_history
+    cross join exchange_with_credit
+    where exchange_history.userId = ${userId} and exchange_with_credit.id = exchange_history.exchangeWithCreditId
+    group by exchange_history.id;`);
+    let historyArray = [];
+    console.log("oie");
+
+    for (let i = 0; i < history.length; i++) {
+      const historyResponse = new HistoryResponseDto();
+
+      let book = await this._repository.query(`
+
+        select book.name, book.pagesQuantity, book.price, book.ownerId, book.id
+        from exchange_history
+        cross join exchange_with_credit
+        cross join book
+        where exchange_with_credit.bookId = book.id and exchange_history.exchangeWithCreditId = exchange_with_credit.id and book.id = 5
+        group by exchange_with_credit.id;`);
+
+      const images = await this._repository.query(`select book_images.*
+      from book
+      cross join book_images
+      where book_images.id = book.bookImagesId and book.id = ${book.id};`);
+      book.images = await images;
+
+      const dono = await this._repository.query(`
+      select user.firstName, user.lastName, user.picture, personal_data.streetName, personal_data.complement,
+      personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state
+      from user
+      cross join personal_data
+      cross join book
+      where book.ownerId = ${book[0].ownerId} and personal_data.id = user.personalDataId and user.id = ${book[0].ownerId}
+      group by user.id;`);
+
+      historyResponse.ofertado = await book;
+      historyResponse.recebido = await book.price;
+      historyResponse.solicitante = await dono;
+      historyArray.push(historyResponse);
     }
     return historyArray;
   }
