@@ -348,8 +348,9 @@ export class ExchangeController {
           owner: exchangeFound.book1.owner.firstName + " " + exchangeFound.book1.owner.lastName,
           ownerCity: exchangeFound.book1.owner.personalData.city || "",
           ownerState: exchangeFound.book1.owner.personalData.state || "",
-          ownerHouseNumber: exchangeFound.book1.owner.personalData.houseNumber,
-          ownerStreet: exchangeFound.book1.owner.personalData.streetName,
+          ownerHouseNumber: exchangeFound.book1.owner.personalData.houseNumber || "",
+          ownerStreet: exchangeFound.book1.owner.personalData.streetName || "",
+          ownerDistric: exchangeFound.book1.owner.personalData.district || "",
         },
         requiredBook: {
           name: exchangeFound.book2.name,
@@ -371,10 +372,11 @@ export class ExchangeController {
       return {
         creditToReceive: exchangeCreditFound.book.price,
         buyerUser: exchangeCreditFound.user.firstName + " " + exchangeCreditFound.user.lastName,
-        buyerCity: exchangeCreditFound.user.personalData.city,
-        buyerState: exchangeCreditFound.user.personalData.state,
-        buyerHouseNumber: exchangeCreditFound.user.personalData.houseNumber,
-        buyerStreet: exchangeCreditFound.user.personalData.streetName,
+        buyerCity: exchangeCreditFound.user.personalData.city || "",
+        buyerState: exchangeCreditFound.user.personalData.state || "",
+        buyerHouseNumber: exchangeCreditFound.user.personalData.houseNumber || "",
+        buyerStreet: exchangeCreditFound.user.personalData.streetName || "",
+        buyerDistrict: exchangeCreditFound.user.personalData.district || "",
         requiredBook: {
           name: exchangeCreditFound.book.name,
           author: exchangeCreditFound.book.author,
