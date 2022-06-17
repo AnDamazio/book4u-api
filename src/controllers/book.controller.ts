@@ -29,13 +29,18 @@ import {
 import {
   CategoryFactoryService,
   CategoryServices,
-} from 'src/service/use-cases/category';
-import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { BookImagesServices } from 'src/service/use-cases/bookImages';
-import { BookCategoriesFactoryService, BookCategoriesServices, RequestServices, UserServices } from 'src/service';
-import { JwtAuthGuard } from 'src/frameworks/auth/jwt-auth.guard';
-import * as jwt from 'jsonwebtoken'
-import { Status } from 'src/core';
+} from "src/service/use-cases/category";
+import { AnyFilesInterceptor } from "@nestjs/platform-express";
+import { BookImagesServices } from "src/service/use-cases/bookImages";
+import {
+  BookCategoriesFactoryService,
+  BookCategoriesServices,
+  RequestServices,
+  UserServices,
+} from "src/service";
+import { JwtAuthGuard } from "src/frameworks/auth/jwt-auth.guard";
+import * as jwt from "jsonwebtoken";
+import { Status } from "src/core";
 
 @Controller("api/book")
 @UseGuards(JwtAuthGuard)
@@ -53,9 +58,8 @@ export class BookController {
     private bookCategoriesFactoryService: BookCategoriesFactoryService,
     private bookCategoriesServices: BookCategoriesServices,
     private bookImagesServices: BookImagesServices,
-    private userServices: UserServices,
-
-  ) { }
+    private userServices: UserServices
+  ) {}
 
   @Post(":token")
   async createBook(
@@ -132,7 +136,7 @@ export class BookController {
       const books = await this.bookServices.getAllBooks(id);
       return books;
     } catch (err) {
-      return err.message
+      return err.message;
     }
   }
 
@@ -142,16 +146,23 @@ export class BookController {
   }
 
   @Put("sendBookImage/:id")
-  async updateBookImage(@Body() bookImages: CreateBookImagesDto, @Param("id") id: number,
+  async updateBookImage(
+    @Body() bookImages: CreateBookImagesDto,
+    @Param("id") id: number
   ) {
     try {
       const bookFound = await this.bookServices.findBookByPk(id);
-      const idFromBookImage = await this.bookImagesServices.getIdFromBookImages(bookFound.bookImages);
+      const idFromBookImage = await this.bookImagesServices.getIdFromBookImages(
+        bookFound.bookImages
+      );
       bookFound.bookImages.backSideImage = bookImages.backSideImage;
       bookFound.bookImages.frontSideImage = bookImages.frontSideImage;
       bookFound.bookImages.leftSideImage = bookImages.leftSideImage;
       bookFound.bookImages.rightSideImage = bookImages.rightSideImage;
-      await this.bookImagesServices.updateBookImages(Number(idFromBookImage), bookFound.bookImages);
+      await this.bookImagesServices.updateBookImages(
+        Number(idFromBookImage),
+        bookFound.bookImages
+      );
       return `Imagens inseridas com sucesso!`;
     } catch (err) {
       return err.message;
@@ -166,7 +177,6 @@ export class BookController {
     return await this.bookServices.getUserLibrary(Number(id));
   }
 
-
   @Get("get-books-in/:category/:token")
   async a(@Param("category") category: string, @Param("token") token: string) {
     const destructToken: any = jwt.decode(token);
@@ -177,5 +187,10 @@ export class BookController {
       [category],
       id as unknown as string
     );
+  }
+
+  @Get("get-books-named/:title")
+  async getBooksByName(@Param("title") title: string) {
+    return await this.bookServices.findBookByName(title);
   }
 }

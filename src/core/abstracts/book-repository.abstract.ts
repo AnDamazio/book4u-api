@@ -10,11 +10,13 @@ export abstract class IBookRepository<T> {
 
   abstract getUserLibrary(id: number): Promise<T[]>;
 
-  abstract getIdFromBook(book: T): Promise<number>
+  abstract getIdFromBook(book: T): Promise<number>;
 
   abstract findBookByCategory(categories: string[]): Promise<any[]>;
 
   abstract updateBook(id: number, book: T): Promise<UpdateResult>;
 
   abstract findBooksByDate(dayInterval: number): Promise<T[]>;
+
+  abstract findBookByName(title: string): Promise<T[]>;
 }

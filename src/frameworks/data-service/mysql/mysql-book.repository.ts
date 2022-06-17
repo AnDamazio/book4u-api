@@ -1,4 +1,4 @@
-import { Not, Repository, UpdateResult } from "typeorm";
+import { Like, Not, Repository, UpdateResult } from "typeorm";
 import { IBookRepository } from "src/core";
 import { CreateBookCategoriesDto } from "src/core/dtos/book-categories.dto";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
@@ -13,9 +13,16 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
   async findAll(id: number): Promise<T[]> {
     const books = await this._repository.find({
       where: { owner: Not(id) },
-      relations: ["bookImages", "owner", "author", "language", "publisher", "owner.personalData"],
+      relations: [
+        "bookImages",
+        "owner",
+        "author",
+        "language",
+        "publisher",
+        "owner.personalData",
+      ],
     });
-    return books
+    return books;
   }
 
   async create(book): Promise<T> {
@@ -30,7 +37,7 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
 
   async getUserLibrary(id: number): Promise<T[]> {
     return await this._repository.find({
-      where: [{ owner: id, status: 'Disponível' }],
+      where: [{ owner: id, status: "Disponível" }],
       relations: ["bookImages", "owner", "author", "language", "publisher"],
     });
   }
@@ -77,5 +84,12 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
       findedBooks.push(await this.findBookByPk(books[i].id));
     }
     return findedBooks;
+  }
+
+  async findBookByName(title: string): Promise<T[]> {
+    return await this._repository.find({
+      where: [{ name: Like(`%${title}%`), status: "Disponível" }],
+      relations: ["bookImages", "owner", "author", "language", "publisher"],
+    });
   }
 }

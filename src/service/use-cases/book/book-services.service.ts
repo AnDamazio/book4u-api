@@ -76,4 +76,8 @@ export class BookServices {
   async findRecentBooks(dayInterval: number): Promise<Book[]> {
     return await this.bookServices.book.findBooksByDate(7);
   }
+
+  async findBookByName(title): Promise<Book[]> {
+    return await this.bookServices.book.findBookByName(title);
+  }
 }
