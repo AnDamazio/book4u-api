@@ -180,7 +180,7 @@ export class ExchangeController {
               bookRequired: {
                 name: notifications.book2.name,
                 bookImage: notifications.book2.bookImages.frontSideImage,
-                author: notifications.book2.author,
+                authorName: notifications.book2.author.name,
                 owner:
                   notifications.book2.owner.firstName +
                   " " +
@@ -193,7 +193,7 @@ export class ExchangeController {
           })
         );
       } else {
-        return "Sem notificações";
+        return [];
       }
     } catch (err) {
       return err.message;
@@ -230,7 +230,7 @@ export class ExchangeController {
           })
         );
       } else {
-        return "Nenhum pedido de troca";
+        return [];
       }
     } catch (err) {
       return err.message;
@@ -355,7 +355,7 @@ export class ExchangeController {
               situation: notifications.situation,
               bookRequired: {
                 bookName: notifications.book.name,
-                author: notifications.book.author,
+                author: notifications.book.author.name,
                 bookImage: notifications.book.bookImages.frontSideImage,
                 owner:
                   notifications.book.owner.firstName +
@@ -369,7 +369,7 @@ export class ExchangeController {
           })
         );
       } else {
-        return "Sem notificações";
+        return [];
       }
     } catch (err) {
       return err.message;
@@ -404,7 +404,7 @@ export class ExchangeController {
           })
         );
       } else {
-        return "Nenhum pedido de troca";
+        return [];
       }
     } catch (err) {
       return err.message;
@@ -420,7 +420,7 @@ export class ExchangeController {
       return {
         bookOffered: {
           name: exchangeFound.book1.name,
-          author: exchangeFound.book1.author,
+          author: exchangeFound.book1.author.name,
           price: exchangeFound.book1.price,
           bookImage: exchangeFound.book1.bookImages.frontSideImage,
           owner:
@@ -436,7 +436,7 @@ export class ExchangeController {
         },
         requiredBook: {
           name: exchangeFound.book2.name,
-          author: exchangeFound.book2.author,
+          author: exchangeFound.book2.author.name,
           price: exchangeFound.book2.price,
           bookImage: exchangeFound.book2.bookImages.frontSideImage,
           owner:
@@ -469,7 +469,7 @@ export class ExchangeController {
         buyerDistrict: exchangeCreditFound.user.personalData.district || "",
         requiredBook: {
           name: exchangeCreditFound.book.name,
-          author: exchangeCreditFound.book.author,
+          author: exchangeCreditFound.book.author.name,
           price: exchangeCreditFound.book.price,
           bookImage: exchangeCreditFound.book.bookImages.frontSideImage,
           owner: exchangeCreditFound.book.owner,
