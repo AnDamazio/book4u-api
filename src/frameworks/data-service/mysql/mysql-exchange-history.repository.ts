@@ -95,9 +95,9 @@ export class MysqlExchangeHistoryRepository<T>
       book2[i].imagesId = await images2;
 
       history.exchangeDate = historyDatabase[i].exchangeDate;
-      history.solicitante = dono1[0];
-      history.ofertado = await book1[i];
-      history.recebido = await book2[i];
+      history.requester = dono1[0];
+      history.offered = await book1[i];
+      history.received = await book2[i];
 
       historyArray.push(history);
     }
@@ -140,9 +140,9 @@ export class MysqlExchangeHistoryRepository<T>
       group by user.id;`);
 
       historyResponse.exchangeDate = history.exchangeDate;
-      historyResponse.ofertado = await book;
-      historyResponse.recebido = await book.price;
-      historyResponse.solicitante = await dono;
+      historyResponse.offered = await book;
+      historyResponse.received = await book.price;
+      historyResponse.requester = await dono;
       historyArray.push(historyResponse);
     }
     return historyArray;
