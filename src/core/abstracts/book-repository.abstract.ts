@@ -19,4 +19,7 @@ export abstract class IBookRepository<T> {
   abstract findBooksByDate(dayInterval: number): Promise<T[]>;
 
   abstract findBookByName(title: string): Promise<T[]>;
+
+  abstract findBookByAuthor(name: string): Promise<T[]>;
+
 }

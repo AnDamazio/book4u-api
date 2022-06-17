@@ -80,4 +80,8 @@ export class BookServices {
   async findBookByName(title): Promise<Book[]> {
     return await this.bookServices.book.findBookByName(title);
   }
+
+  async findBookByAuthor(name): Promise<Book[]> {
+    return await this.bookServices.book.findBookByAuthor(name);
+  }
 }

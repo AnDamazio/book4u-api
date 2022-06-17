@@ -16,7 +16,7 @@ import { AuthModule } from "./frameworks/auth/auth.module";
 import { BookController } from "./controllers/book.controller";
 import { BookServices } from "./service/use-cases/book/book-services.service";
 import { BookServicesModule } from "./service/use-cases/book/book-services.module";
-import { AuthorServicesModule } from "./service/use-cases/author";
+import { AuthorServices, AuthorServicesModule } from "./service/use-cases/author";
 import { LanguageServicesModule } from "./service/use-cases/language";
 import { PublisherServicesModule } from "./service/use-cases/publisher/publisher-services.module";
 import {
@@ -74,7 +74,7 @@ import { HistoryController } from "./controllers/history.controller";
     WishListController,
     CategoryController,
     ExchangeController,
-    HistoryController
+    HistoryController,
   ],
   providers: [
     AppService,

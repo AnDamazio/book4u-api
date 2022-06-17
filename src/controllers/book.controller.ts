@@ -193,4 +193,9 @@ export class BookController {
   async getBooksByName(@Param("title") title: string) {
     return await this.bookServices.findBookByName(title);
   }
+
+  @Get("get-book-by-author/:author")
+  async getBooksByAuthor(@Param("author") author: string) {
+    return await this.bookServices.findBookByAuthor(author);
+  }
 }

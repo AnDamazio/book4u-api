@@ -92,4 +92,15 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
       relations: ["bookImages", "owner", "author", "language", "publisher"],
     });
   }
+
+  async findBookByAuthor(name: string): Promise<T[]> {
+    return await this._repository
+      .createQueryBuilder("book")
+      .leftJoinAndSelect("book.author", "author")
+      .leftJoinAndSelect("book.bookImages", "book_images")
+      .leftJoinAndSelect("book.owner", "user")
+      .where(`author.name LIKE :name `, { name: `%${name}%` })
+      .andWhere(`book.status = :status`, { status: "Disponível" })
+      .getMany();
+  }
 }

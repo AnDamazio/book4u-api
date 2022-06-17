@@ -6,4 +6,5 @@ export abstract class IAuthorRepository<T> {
   abstract findOneByName(name: string): Promise<T>;
 
   abstract checkIfExists(name: string): Promise<boolean>;
+
 }
