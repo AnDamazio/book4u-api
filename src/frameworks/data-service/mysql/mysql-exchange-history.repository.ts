@@ -12,6 +12,11 @@ export class MysqlExchangeHistoryRepository<T>
     this._repository = repository;
   }
 
+  clean = (obj) => {
+    let { languageId, publisherId, bookImagesId, ...book } = obj;
+    return book;
+  };
+
   async create(exchangeHistory: any): Promise<T> {
     console.log(exchangeHistory.type);
     if (exchangeHistory.exchangeType == ExchangeType.LIVRO) {
@@ -72,12 +77,14 @@ export class MysqlExchangeHistoryRepository<T>
       where exchange_history.userId = ${userId} and request.id = exchange_history.requestId
       group by exchange_history.id;`);
 
-      const images1 = await this._repository.query(`select book_images.frontSideImage
+      const images1 = await this._repository
+        .query(`select book_images.frontSideImage
       from book
       cross join book_images
       where book_images.id = book.bookImagesId and book.id = ${book1[i].id};`);
 
-      const images2 = await this._repository.query(`select book_images.frontSideImage
+      const images2 = await this._repository
+        .query(`select book_images.frontSideImage
       from book
       cross join book_images
       where book_images.id = book.bookImagesId and book.id = ${book2[i].id};`);
@@ -96,8 +103,11 @@ export class MysqlExchangeHistoryRepository<T>
 
       history.exchangeDate = historyDatabase[i].exchangeDate;
       history.requester = dono1[0];
-      history.offered = await book1[i];
-      history.received = await book2[i];
+
+
+      history.offered = this.clean(book1[i]);
+
+      history.received = this.clean(book2[i]);
 
       historyArray.push(history);
     }
@@ -140,7 +150,7 @@ export class MysqlExchangeHistoryRepository<T>
       group by user.id;`);
 
       historyResponse.exchangeDate = history.exchangeDate;
-      historyResponse.offered = await book;
+      historyResponse.offered = this.clean(await book);
       historyResponse.received = await book.price;
       historyResponse.requester = await dono;
       historyArray.push(historyResponse);
