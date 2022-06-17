@@ -83,7 +83,7 @@ export class MysqlExchangeHistoryRepository<T>
       where book_images.id = book.bookImagesId and book.id = ${book2[i].id};`);
 
       const dono1 = await this._repository.query(`
-      select user.firstName, user.lastName, user.picture, personal_data.streetName, personal_data.complement,
+      select user.firstName, user.lastName, personal_data.streetName, personal_data.complement,
       personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state
       from user
       cross join personal_data
