@@ -72,12 +72,12 @@ export class MysqlExchangeHistoryRepository<T>
       where exchange_history.userId = ${userId} and request.id = exchange_history.requestId
       group by exchange_history.id;`);
 
-      const images1 = await this._repository.query(`select book_images.*
+      const images1 = await this._repository.query(`select book_images.frontSideImage
       from book
       cross join book_images
       where book_images.id = book.bookImagesId and book.id = ${book1[i].id};`);
 
-      const images2 = await this._repository.query(`select book_images.*
+      const images2 = await this._repository.query(`select book_images.frontSideImage
       from book
       cross join book_images
       where book_images.id = book.bookImagesId and book.id = ${book2[i].id};`);
