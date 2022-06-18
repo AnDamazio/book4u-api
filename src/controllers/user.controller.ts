@@ -231,7 +231,7 @@ export class UserController {
     }
   }
 
-  @Get("/getUserByToken/:token")
+  @Get("getUserByToken/:token")
   async getUserById(@Param("token") token: string) {
     try {
       const destructToken: any = jwt.decode(token);
@@ -240,6 +240,17 @@ export class UserController {
       return await this.userServices.getUserById(id);
     } catch (err) {
       return err.message;
+    }
+  }
+
+  @Get("getUserCredits/:token")
+  async getUserCredits(@Param('token') token: string) {
+    try {
+      const destructToken: any = jwt.decode(token);
+      const user = await this.userServices.findByEmail(destructToken.email);
+      return user.credits;
+    } catch (err) {
+      return err.message
     }
   }
 }
