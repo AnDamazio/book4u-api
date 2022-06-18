@@ -7,4 +7,5 @@ export class HistoryResponseDto {
   received: any;
   exchangeDate: any;
   situation: any;
+  type: 'BOOK' | 'CREDIT'
 }

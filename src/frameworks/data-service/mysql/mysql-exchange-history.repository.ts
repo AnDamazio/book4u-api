@@ -148,6 +148,7 @@ export class MysqlExchangeHistoryRepository<T>
       history.offered = this.clean(book1[i]);
 
       history.received = this.clean(book2[i]);
+      history.type = 'BOOK'
 
       historyArray.push(history);
     }
@@ -208,6 +209,8 @@ export class MysqlExchangeHistoryRepository<T>
       historyResponse.offered = this.clean(await book);
       historyResponse.received = await book.price;
       historyResponse.requester = await dono;
+      history.type = 'CREDIT'
+
       historyArray.push(historyResponse);
     }
     return historyArray;
