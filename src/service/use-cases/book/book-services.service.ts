@@ -57,7 +57,7 @@ export class BookServices {
     });
   }
 
-  async updateBook(id: number, book: Book): Promise<UpdateResult> {
+  async updateBook(id: number, book: any): Promise<UpdateResult> {
     try {
       return await this.bookServices.book.updateBook(id, book);
     } catch (err) {

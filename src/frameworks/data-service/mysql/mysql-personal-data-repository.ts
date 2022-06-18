@@ -67,10 +67,10 @@ export class MysqlPersonalDataRepository<T>
     }
   }
 
-  async updateData(location) {
+  async updateData(personalData) {
     return await this._repository.update(
-      location.id,
-      location as unknown as QueryDeepPartialEntity<T>
+      personalData.id,
+      personalData as unknown as QueryDeepPartialEntity<T>
     );
   }
 

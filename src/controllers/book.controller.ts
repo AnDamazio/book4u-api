@@ -1,4 +1,3 @@
-import { ExchangeSituation } from "./../core/enums/exchange-situation.enum";
 import {
   AuthorServices,
   AuthorFactoryService,
@@ -21,6 +20,7 @@ import {
   CreateBookDto,
   CreateBookImagesDto,
   CreateBookResponseDto,
+  PartialBookDto,
 } from "../core/dtos";
 import {
   LanguageFactoryService,
@@ -197,5 +197,31 @@ export class BookController {
   @Get("get-book-by-author/:author")
   async getBooksByAuthor(@Param("author") author: string) {
     return await this.bookServices.findBookByAuthor(author);
+  }
+
+  @Post("update/:id")
+  async updateBookData(
+    @Param("id") id: number,
+    @Body() partialBookDto: PartialBookDto
+  ) {
+    const {category, author, language, publisher, ...partialBook} = partialBookDto
+    const keyNames = Object.keys(partialBook);
+    const book = await this.bookServices.findBookByPk(id);
+
+    keyNames.forEach((element) => {
+      if (
+        partialBook[element] == null ||
+        partialBook[element] == undefined ||
+        partialBook[element] == ""
+      ) {
+        partialBook[element] = book[element];
+      }
+    });
+    try {
+      await this.bookServices.updateBook(id, partialBook);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

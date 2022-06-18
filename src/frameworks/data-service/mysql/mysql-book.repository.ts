@@ -55,7 +55,7 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
     return findedBooks;
   }
 
-  async updateBook(id: number, book): Promise<UpdateResult> {
+  async updateBook(id: number, book: any): Promise<UpdateResult> {
     return await this._repository.update(id, book);
   }
 
@@ -103,4 +103,5 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
       .andWhere(`book.status = :status`, { status: "Disponível" })
       .getMany();
   }
+
 }
