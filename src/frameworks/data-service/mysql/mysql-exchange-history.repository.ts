@@ -13,7 +13,7 @@ export class MysqlExchangeHistoryRepository<T>
   }
 
   clean = (obj) => {
-    let { languageId, publisherId, bookImagesId, ...book } = obj;
+    let { languageId, publisherId, bookImagesId, synopsis, ...book } = obj;
     return book;
   };
 
