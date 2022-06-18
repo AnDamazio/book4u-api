@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
-import { IsEnum, IsNotEmpty, IsNotEmptyObject, IsObject, IsString, ValidateNested } from "class-validator";
+import { IsEmpty, IsEnum, IsNotEmpty, IsNotEmptyObject, IsObject, IsString, ValidateNested } from "class-validator";
 import { CreateBookDto, CreateUserDto } from "../dtos";
-import { ExchangeSituation } from "../enums";
+import { ExchangeSituation, ReadNotification } from "../enums";
 
 export class ExchangeWithCreditDto {
     @IsNotEmpty()
@@ -25,4 +25,14 @@ export class ExchangeWithCreditDto {
 
     @IsString()
     createdAt: string;
+
+    @IsEnum(ReadNotification)
+    @IsEmpty()
+    readBuyer: ReadNotification;
+
+    @IsEnum(ReadNotification)
+    @IsEmpty()
+    readOwner: ReadNotification;
+
+
 }

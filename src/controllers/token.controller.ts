@@ -13,7 +13,11 @@ export class TokenController {
     async refreshToken(@Body() oldToken: RefreshTokenDto['token']) {
         try {
             const user = await this.personalDataServices.refreshToken(oldToken)
-            return await this.authService.login(user)
+            if (user == 401) {
+                return "Por favor passe um token válido"
+            } else {
+                return await this.authService.login(user)
+            }
         } catch (error) {
             return error.message
         }

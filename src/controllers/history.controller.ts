@@ -15,7 +15,7 @@ export class HistoryController {
   constructor(
     private userServices: UserServices,
     private historyServices: ExchangeHistoryServices
-  ) {}
+  ) { }
 
   @UseGuards(JwtAuthGuard)
   @Get("/:token")
@@ -27,9 +27,7 @@ export class HistoryController {
       );
       const id = await this.userServices.getIdFromUser(userFound);
       const user = await this.userServices.getUserById(id);
-      console.log(
-        await this.historyServices.findHistoryCredits(id as unknown as number)
-      );
+      await this.historyServices.findHistoryCredits(id as unknown as number)
       return {
         book: await this.historyServices.findHistory(id as unknown as number),
         credits: await this.historyServices.findHistoryCredits(
