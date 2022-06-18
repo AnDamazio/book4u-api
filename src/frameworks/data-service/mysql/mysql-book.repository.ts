@@ -14,7 +14,7 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
     const books = await this._repository.find({
       where: {
         owner: Not(id),
-        status: "Disponível"
+        status: "Disponível",
       },
       relations: [
         "bookImages",
@@ -49,7 +49,7 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
     const books = await this._repository.query(`select category.name, book.*
       from ((category
       inner join book_categories on category.name = '${categories[0]}' AND book_categories.categoryId = category.id)
-      inner join book on book_categories.bookId = book.id);`);
+      inner join book on book_categories.bookId = book.id) AND book.status = 'Disponível';`);
 
     let findedBooks = [];
     for (let i = 0; i < books.length; i++) {
@@ -106,5 +106,4 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
       .andWhere(`book.status = :status`, { status: "Disponível" })
       .getMany();
   }
-
 }
