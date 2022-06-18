@@ -520,5 +520,4 @@ export class ExchangeController {
       return err.message
     }
   }
-
 }

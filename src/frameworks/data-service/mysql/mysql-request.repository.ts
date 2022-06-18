@@ -26,7 +26,7 @@ export class MysqlRequestRepository<T> implements IRequestRepository<T> {
   async exchangeNotificationOwner2(token: string): Promise<T[]> {
     return await this._repository.find({
       relations: ['book2', 'book1', 'book2.owner', 'book1.owner', 'book2.owner.personalData', 'book1.bookImages', 'book2.bookImages', 'book1.author', 'book2.author'],
-      where: { book2: { owner: { personalData: { token: token } } } }
+      where: { book2: { owner: { personalData: { token: token } } }, situation: 'Pendente' }
     })
   }
 
