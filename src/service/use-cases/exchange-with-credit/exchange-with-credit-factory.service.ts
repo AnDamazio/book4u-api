@@ -10,6 +10,8 @@ export class ExchangeWithCreditFactoryService {
         newExchangeWithCredit.book = createExchangeWithCreditDto.book;
         newExchangeWithCredit.user = createExchangeWithCreditDto.user;
         newExchangeWithCredit.situation = createExchangeWithCreditDto.situation;
+        newExchangeWithCredit.readBuyer = createExchangeWithCreditDto.readBuyer;
+        newExchangeWithCredit.readOwner = createExchangeWithCreditDto.readOwner;
         return newExchangeWithCredit;
     }
 }

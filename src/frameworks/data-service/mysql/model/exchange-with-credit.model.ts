@@ -1,4 +1,4 @@
-import { ExchangeSituation } from "src/core";
+import { ExchangeSituation, ReadNotification } from "src/core";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -27,6 +27,20 @@ export class ExchangeWithCredit {
     default: ExchangeSituation.PENDENTE,
   })
   situation: ExchangeSituation;
+
+  @Column({
+    type: "enum",
+    enum: ReadNotification,
+    default: ReadNotification.NONREAD,
+  })
+  readBuyer: ReadNotification;
+
+  @Column({
+    type: "enum",
+    enum: ReadNotification,
+    default: ReadNotification.NONREAD,
+  })
+  readOwner: ReadNotification;
 
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn()

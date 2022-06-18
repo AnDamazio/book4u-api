@@ -10,6 +10,8 @@ export class RequestFactoryService {
         newRequest.situation = requestDto.situation;
         newRequest.book1 = requestDto.book1;
         newRequest.book2 = requestDto.book2;
-        newRequest.createdAt = requestDto.createdAt
+        newRequest.createdAt = requestDto.createdAt;
+        newRequest.readOwner1 = requestDto.readOwner1;
+        newRequest.readOwner2 = requestDto.readOwner2;
     }
 }

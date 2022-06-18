@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
-import { IsString, IsNotEmpty, IsEnum, IsNotEmptyObject, IsObject, ValidateNested } from 'class-validator';
+import { IsString, IsNotEmpty, IsEnum, IsNotEmptyObject, IsObject, ValidateNested, IsEmpty } from 'class-validator';
 import { CreateBookDto } from '.';
-import { ExchangeSituation } from '../enums';
+import { ExchangeSituation, ReadNotification } from '../enums';
 
 export class RequestDto {
     @IsString()
@@ -25,4 +25,12 @@ export class RequestDto {
 
     @IsString()
     createdAt: string;
+
+    @IsEnum(ReadNotification)
+    @IsEmpty()
+    readOwner1: ReadNotification;
+
+    @IsEnum(ReadNotification)
+    @IsEmpty()
+    readOwner2: ReadNotification;
 }

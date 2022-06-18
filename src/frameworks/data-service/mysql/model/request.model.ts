@@ -1,4 +1,4 @@
-import { ExchangeSituation } from "src/core";
+import { ExchangeSituation, ReadNotification } from "src/core";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -32,6 +32,21 @@ export class Request {
 
   @Column()
   createdAt: string;
+
+  @Column({
+    type: "enum",
+    enum: ReadNotification,
+    default: ReadNotification.NONREAD,
+  })
+  readOwner1: ReadNotification;
+
+  @Column({
+    type: "enum",
+    enum: ReadNotification,
+    default: ReadNotification.NONREAD,
+  })
+  readOwner2: ReadNotification;
+
 
   @OneToMany(
     () => ExchangeHistory,

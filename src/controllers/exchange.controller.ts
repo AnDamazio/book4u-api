@@ -1,14 +1,15 @@
-import { UserServices } from "src/service";
+import { PersonalDataServices, UserServices } from "src/service";
 import { JwtAuthGuard } from "src/frameworks/auth/jwt-auth.guard";
 import * as jwt from "jsonwebtoken";
-import { Status } from "src/core";
+import { ReadNotification, Status } from "src/core";
 import { ExchangeHistory, ExchangeHistoryDto, ExchangeType } from "src/core";
-import { Controller, Post, Get, Put, Param, UseGuards } from "@nestjs/common";
+import { Controller, Post, Get, Put, Param, UseGuards, Body } from "@nestjs/common";
 import { BookServices } from "../service/use-cases/book/";
 import { ExchangeWithCreditServices } from "../service/use-cases/exchange-with-credit";
 import { RequestServices } from "../service/use-cases/request";
 import { ExchangeSituation } from "./../core/enums/exchange-situation.enum";
 import { ExchangeHistoryServices } from "src/service/use-cases/exchange-history";
+import { ReadNotificationsDto } from "src/core/dtos/read-notifications.dto"
 
 @Controller("api/exchange")
 @UseGuards(JwtAuthGuard)
@@ -18,8 +19,9 @@ export class ExchangeController {
     private userServices: UserServices,
     private exchangeWithCreditServices: ExchangeWithCreditServices,
     private requestServices: RequestServices,
-    private exchangeHistory: ExchangeHistoryServices
-  ) {}
+    private exchangeHistory: ExchangeHistoryServices,
+    private personalDataServices: PersonalDataServices,
+  ) { }
 
   @Post("exchangeBookWithBook/:book1/:book2")
   async createExchangeBooks(
@@ -34,6 +36,8 @@ export class ExchangeController {
         book1: getBook1,
         book2: getBook2,
         createdAt: String(Date.now()),
+        readOwner1: ReadNotification.NONREAD,
+        readOwner2: ReadNotification.NONREAD
       };
       getBook1.status = "Indisponível";
       await this.bookServices.updateBook(book1, getBook1);
@@ -114,7 +118,6 @@ export class ExchangeController {
             Number(userId),
             findedAutoRelation.book2.owner
           );
-          console.log("Passou2");
           exchangeHistory.exchangeDate = "";
           exchangeHistory.request = [findedAutoRelation];
           exchangeHistory.exchangeWithCredit = [];
@@ -137,7 +140,6 @@ export class ExchangeController {
         ];
         exchangeHistory.exchangeType = ExchangeType.LIVRO;
         await this.exchangeHistory.saveRegistry(exchangeHistory);
-        console.log("Passou");
         return "Troca confirmada";
       } else if (confirm === "Recusado") {
         findedAutoRelation.situation = ExchangeSituation.RECUSADO;
@@ -177,6 +179,7 @@ export class ExchangeController {
             return {
               tradeId: id,
               situation: notifications.situation,
+              read: notifications.readOwner1,
               bookRequired: {
                 name: notifications.book2.name,
                 bookImage: notifications.book2.bookImages.frontSideImage,
@@ -220,6 +223,7 @@ export class ExchangeController {
             return {
               tradeId: id,
               situation: notifications.situation,
+              read: notifications.readOwner2,
               userRequested: {
                 owner: userFound.firstName + " " + userFound.lastName,
                 picture: userFound.picture,
@@ -253,6 +257,8 @@ export class ExchangeController {
           book: book,
           situation: ExchangeSituation.PENDENTE,
           createdAt: String(Date.now()),
+          readBuyer: ReadNotification.NONREAD,
+          readOwner: ReadNotification.NONREAD,
         };
         return {
           text: "Proposta enviada",
@@ -316,7 +322,7 @@ export class ExchangeController {
         exchangeHistory.exchangeType = ExchangeType.PONTOS;
 
         exchangeHistory.user = [findedCreditExchange.book.owner];
-        console.log(await this.exchangeHistory.saveRegistry(exchangeHistory));
+        await this.exchangeHistory.saveRegistry(exchangeHistory)
 
         return "Solicitação confirmada";
       } else if (confirm === "Recusado") {
@@ -353,6 +359,7 @@ export class ExchangeController {
             return {
               tradeId: id,
               situation: notifications.situation,
+              read: notifications.readBuyer,
               bookRequired: {
                 bookName: notifications.book.name,
                 author: notifications.book.author.name,
@@ -391,6 +398,7 @@ export class ExchangeController {
               tradeId: id,
               situation: notifications.situation,
               creditsToReceive: notifications.book.price,
+              read: notifications.readOwner,
               userRequested: {
                 user:
                   notifications.user.firstName +
@@ -479,4 +487,38 @@ export class ExchangeController {
       return err.message;
     }
   }
+
+  @Put('readAllNotifications/:token')
+  async readAllNotifications(@Body() readNotification: ReadNotificationsDto, @Param('token') token: string) {
+    try {
+      const destructToken: any = jwt.decode(token);
+      const user = await this.userServices.findByEmail(destructToken.email);
+      readNotification.ids.map(async (notifications) => {
+        const trade = await this.requestServices.findExchangeById(Number(notifications))
+        if (trade) {
+          if (user.registerNumber == trade.book1.owner.registerNumber) {
+            trade.readOwner1 = ReadNotification.READ
+            await this.requestServices.updateExchangeBooks(Number(notifications), trade)
+          } else if (user.registerNumber == trade.book2.owner.registerNumber) {
+            trade.readOwner2 = ReadNotification.READ
+            await this.requestServices.updateExchangeBooks(Number(notifications), trade)
+          }
+        }
+
+        const creditTrade = await this.exchangeWithCreditServices.findById(Number(notifications))
+        if (creditTrade) {
+          if (user.registerNumber == creditTrade.user.registerNumber) {
+            creditTrade.readBuyer = ReadNotification.READ
+            await this.exchangeWithCreditServices.updateExchangeBooks(Number(notifications), creditTrade)
+          } else if (user.registerNumber == creditTrade.book.owner.registerNumber) {
+            creditTrade.readOwner = ReadNotification.READ
+            await this.exchangeWithCreditServices.updateExchangeBooks(Number(notifications), creditTrade)
+          }
+        }
+      })
+    } catch (err) {
+      return err.message
+    }
+  }
+
 }

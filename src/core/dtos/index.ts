@@ -18,3 +18,4 @@ export * from "./request-books.dto";
 export * from "./picture.dto";
 export * from "./exchange-with-credit.dto";
 export * from "./exchange-history.dto";
+export * from "./read-notifications.dto"

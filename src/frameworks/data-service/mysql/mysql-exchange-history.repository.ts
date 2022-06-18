@@ -18,7 +18,6 @@ export class MysqlExchangeHistoryRepository<T>
   };
 
   async create(exchangeHistory: any): Promise<T> {
-    console.log(exchangeHistory.type);
     if (exchangeHistory.exchangeType == ExchangeType.LIVRO) {
       const date = new Date().toLocaleDateString();
       const day = date.slice(0, 2);
@@ -29,8 +28,7 @@ export class MysqlExchangeHistoryRepository<T>
       for (let i = 0; i < exchangeHistory.user.length; i++) {
         await this._repository.query(
           `INSERT INTO exchange_history(exchangeDate, requestId, exchangeWithCreditId, exchangeType, userId)
-                 VALUES('${exchangeHistory.exchangeDate}', '${
-            exchangeHistory.request[0].id
+                 VALUES('${exchangeHistory.exchangeDate}', '${exchangeHistory.request[0].id
           }', ${null}, 'LIVRO', '${exchangeHistory.user[i].id}')`
         );
       }
@@ -44,8 +42,7 @@ export class MysqlExchangeHistoryRepository<T>
         exchangeHistory.exchangeDate = `${year}-${month}-${day}`;
         return await this._repository.query(
           `INSERT INTO exchange_history(exchangeDate, requestId, exchangeWithCreditId, exchangeType, userId)
-                     VALUES('${exchangeHistory.exchangeDate}', ${null}, '${
-            exchangeHistory.exchangeWithCredit[0].id
+                     VALUES('${exchangeHistory.exchangeDate}', ${null}, '${exchangeHistory.exchangeWithCredit[0].id
           }', 'PONTOS', '${exchangeHistory.user[0].id}')`
         );
       }
@@ -121,7 +118,6 @@ export class MysqlExchangeHistoryRepository<T>
     where exchange_history.userId = ${userId} and exchange_with_credit.id = exchange_history.exchangeWithCreditId
     group by exchange_history.id;`);
     let historyArray = [];
-    console.log("oie");
 
     for (let i = 0; i < history.length; i++) {
       const historyResponse = new HistoryResponseDto();
