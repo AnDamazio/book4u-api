@@ -101,11 +101,20 @@ export class MysqlExchangeHistoryRepository<T>
 
       const dono1 = await this._repository.query(`
       select user.firstName, user.lastName, personal_data.streetName, personal_data.complement,
-      personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state
+      personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state, user.id
       from user
       cross join personal_data
       cross join book
       where book.ownerId = ${book1[i].ownerId} and personal_data.id = user.personalDataId and user.id = ${book1[i].ownerId}
+      group by user.id;`);
+
+      const dono2 = await this._repository.query(`
+      select user.firstName, user.lastName, personal_data.streetName, personal_data.complement,
+      personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state, user.id
+      from user
+      cross join personal_data
+      cross join book
+      where book.ownerId = ${book2[i].ownerId} and personal_data.id = user.personalDataId and user.id = ${book2[i].ownerId}
       group by user.id;`);
 
       book1[i]["images"] = book1["imagesId"];
@@ -127,7 +136,12 @@ export class MysqlExchangeHistoryRepository<T>
       history.id = i;
       history.situation = historyDatabase[i].situation;
       history.exchangeDate = historyDatabase[i].exchangeDate;
-      history.requester = dono1[0];
+
+      if (userId == dono1.id) {
+        history.requester = dono2[0];
+      } else {
+        history.requester = dono1[0];
+      }
 
       history.offered = this.clean(book1[i]);
 
