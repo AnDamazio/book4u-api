@@ -6,4 +6,5 @@ export class HistoryResponseDto {
   offered: any;
   received: any;
   exchangeDate: any;
+  situation: any;
 }
