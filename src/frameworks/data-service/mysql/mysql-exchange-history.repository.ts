@@ -101,6 +101,7 @@ export class MysqlExchangeHistoryRepository<T>
       book1[i].imagesId = await images1;
       book2[i].imagesId = await images2;
 
+      history.id = i
       history.exchangeDate = historyDatabase[i].exchangeDate;
       history.requester = dono1[0];
 
@@ -149,6 +150,7 @@ export class MysqlExchangeHistoryRepository<T>
       where book.ownerId = ${book[0].ownerId} and personal_data.id = user.personalDataId and user.id = ${book[0].ownerId}
       group by user.id;`);
 
+      historyResponse.id = i
       historyResponse.exchangeDate = history.exchangeDate;
       historyResponse.offered = this.clean(await book);
       historyResponse.received = await book.price;
