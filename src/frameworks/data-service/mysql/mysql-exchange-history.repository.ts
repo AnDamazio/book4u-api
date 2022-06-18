@@ -101,7 +101,7 @@ export class MysqlExchangeHistoryRepository<T>
 
       const dono1 = await this._repository.query(`
       select user.firstName, user.lastName, personal_data.streetName, personal_data.complement,
-      personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state, user.id
+      personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state, user.id as identificator
       from user
       cross join personal_data
       cross join book
@@ -110,7 +110,7 @@ export class MysqlExchangeHistoryRepository<T>
 
       const dono2 = await this._repository.query(`
       select user.firstName, user.lastName, personal_data.streetName, personal_data.complement,
-      personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state, user.id
+      personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state, user.id as identificator
       from user
       cross join personal_data
       cross join book
@@ -137,10 +137,12 @@ export class MysqlExchangeHistoryRepository<T>
       history.situation = historyDatabase[i].situation;
       history.exchangeDate = historyDatabase[i].exchangeDate;
 
-      if (userId == dono1.id) {
-        history.requester = dono2[0];
+      if (userId == dono1[0].identificator) {
+        let { identificator, ...reqDono } = dono2[0];
+        history.requester = reqDono;
       } else {
-        history.requester = dono1[0];
+        let { identificator, ...reqDono } = dono1[0];
+        history.requester = reqDono;
       }
 
       history.offered = this.clean(book1[i]);
