@@ -140,9 +140,15 @@ export class BookController {
     }
   }
 
-  @Get("list-recent-books/:daysInterval")
-  async getRecentBooks(@Param("daysInterval") daysInterval: number) {
-    return await this.bookServices.findRecentBooks(daysInterval);
+  @Get("list-recent-books/:daysInterval/:token")
+  async getRecentBooks(
+    @Param("daysInterval") daysInterval: number,
+    @Param("token") token: string
+  ) {
+    const destructToken: any = jwt.decode(token);
+    const user = await this.userServices.findByEmail(destructToken.email);
+    const id = await this.userServices.getIdFromUser(user);
+    return await this.bookServices.findRecentBooks(daysInterval, id);
   }
 
   @Put("sendBookImage/:id")
@@ -204,7 +210,8 @@ export class BookController {
     @Param("id") id: number,
     @Body() partialBookDto: PartialBookDto
   ) {
-    const {category, author, language, publisher, ...partialBook} = partialBookDto
+    const { category, author, language, publisher, ...partialBook } =
+      partialBookDto;
     const keyNames = Object.keys(partialBook);
     const book = await this.bookServices.findBookByPk(id);
 

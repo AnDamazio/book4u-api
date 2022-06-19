@@ -79,7 +79,8 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
     const year = treatedDate.slice(6, 10);
 
     const books = await this._repository.query(
-      `SELECT * FROM book WHERE DATE(createdAt) > '${year}-${month}-${day}' AND DATE(createdAt) < '${actualYear}-${actualMonth}-${actualDay}';`
+      `SELECT * FROM book WHERE DATE(createdAt) > '${year}-${month}-${day}' AND DATE(createdAt) <
+      '${actualYear}-${actualMonth}-${actualDay}' AND book.status = 'Disponível' ;`
     );
 
     let findedBooks = [];
