@@ -14,14 +14,14 @@ export class MysqlExchangeWithCreditRepository<T> implements IExchangeWithCredit
 
     async exchangeNotificationBuyer(token: string): Promise<T[]> {
         return await this._repository.find({
-            relations: ['user', 'user.personalData', 'book', 'book.owner', 'book.bookImages', 'book.owner.personalData', 'book.author'],
+            relations: ['user', 'user.personalData', 'book', 'book.owner', 'book.bookImages', 'book.author'],
             where: { user: { personalData: { token: token } } }
         })
     }
 
     async exchangeNotificationOwner(token: string): Promise<T[]> {
         return await this._repository.find({
-            relations: ['user', 'user.personalData', 'book', 'book.owner', 'book.bookImages', 'book.owner.personalData', 'book.author'],
+            relations: ['user', 'book', 'book.owner', 'book.bookImages', 'book.owner.personalData', 'book.author'],
             where: { book: { owner: { personalData: { token: token } } }, situation: 'Pendente' }
         })
     }
