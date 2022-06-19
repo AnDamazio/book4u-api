@@ -141,7 +141,7 @@ export class MysqlExchangeHistoryRepository<T>
         let { identificator, ...reqDono } = dono2[0];
         history.requester = reqDono;
       } else {
-        let { identificator, ...reqDono } = dono1[0];
+        let { identificator, ...reqDono } = dono2[0];
         history.requester = reqDono;
       }
 
