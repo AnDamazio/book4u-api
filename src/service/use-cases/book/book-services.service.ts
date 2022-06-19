@@ -1,10 +1,9 @@
-import { DeleteResult, UpdateResult } from "typeorm";
+import { UpdateResult } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { Book } from "../../../core/entities";
 import { IDataServices } from "../../../core/abstracts";
 import { CreateBookDto } from "../../../core/dtos";
 import { BookFactoryService } from "./book-factory.service";
-import { CreateBookCategoriesDto } from "src/core/dtos/book-categories.dto";
 
 @Injectable()
 export class BookServices {
@@ -88,5 +87,4 @@ export class BookServices {
   async findBookByAuthor(name): Promise<Book[]> {
     return await this.bookServices.book.findBookByAuthor(name);
   }
-
 }

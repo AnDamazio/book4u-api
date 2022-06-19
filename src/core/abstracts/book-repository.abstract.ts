@@ -1,5 +1,4 @@
-import { BookCategories } from "../entities";
-import { DeleteResult, UpdateResult } from "typeorm";
+import { UpdateResult } from "typeorm";
 
 export abstract class IBookRepository<T> {
   abstract create(book: T): Promise<T>;

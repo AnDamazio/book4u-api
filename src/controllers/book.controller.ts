@@ -11,7 +11,6 @@ import {
   Put,
   Param,
   UseGuards,
-  Delete,
 } from "@nestjs/common";
 import {
   PublisherFactoryService,
@@ -28,10 +27,8 @@ import {
   LanguageServices,
 } from "src/service/use-cases/language";
 import {
-  CategoryFactoryService,
   CategoryServices,
 } from "src/service/use-cases/category";
-import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { BookImagesServices } from "src/service/use-cases/bookImages";
 import {
   BookCategoriesFactoryService,
@@ -41,7 +38,6 @@ import {
 } from "src/service";
 import { JwtAuthGuard } from "src/frameworks/auth/jwt-auth.guard";
 import * as jwt from "jsonwebtoken";
-import { ExchangeSituation, Status } from "src/core";
 import { ExchangeWithCreditServices } from "src/service/use-cases/exchange-with-credit";
 
 @Controller("api/book")
@@ -61,8 +57,6 @@ export class BookController {
     private bookCategoriesServices: BookCategoriesServices,
     private bookImagesServices: BookImagesServices,
     private userServices: UserServices,
-    private exchangeWithCreditServices: ExchangeWithCreditServices,
-    private requestServices: RequestServices,
   ) { }
 
   @Post(":token")
