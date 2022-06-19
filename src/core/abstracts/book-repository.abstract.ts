@@ -1,4 +1,3 @@
-import { BookCategories } from "../entities";
 import { UpdateResult } from "typeorm";
 
 export abstract class IBookRepository<T> {
@@ -21,4 +20,5 @@ export abstract class IBookRepository<T> {
   abstract findBookByName(title: string): Promise<T[]>;
 
   abstract findBookByAuthor(name: string): Promise<T[]>;
+
 }

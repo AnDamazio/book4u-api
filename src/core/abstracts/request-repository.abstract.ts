@@ -13,4 +13,6 @@ export abstract class IRequestRepository<T> {
 
   abstract findExchangeById(id: number): Promise<T>
 
+  abstract findAll(): Promise<T[]>
+
 }

@@ -1,7 +1,6 @@
 import { Like, Not, Repository, UpdateResult } from "typeorm";
 import { IBookRepository } from "src/core";
-import { CreateBookCategoriesDto } from "src/core/dtos/book-categories.dto";
-import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
+
 
 export class MysqlBookRepository<T> implements IBookRepository<T> {
   private _repository: Repository<T>;
@@ -107,4 +106,5 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
       .andWhere(`book.status = :status`, { status: "Disponível" })
       .getMany();
   }
+
 }

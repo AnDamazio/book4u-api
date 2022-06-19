@@ -27,10 +27,8 @@ import {
   LanguageServices,
 } from "src/service/use-cases/language";
 import {
-  CategoryFactoryService,
   CategoryServices,
 } from "src/service/use-cases/category";
-import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { BookImagesServices } from "src/service/use-cases/bookImages";
 import {
   BookCategoriesFactoryService,
@@ -40,7 +38,7 @@ import {
 } from "src/service";
 import { JwtAuthGuard } from "src/frameworks/auth/jwt-auth.guard";
 import * as jwt from "jsonwebtoken";
-import { Status } from "src/core";
+import { ExchangeWithCreditServices } from "src/service/use-cases/exchange-with-credit";
 
 @Controller("api/book")
 @UseGuards(JwtAuthGuard)
@@ -58,8 +56,8 @@ export class BookController {
     private bookCategoriesFactoryService: BookCategoriesFactoryService,
     private bookCategoriesServices: BookCategoriesServices,
     private bookImagesServices: BookImagesServices,
-    private userServices: UserServices
-  ) {}
+    private userServices: UserServices,
+  ) { }
 
   @Post(":token")
   async createBook(
@@ -229,6 +227,18 @@ export class BookController {
       return true;
     } catch (error) {
       return false;
+    }
+  }
+
+  @Put('delete/:id')
+  async deleteBookById(@Param('id') id: number) {
+    try {
+      const book = await this.bookServices.findBookByPk(id)
+      book.status = "Indisponível"
+      await this.bookServices.updateBook(id, book)
+      return "Livro excluído com sucesso"
+    } catch (err) {
+      return err.message
     }
   }
 }

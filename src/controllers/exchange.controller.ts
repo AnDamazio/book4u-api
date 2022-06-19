@@ -62,72 +62,41 @@ export class ExchangeController {
     @Param("id") id: number
   ) {
     try {
-      const findedAutoRelation = await this.requestServices.findExchangeById(
-        id
-      );
+      const findedAutoRelation = await this.requestServices.findExchangeById(id);
       let exchangeHistory = new ExchangeHistoryDto();
       if (confirm === "Confirmado") {
         findedAutoRelation.situation = ExchangeSituation.CONFIRMADO;
         findedAutoRelation.book2.status = Status.INDISPONIVEL;
-        const bookId = await this.bookServices.getIdFromBook(
-          findedAutoRelation.book2
-        );
+        const bookId = await this.bookServices.getIdFromBook(findedAutoRelation.book2);
         await this.bookServices.updateBook(bookId, findedAutoRelation.book2);
         await this.requestServices.updateExchangeBooks(id, findedAutoRelation);
 
-        if (findedAutoRelation.book1.price > findedAutoRelation.book2.price) {
-          const calcPoints =
-            Number(findedAutoRelation.book1.price) -
-            Number(findedAutoRelation.book2.price);
-          const pointsToString = String(
-            Number(findedAutoRelation.book1.owner.credits) + calcPoints
-          );
-          findedAutoRelation.book1.owner.credits = pointsToString;
-          const userId = await this.userServices.getIdFromUser(
-            findedAutoRelation.book1.owner
-          );
-          await this.userServices.updateUser(
-            Number(userId),
-            findedAutoRelation.book1.owner
-          );
+        if (Number(findedAutoRelation.book1.price) > Number(findedAutoRelation.book2.price)) {
+          const calcPoints = Number(findedAutoRelation.book1.price) - Number(findedAutoRelation.book2.price);
+          const pointsToString = Number(findedAutoRelation.book1.owner.credits) + calcPoints;
+          findedAutoRelation.book1.owner.credits = String(pointsToString);
+          const userId = await this.userServices.getIdFromUser(findedAutoRelation.book1.owner);
+          await this.userServices.updateUser(Number(userId), findedAutoRelation.book1.owner);
           exchangeHistory.exchangeDate = "";
           exchangeHistory.request = [findedAutoRelation];
           exchangeHistory.exchangeWithCredit = [];
-          exchangeHistory.user = [
-            findedAutoRelation.book1.owner,
-            findedAutoRelation.book2.owner,
-          ];
+          exchangeHistory.user = [findedAutoRelation.book1.owner, findedAutoRelation.book2.owner];
           exchangeHistory.exchangeType = ExchangeType.LIVRO;
           await this.exchangeHistory.saveRegistry(exchangeHistory);
-
           return "Troca confirmada";
-        } else if (
-          findedAutoRelation.book2.price > findedAutoRelation.book1.price
-        ) {
-          const calcPoints =
-            Number(findedAutoRelation.book2.price) -
-            Number(findedAutoRelation.book1.price);
-          const pointsToString = String(
-            Number(findedAutoRelation.book2.owner.credits) + calcPoints
-          );
-          findedAutoRelation.book2.owner.credits = pointsToString;
-          const userId = await this.userServices.getIdFromUser(
-            findedAutoRelation.book2.owner
-          );
-          await this.userServices.updateUser(
-            Number(userId),
-            findedAutoRelation.book2.owner
-          );
+
+        } else if (Number(findedAutoRelation.book2.price) > Number(findedAutoRelation.book1.price)) {
+          const calcPoints = Number(findedAutoRelation.book2.price) - Number(findedAutoRelation.book1.price);
+          const pointsToString = Number(findedAutoRelation.book2.owner.credits) + calcPoints
+          findedAutoRelation.book2.owner.credits = String(pointsToString);
+          const userId = await this.userServices.getIdFromUser(findedAutoRelation.book2.owner);
+          await this.userServices.updateUser(Number(userId), findedAutoRelation.book2.owner);
           exchangeHistory.exchangeDate = "";
           exchangeHistory.request = [findedAutoRelation];
           exchangeHistory.exchangeWithCredit = [];
-          exchangeHistory.user = [
-            findedAutoRelation.book1.owner,
-            findedAutoRelation.book2.owner,
-          ];
+          exchangeHistory.user = [findedAutoRelation.book1.owner, findedAutoRelation.book2.owner];
           exchangeHistory.exchangeType = ExchangeType.LIVRO;
           await this.exchangeHistory.saveRegistry(exchangeHistory);
-
           return "Troca confirmada";
         }
 
@@ -140,18 +109,16 @@ export class ExchangeController {
         ];
         exchangeHistory.exchangeType = ExchangeType.LIVRO;
         await this.exchangeHistory.saveRegistry(exchangeHistory);
+
         return "Troca confirmada";
+
       } else if (confirm === "Recusado") {
         findedAutoRelation.situation = ExchangeSituation.RECUSADO;
         findedAutoRelation.book1.status = "Disponível";
-        const bookId = await this.bookServices.getIdFromBook(
-          findedAutoRelation.book1
-        );
-        await this.bookServices.updateBook(
-          Number(bookId),
-          findedAutoRelation.book1
-        );
+        const bookId = await this.bookServices.getIdFromBook(findedAutoRelation.book1);
+        await this.bookServices.updateBook(Number(bookId), findedAutoRelation.book1);
         await this.requestServices.updateExchangeBooks(id, findedAutoRelation);
+
         return "Solicitação Recusada";
       }
     } catch (err) {

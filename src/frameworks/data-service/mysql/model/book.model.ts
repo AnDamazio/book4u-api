@@ -58,9 +58,8 @@ export class Book {
   })
   bookCategories: BookCategories[];
 
-  @ManyToOne(() => BookImages, (bookImages) => bookImages.book, {
-    cascade: true,
-  })
+  @ManyToOne(() => BookImages, (bookImages) => bookImages.book,
+    { cascade: true })
   @JoinColumn()
   bookImages: BookImages;
 

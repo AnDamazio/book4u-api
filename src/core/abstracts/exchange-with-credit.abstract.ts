@@ -12,4 +12,6 @@ export abstract class IExchangeWithCreditRepository<T>{
     abstract exchangeNotificationOwner(token: string): Promise<T[]>
 
     abstract findCreditExchangeById(id: number): Promise<T>
+
+    abstract findAll(): Promise<T[]>
 }

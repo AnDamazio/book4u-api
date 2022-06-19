@@ -4,14 +4,13 @@ import { Book } from "../../../core/entities";
 import { IDataServices } from "../../../core/abstracts";
 import { CreateBookDto } from "../../../core/dtos";
 import { BookFactoryService } from "./book-factory.service";
-import { CreateBookCategoriesDto } from "src/core/dtos/book-categories.dto";
 
 @Injectable()
 export class BookServices {
   constructor(
     private bookServices: IDataServices,
     private bookFactoryService: BookFactoryService
-  ) {}
+  ) { }
 
   async getAllBooks(id: any): Promise<Book[]> {
     try {
