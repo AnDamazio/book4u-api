@@ -45,4 +45,8 @@ export class RequestServices {
   async findExchangeById(id: number): Promise<Request> {
     return await this.dataServices.request.findExchangeById(id)
   }
+
+  async findAll(): Promise<Request[]> {
+    return await this.dataServices.request.findAll();
+  }
 }

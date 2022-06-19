@@ -40,4 +40,8 @@ export class MysqlExchangeWithCreditRepository<T> implements IExchangeWithCredit
             where: { id: id }
         })
     }
+
+    async findAll(): Promise<T[]> {
+        return await this._repository.find({ relations: ['book'] })
+    }
 }

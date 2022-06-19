@@ -1,4 +1,4 @@
-import { UpdateResult } from "typeorm";
+import { DeleteResult, UpdateResult } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { Book } from "../../../core/entities";
 import { IDataServices } from "../../../core/abstracts";
@@ -11,7 +11,7 @@ export class BookServices {
   constructor(
     private bookServices: IDataServices,
     private bookFactoryService: BookFactoryService
-  ) {}
+  ) { }
 
   async getAllBooks(id: any): Promise<Book[]> {
     try {
@@ -88,4 +88,5 @@ export class BookServices {
   async findBookByAuthor(name): Promise<Book[]> {
     return await this.bookServices.book.findBookByAuthor(name);
   }
+
 }

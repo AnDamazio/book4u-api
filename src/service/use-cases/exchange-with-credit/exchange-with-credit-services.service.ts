@@ -35,4 +35,8 @@ export class ExchangeWithCreditServices {
     async findById(id: number): Promise<ExchangeWithCredit> {
         return await this.dataServices.exchangeWithCredit.findCreditExchangeById(id)
     }
+
+    async findAll(): Promise<ExchangeWithCredit[]> {
+        return await this.dataServices.exchangeWithCredit.findAll();
+    }
 }
