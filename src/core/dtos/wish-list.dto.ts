@@ -14,11 +14,6 @@ import { CreateBookDto } from './book.dto';
 import { CreateUserDto } from './user.dto';
 
 export class CreateWishListDto {
-  @IsInt()
-  @IsNotEmpty()
-  @Min(1)
-  @Max(10)
-  wishLevel!: string;
 
   @IsNotEmptyObject()
   @IsOptional()

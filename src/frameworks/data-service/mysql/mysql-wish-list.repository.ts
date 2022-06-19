@@ -1,5 +1,5 @@
-import { IWishListRepository } from 'src/core';
-import { Repository } from 'typeorm';
+import { IWishListRepository } from "src/core";
+import { Repository } from "typeorm";
 
 export class MysqlWishListRepository<T> implements IWishListRepository<T> {
   private _repository: Repository<T>;
@@ -14,5 +14,12 @@ export class MysqlWishListRepository<T> implements IWishListRepository<T> {
 
   remove(id): any {
     return this._repository.delete(id);
+  }
+
+  async findAll(id): Promise<T[]> {
+    return this._repository.find({
+      where: { user: id },
+      relations: ["book", "book.bookImages", "book.author", "book.owner", "book.language", "book.publisher"],
+    });
   }
 }

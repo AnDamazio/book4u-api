@@ -14,9 +14,6 @@ export class Wish {
   @PrimaryGeneratedColumn()
   id!: string;
 
-  @Column()
-  wishLevel: string;
-
   @ManyToMany(() => Book, { cascade: ['insert'] })
   @JoinTable({
     name: 'wish_list',
