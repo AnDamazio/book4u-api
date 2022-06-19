@@ -353,9 +353,7 @@ export class ExchangeController {
       if (findNotification.length > 0) {
         return await Promise.all(
           findNotification.map(async (notifications) => {
-            const id = await this.exchangeWithCreditServices.getIdFromExchange(
-              notifications
-            );
+            const id = await this.exchangeWithCreditServices.getIdFromExchange(notifications);
             return {
               tradeId: id,
               situation: notifications.situation,
@@ -386,14 +384,15 @@ export class ExchangeController {
   @Get("creditExchangeRequestNotification/:token")
   async getCreditExchangeInfoNotification(@Param("token") token: string) {
     try {
-      const findNotification =
-        await this.exchangeWithCreditServices.exchangeNotificationOwner(token);
+      const findNotification = await this.exchangeWithCreditServices.exchangeNotificationOwner(token);
       if (findNotification.length > 0) {
         return await Promise.all(
           findNotification.map(async (notifications) => {
             const id = await this.requestServices.getIdFromExchange(
               notifications
             );
+            const userId = await this.userServices.getIdFromUser(notifications.user);
+            const userFound = await this.userServices.getUserById(Number(userId));
             return {
               tradeId: id,
               situation: notifications.situation,
@@ -401,14 +400,15 @@ export class ExchangeController {
               read: notifications.readOwner,
               userRequested: {
                 user:
-                  notifications.user.firstName +
+                  userFound.firstName +
                   " " +
-                  notifications.user.lastName,
-                picture: notifications.user.picture,
-                state: notifications.user.personalData.state || "",
-                city: notifications.user.personalData.city || "",
+                  userFound.lastName,
+                picture: userFound.picture,
+                state: userFound.personalData.state || "",
+                city: userFound.personalData.city || "",
               },
             };
+
           })
         );
       } else {
