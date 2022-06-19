@@ -22,7 +22,7 @@ export class MysqlExchangeWithCreditRepository<T> implements IExchangeWithCredit
     async exchangeNotificationOwner(token: string): Promise<T[]> {
         return await this._repository.find({
             relations: ['user', 'user.personalData', 'book', 'book.owner', 'book.bookImages', 'book.owner.personalData', 'book.author'],
-            where: { book: { owner: { personalData: { token: token } } } }
+            where: { book: { owner: { personalData: { token: token } } }, situation: 'Pendente' }
         })
     }
 
