@@ -13,7 +13,7 @@ export class MysqlExchangeHistoryRepository<T>
   }
 
   clean = (obj) => {
-    let { languageId, publisherId, bookImagesId, synopsis, ...book } = obj;
+    let { languageId, publisherId, bookImagesId, synopsis, id, ...book } = obj;
     return book;
   };
 
@@ -148,7 +148,7 @@ export class MysqlExchangeHistoryRepository<T>
       history.offered = this.clean(book1[i]);
 
       history.received = this.clean(book2[i]);
-      history.type = 'BOOK'
+      history.type = "BOOK";
 
       historyArray.push(history);
     }
@@ -156,14 +156,17 @@ export class MysqlExchangeHistoryRepository<T>
   }
 
   async findOneCreditExchanges(userId: number): Promise<any> {
+    console.log(userId);
     let history = await this._repository.query(`select * from exchange_history
     cross join exchange_with_credit
     where exchange_history.userId = ${userId} and exchange_with_credit.id = exchange_history.exchangeWithCreditId
     group by exchange_history.id;`);
     let historyArray = [];
+    console.log(history);
 
     for (let i = 0; i < history.length; i++) {
       const historyResponse = new HistoryResponseDto();
+      console.log(history[i].bookId);
 
       let book = await this._repository.query(`
 
@@ -173,26 +176,28 @@ export class MysqlExchangeHistoryRepository<T>
         cross join book
         where exchange_with_credit.bookId = book.id and exchange_history.exchangeWithCreditId = exchange_with_credit.id and book.id = ${history[i].bookId}
         group by exchange_with_credit.id;`);
+      console.log(book);
 
       let author = await this._repository.query(`select author.name
         from author
         cross join book
-        where book.authorId = author.id and book.id = ${book.id};`);
+        where book.authorId = author.id and book.id = ${book[i].id};`);
+      console.log(author);
 
-      book["images"] = book["imagesId"];
-      book.images = { ...book.images };
-      delete book["images"];
+      book[i]["images"] = book["imagesId"];
+      book[i].images = { ...book[i].images };
+      delete book[i]["images"];
 
-      book["author"] = book["authorId"];
-      book.author = author;
-      delete book["authorId"];
+      book[i]["author"] = book["authorId"];
+      book[i].author = { ...author["0"] };
+      delete book[i]["authorId"];
 
       const images = await this._repository
         .query(`select book_images.frontSideImage
       from book
       cross join book_images
-      where book_images.id = book.bookImagesId and book.id = ${book.id};`);
-      book.images = { ...(await images)["0"] };
+      where book_images.id = book.bookImagesId and book.id = ${book[i].id};`);
+      book[i].images = { ...(await images)["0"] };
 
       const dono = await this._repository.query(`
       select user.firstName, user.lastName, user.picture, personal_data.streetName, personal_data.complement,
@@ -200,19 +205,28 @@ export class MysqlExchangeHistoryRepository<T>
       from user
       cross join personal_data
       cross join book
-      where book.ownerId = ${book.ownerId} and personal_data.id = user.personalDataId and user.id = ${book.ownerId}
+      where book.ownerId = ${book[i].ownerId} and personal_data.id = user.personalDataId and user.id = ${book[i].ownerId}
+      group by user.id;`);
+
+      const user = this._repository
+        .query(`select user.firstName, user.lastName, user.picture, personal_data.streetName, personal_data.complement,
+      personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state
+      from user
+      cross join personal_data
+      where personal_data.id = user.personalDataId and user.id = ${userId}
       group by user.id;`);
 
       historyResponse.id = i;
       historyResponse.situation = history[i].situation;
       historyResponse.exchangeDate = history[i].exchangeDate;
-      historyResponse.offered = this.clean(await book);
-      historyResponse.received = await book.price;
-      historyResponse.requester = await dono;
-      history.type = 'CREDIT'
+      historyResponse.offered = this.clean(await book[i]);
+      historyResponse.received = await book[i].price;
+      historyResponse.requester = await user;
+      history.type = "CREDIT";
 
       historyArray.push(historyResponse);
     }
+    console.log(historyArray);
     return historyArray;
   }
 }

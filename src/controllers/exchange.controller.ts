@@ -320,6 +320,7 @@ export class ExchangeController {
         exchangeHistory.exchangeWithCredit = [findedCreditExchange];
         exchangeHistory.user = [findedCreditExchange.user];
         exchangeHistory.exchangeType = ExchangeType.PONTOS;
+        await this.exchangeHistory.saveRegistry(exchangeHistory)
 
         exchangeHistory.user = [findedCreditExchange.book.owner];
         await this.exchangeHistory.saveRegistry(exchangeHistory)
