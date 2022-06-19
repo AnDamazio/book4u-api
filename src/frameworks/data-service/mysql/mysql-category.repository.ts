@@ -1,6 +1,6 @@
-import { ICategoryRepository } from 'src/core';
-import { Repository } from 'typeorm';
-import { Category } from './model';
+import { ICategoryRepository } from "src/core";
+import { Repository } from "typeorm";
+import { Category } from "./model";
 
 export class MysqlCategoryRepository<T> implements ICategoryRepository<T> {
   private _repository: Repository<T>;
@@ -21,7 +21,7 @@ export class MysqlCategoryRepository<T> implements ICategoryRepository<T> {
     const categories = Promise.all(
       await category.map(async (obj) => {
         return await this._repository.find({ where: { name: obj.name } });
-      }),
+      })
     );
     return categories;
   }
