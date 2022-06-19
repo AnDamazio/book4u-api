@@ -137,13 +137,8 @@ export class MysqlExchangeHistoryRepository<T>
       history.situation = historyDatabase[i].situation;
       history.exchangeDate = historyDatabase[i].exchangeDate;
 
-      if (userId == dono1[0].identificator) {
-        let { identificator, ...reqDono } = dono2[0];
-        history.requester = reqDono;
-      } else {
-        let { identificator, ...reqDono } = dono2[0];
-        history.requester = reqDono;
-      }
+      let { identificator, ...reqDono } = dono2[0];
+      history.requester = reqDono;
 
       history.offered = this.clean(book1[i]);
 
