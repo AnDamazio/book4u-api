@@ -67,7 +67,7 @@ export class MysqlExchangeHistoryRepository<T>
     cross join request
     cross join book
     cross join author
-    where exchange_history.userId = ${userId} and request.id = exchange_history.requestId and book.id = request.book2Id 
+    where exchange_history.userId = ${userId} and request.id = exchange_history.requestId and book.id = request.book2Id
     group by exchange_history.id;`);
 
     for (let i = 0; i < book1.length; i++) {
