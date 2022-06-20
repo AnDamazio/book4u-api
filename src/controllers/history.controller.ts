@@ -15,11 +15,11 @@ export class HistoryController {
   constructor(
     private userServices: UserServices,
     private historyServices: ExchangeHistoryServices
-  ) { }
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Get("/:token")
-  async createWish(@Param("token") token: string) {
+  async getHistory(@Param("token") token: string) {
     try {
       const destructToken: any = jwt.decode(token);
       const userFound = await this.userServices.findByEmail(
@@ -27,13 +27,20 @@ export class HistoryController {
       );
       const id = await this.userServices.getIdFromUser(userFound);
       const user = await this.userServices.getUserById(id);
-      await this.historyServices.findHistoryCredits(id as unknown as number)
-      return {
-        book: await this.historyServices.findHistory(id as unknown as number),
-        credits: await this.historyServices.findHistoryCredits(
-          id as unknown as number
-        ),
-      };
+      await this.historyServices.findHistoryCredits(id as unknown as number);
+
+      const history = [];
+      history.push(
+        ...(await this.historyServices.findHistory(id as unknown as number))
+      )["0"];
+
+      history.push(
+        ...(
+          await this.historyServices.findHistoryCredits(id as unknown as number)
+        )
+      );
+
+      return history;
     } catch (error) {
       return error.message;
     }

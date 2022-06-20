@@ -137,17 +137,14 @@ export class MysqlExchangeHistoryRepository<T>
   }
 
   async findOneCreditExchanges(userId: number): Promise<any> {
-    console.log(userId);
     let history = await this._repository.query(`select * from exchange_history
     cross join exchange_with_credit
     where exchange_history.userId = ${userId} and exchange_with_credit.id = exchange_history.exchangeWithCreditId
     group by exchange_history.id;`);
     let historyArray = [];
-    console.log(history);
 
     for (let i = 0; i < history.length; i++) {
       const historyResponse = new HistoryResponseDto();
-      console.log(history[i].bookId);
 
       let book = await this._repository.query(`
 
@@ -158,7 +155,6 @@ export class MysqlExchangeHistoryRepository<T>
         cross join book_images
         where exchange_with_credit.bookId = book.bookImagesId and exchange_history.exchangeWithCreditId = exchange_with_credit.id and book.id = ${history[i].bookId}
         group by exchange_with_credit.id;`);
-      console.log(book);
 
       let author = await this._repository.query(`select author.name
         from author
@@ -199,11 +195,10 @@ export class MysqlExchangeHistoryRepository<T>
       historyResponse.offered = book[0];
       historyResponse.received = book[0].price;
       historyResponse.requester = { ...user["0"] };
-      history.type = "CREDIT";
+      historyResponse.type = "CREDIT";
 
       historyArray.push(historyResponse);
     }
-    console.log(historyArray);
     return historyArray;
   }
 }
