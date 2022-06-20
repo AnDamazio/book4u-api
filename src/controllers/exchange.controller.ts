@@ -151,11 +151,7 @@ export class ExchangeController {
                 name: notifications.book2.name,
                 bookImage: notifications.book2.bookImages.frontSideImage,
                 authorName: notifications.book2.author.name,
-                owner:
-                  notifications.book2.owner.firstName +
-                  " " +
-                  notifications.book2.owner.lastName,
-                ownerPicture: notifications.book2.owner.picture,
+                owner: notifications.book2.owner.firstName + " " + notifications.book2.owner.lastName,
                 ownerState: userFound.personalData.state || "",
                 ownerCity: userFound.personalData.city || "",
               },
@@ -310,11 +306,7 @@ export class ExchangeController {
                 bookName: notifications.book.name,
                 author: notifications.book.author.name,
                 bookImage: notifications.book.bookImages.frontSideImage,
-                owner:
-                  notifications.book.owner.firstName +
-                  " " +
-                  notifications.book.owner.lastName,
-                picture: notifications.book.owner.picture,
+                owner: notifications.book.owner.firstName + " " + notifications.book.owner.lastName,
                 state: notifications.user.personalData.state || "",
                 city: notifications.user.personalData.city || "",
               },
@@ -347,10 +339,7 @@ export class ExchangeController {
               creditsToReceive: notifications.book.price,
               read: notifications.readOwner,
               userRequested: {
-                user:
-                  userFound.firstName +
-                  " " +
-                  userFound.lastName,
+                user: userFound.firstName + " " + userFound.lastName,
                 picture: userFound.picture,
                 state: userFound.personalData.state || "",
                 city: userFound.personalData.city || "",
