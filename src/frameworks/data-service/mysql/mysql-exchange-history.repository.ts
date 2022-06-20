@@ -53,7 +53,6 @@ export class MysqlExchangeHistoryRepository<T>
 
   async findOne(userId: number): Promise<any> {
     const historyArray = [];
-
     let book1 = await this._repository.query(`select book.*
       from exchange_history
       cross join request
@@ -61,7 +60,6 @@ export class MysqlExchangeHistoryRepository<T>
       cross join author
       where exchange_history.userId = ${userId} and request.id = exchange_history.requestId and book.id = request.book1Id
       group by exchange_history.id;`);
-
     let book2 = await this._repository.query(`select book.*
     from exchange_history
     cross join request
@@ -69,13 +67,11 @@ export class MysqlExchangeHistoryRepository<T>
     cross join author
     where exchange_history.userId = ${userId} and request.id = exchange_history.requestId and book.id = request.book2Id
     group by exchange_history.id;`);
-
     for (let i = 0; i < book1.length; i++) {
       let author1 = await this._repository.query(`select author.name
       from author
       cross join book
       where book.authorId = author.id and book.id = ${book1[i].id};`);
-
       let author2 = await this._repository.query(`select author.name
       from author
       cross join book
@@ -86,19 +82,16 @@ export class MysqlExchangeHistoryRepository<T>
       cross join request
       where exchange_history.userId = ${userId} and request.id = exchange_history.requestId
       group by exchange_history.id;`);
-
       const images1 = await this._repository
         .query(`select book_images.frontSideImage
       from book
       cross join book_images
       where book_images.id = book.bookImagesId and book.id = ${book1[i].id};`);
-
       const images2 = await this._repository
         .query(`select book_images.frontSideImage
       from book
       cross join book_images
       where book_images.id = book.bookImagesId and book.id = ${book2[i].id};`);
-
       const dono1 = await this._repository.query(`
       select user.firstName, user.lastName, personal_data.streetName, personal_data.complement,
       personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state, user.id as identificator
@@ -107,7 +100,6 @@ export class MysqlExchangeHistoryRepository<T>
       cross join book
       where book.ownerId = ${book1[i].ownerId} and personal_data.id = user.personalDataId and user.id = ${book1[i].ownerId}
       group by user.id;`);
-
       const dono2 = await this._repository.query(`
       select user.firstName, user.lastName, personal_data.streetName, personal_data.complement,
       personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state, user.id as identificator
@@ -116,20 +108,16 @@ export class MysqlExchangeHistoryRepository<T>
       cross join book
       where book.ownerId = ${book2[i].ownerId} and personal_data.id = user.personalDataId and user.id = ${book2[i].ownerId}
       group by user.id;`);
-
       book1[i]["images"] = book1["imagesId"];
       book1[i]["author"] = book1["authorId"];
       book1[i].author = { ...author1["0"] };
       delete book1[i]["imagesId"];
       delete book1[i]["authorId"];
-
       book2[i]["images"] = book2["imagesId"];
       book2[i]["author"] = book2["authorId"];
       book2[i].author = { ...author2["0"] };
-
       delete book2[i]["authorId"];
       delete book2[i]["imagesId"];
-
       book1[i].images = { ...(await images1)["0"] };
       book2[i].images = { ...(await images2)["0"] };
 
@@ -138,13 +126,11 @@ export class MysqlExchangeHistoryRepository<T>
       history.exchangeDate = historyDatabase[i].exchangeDate;
 
       let { identificator, ...reqDono } = dono2[0];
+
       history.requester = reqDono;
-
       history.offered = this.clean(book1[i]);
-
       history.received = this.clean(book2[i]);
       history.type = "BOOK";
-
       historyArray.push(history);
     }
     return historyArray;
@@ -169,30 +155,26 @@ export class MysqlExchangeHistoryRepository<T>
         from exchange_history
         cross join exchange_with_credit
         cross join book
-        where exchange_with_credit.bookId = book.id and exchange_history.exchangeWithCreditId = exchange_with_credit.id and book.id = ${history[i].bookId}
+        cross join book_images
+        where exchange_with_credit.bookId = book.bookImagesId and exchange_history.exchangeWithCreditId = exchange_with_credit.id and book.id = ${history[i].bookId}
         group by exchange_with_credit.id;`);
       console.log(book);
 
       let author = await this._repository.query(`select author.name
         from author
         cross join book
-        where book.authorId = author.id and book.id = ${book[i].id};`);
-      console.log(author);
+        where book.authorId = author.id and book.id = ${book[0].id};`);
 
-      book[i]["images"] = book["imagesId"];
-      book[i].images = { ...book[i].images };
-      delete book[i]["images"];
-
-      book[i]["author"] = book["authorId"];
-      book[i].author = { ...author["0"] };
-      delete book[i]["authorId"];
+      book[0]["author"] = book["authorId"];
+      book[0].author = { ...author["0"] };
+      delete book[0]["authorId"];
 
       const images = await this._repository
         .query(`select book_images.frontSideImage
       from book
       cross join book_images
-      where book_images.id = book.bookImagesId and book.id = ${book[i].id};`);
-      book[i].images = { ...(await images)["0"] };
+      where book_images.id = book.bookImagesId and book.id = ${book[0].id};`);
+      book[0].images = { ...(await images)["0"] };
 
       const dono = await this._repository.query(`
       select user.firstName, user.lastName, user.picture, personal_data.streetName, personal_data.complement,
@@ -200,10 +182,10 @@ export class MysqlExchangeHistoryRepository<T>
       from user
       cross join personal_data
       cross join book
-      where book.ownerId = ${book[i].ownerId} and personal_data.id = user.personalDataId and user.id = ${book[i].ownerId}
+      where book.ownerId = ${book[0].ownerId} and personal_data.id = user.personalDataId and user.id = ${book[0].ownerId}
       group by user.id;`);
 
-      const user = this._repository
+      const user = await this._repository
         .query(`select user.firstName, user.lastName, user.picture, personal_data.streetName, personal_data.complement,
       personal_data.zipCode, personal_data.houseNumber, personal_data.district, personal_data.city, personal_data.state
       from user
@@ -211,12 +193,12 @@ export class MysqlExchangeHistoryRepository<T>
       where personal_data.id = user.personalDataId and user.id = ${userId}
       group by user.id;`);
 
-      historyResponse.id = i;
+      historyResponse.id = history[i].id;
       historyResponse.situation = history[i].situation;
       historyResponse.exchangeDate = history[i].exchangeDate;
-      historyResponse.offered = this.clean(await book[i]);
-      historyResponse.received = await book[i].price;
-      historyResponse.requester = await user;
+      historyResponse.offered = book[0];
+      historyResponse.received = book[0].price;
+      historyResponse.requester = { ...user["0"] };
       history.type = "CREDIT";
 
       historyArray.push(historyResponse);
