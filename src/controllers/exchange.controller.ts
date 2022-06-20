@@ -252,35 +252,24 @@ export class ExchangeController {
       const exchangeHistory = new ExchangeHistoryDto();
       const findedCreditExchange =
         await this.exchangeWithCreditServices.findById(Number(id));
-      if (confirm === "Confirmado") {
-        const buyerId = await this.userServices.getIdFromUser(
-          findedCreditExchange.user
-        );
+      if (confirm == "Confirmado") {
+        const buyerId = await this.userServices.getIdFromUser(findedCreditExchange.user);
         const buyerFound = await this.userServices.getUserById(buyerId);
-        const buyerCredit =
-          Number(buyerFound.credits) - Number(findedCreditExchange.book.price);
+        const buyerCredit = Number(buyerFound.credits) - Number(findedCreditExchange.book.price);
         buyerFound.credits = String(buyerCredit);
         await this.userServices.updateUser(Number(buyerId), buyerFound);
 
-        const sellerId = await this.userServices.getIdFromUser(
-          findedCreditExchange.book.owner
-        );
+        const sellerId = await this.userServices.getIdFromUser(findedCreditExchange.book.owner);
         const sellerFound = await this.userServices.getUserById(sellerId);
-        const sellerCredit =
-          Number(sellerFound.credits) + Number(findedCreditExchange.book.price);
+        const sellerCredit = Number(sellerFound.credits) + Number(findedCreditExchange.book.price);
         sellerFound.credits = String(sellerCredit);
         await this.userServices.updateUser(Number(sellerId), sellerFound);
 
         findedCreditExchange.situation = ExchangeSituation.CONFIRMADO;
         findedCreditExchange.book.status = Status.INDISPONIVEL;
-        const bookId = await this.bookServices.getIdFromBook(
-          findedCreditExchange.book
-        );
+        const bookId = await this.bookServices.getIdFromBook(findedCreditExchange.book);
         await this.bookServices.updateBook(bookId, findedCreditExchange.book);
-        await this.exchangeWithCreditServices.updateExchangeBooks(
-          id,
-          findedCreditExchange
-        );
+        await this.exchangeWithCreditServices.updateExchangeBooks(id, findedCreditExchange);
 
         exchangeHistory.exchangeDate = "";
         exchangeHistory.request = [];
@@ -288,24 +277,15 @@ export class ExchangeController {
         exchangeHistory.user = [findedCreditExchange.user];
         exchangeHistory.exchangeType = ExchangeType.PONTOS;
         await this.exchangeHistory.saveRegistry(exchangeHistory)
-
         exchangeHistory.user = [findedCreditExchange.book.owner];
         await this.exchangeHistory.saveRegistry(exchangeHistory)
 
         return "Solicitação confirmada";
-      } else if (confirm === "Recusado") {
+      } else if (confirm == "Recusado") {
         findedCreditExchange.situation = ExchangeSituation.RECUSADO;
-        const bookId = await this.bookServices.getIdFromBook(
-          findedCreditExchange.book
-        );
-        await this.bookServices.updateBook(
-          Number(bookId),
-          findedCreditExchange.book
-        );
-        await this.requestServices.updateExchangeBooks(
-          id,
-          findedCreditExchange
-        );
+        const bookId = await this.bookServices.getIdFromBook(findedCreditExchange.book);
+        await this.bookServices.updateBook(Number(bookId), findedCreditExchange.book);
+        await this.exchangeWithCreditServices.updateExchangeBooks(id, findedCreditExchange);
         return "Solicitação Recusada";
       }
     } catch (err) {
