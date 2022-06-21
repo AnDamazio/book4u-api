@@ -147,13 +147,12 @@ export class MysqlExchangeHistoryRepository<T>
       const historyResponse = new HistoryResponseDto();
 
       let book = await this._repository.query(`
-
         select book.name, book.pagesQuantity, book.price, book.ownerId, book.id
         from exchange_history
         cross join exchange_with_credit
         cross join book
         cross join book_images
-        where exchange_with_credit.bookId = book.bookImagesId and exchange_history.exchangeWithCreditId = exchange_with_credit.id and book.id = ${history[i].bookId}
+        where exchange_history.exchangeWithCreditId = exchange_with_credit.id and book.bookImagesId = book_images.id and book.id = ${history[i].bookId} 
         group by exchange_with_credit.id;`);
 
       let author = await this._repository.query(`select author.name
@@ -165,6 +164,7 @@ export class MysqlExchangeHistoryRepository<T>
       book[0].author = { ...author["0"] };
       delete book[0]["authorId"];
 
+      console.log(book[0].id);
       const images = await this._repository
         .query(`select book_images.frontSideImage
       from book
