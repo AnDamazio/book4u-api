@@ -4,4 +4,6 @@ export abstract class IWishListRepository<T> {
   abstract remove(id: string): any;
 
   abstract findAll(id: string): Promise<T[]>;
+
+  abstract findOne(wish, id): Promise<T>;
 }

@@ -23,4 +23,8 @@ export class WishListServices {
   async findWishes(id: string): Promise<WishList[]> {
     return await this.wishListServices.wishList.findAll(id);
   }
+
+  async findWish(wish, id): Promise<WishList> {
+    return await this.wishListServices.wishList.findOne(wish, id);
+  }
 }

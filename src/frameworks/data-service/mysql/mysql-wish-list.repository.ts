@@ -17,9 +17,38 @@ export class MysqlWishListRepository<T> implements IWishListRepository<T> {
   }
 
   async findAll(id): Promise<T[]> {
-    return this._repository.find({
+    let obj = [];
+
+    const wishes = (await this._repository.find({
       where: { user: id },
-      relations: ["book", "book.bookImages", "book.author", "book.owner", "book.language", "book.publisher"],
-    });
+      relations: [
+        "book",
+        "book.bookImages",
+        "book.author",
+        "book.owner",
+        "book.language",
+        "book.publisher",
+      ],
+    })) as any;
+    for (let i = 0; i < wishes.length; i++) {
+      obj.push(wishes[i].book[i]);
+    }
+    return obj;
+  }
+
+  async findOne(wish, id) {
+    const wishes = (await this._repository.find({
+      where: { user: wish.user },
+      relations: ["book", "user"],
+    })) as any;
+
+    for (let i = 0; i < wishes.length; i++) {
+    console.log(wishes[i].book[0].id);
+    console.log(wish.book[0].id )
+
+      if (wishes[i].user.id == id && wish.book[0].id == wishes[i].book[0].id) {
+        return wishes[i];
+      }
+    }
   }
 }
