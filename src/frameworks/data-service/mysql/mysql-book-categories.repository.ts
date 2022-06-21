@@ -15,13 +15,12 @@ export class MysqlBookCategoriesRepository<T>
   }
 
   async findRegisteredCategories(): Promise<any> {
-
-    const array = await this._repository
-      .createQueryBuilder("book_categories")
-      .leftJoinAndSelect("book_categories.category", "category")
-      .select("category.name")
-      .groupBy("book_categories.category")
-      .getRawMany();
+    const array = await this._repository.query(`select category.name
+    from book_categories
+    cross join category
+    cross join book
+    on book_categories.categoryId = category.id and book.id = book_categories.bookId and book.status = 'Disponível'
+    group by book_categories.categoryId;`);
 
     return array;
   }
