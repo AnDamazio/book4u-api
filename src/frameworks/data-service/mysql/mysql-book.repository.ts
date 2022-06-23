@@ -1,7 +1,6 @@
 import { Like, Not, Repository, UpdateResult } from "typeorm";
 import { IBookRepository } from "src/core";
 
-
 export class MysqlBookRepository<T> implements IBookRepository<T> {
   private _repository: Repository<T>;
 
@@ -45,15 +44,17 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
   }
 
   async findBookByCategory(categories: string[]): Promise<any[]> {
+    console.log(categories[0]);
     const books = await this._repository.query(`select category.name, book.*
       from ((category
       inner join book_categories on category.name = '${categories[0]}' AND book_categories.categoryId = category.id)
-      inner join book on book_categories.bookId = book.id) AND book.status = 'Disponível';`);
+      inner join book on book_categories.bookId = book.id AND book.status = 'Disponível')`);
 
     let findedBooks = [];
     for (let i = 0; i < books.length; i++) {
       findedBooks.push(await this.findBookByPk(books[i].id));
     }
+    console.log(findedBooks);
     return findedBooks;
   }
 
@@ -106,5 +107,4 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
       .andWhere(`book.status = :status`, { status: "Disponível" })
       .getMany();
   }
-
 }
