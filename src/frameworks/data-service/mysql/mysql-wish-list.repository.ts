@@ -31,7 +31,7 @@ export class MysqlWishListRepository<T> implements IWishListRepository<T> {
       ],
     })) as any;
     for (let i = 0; i < wishes.length; i++) {
-      obj.push(wishes[i].book[i]);
+      obj.push(wishes[i].book[0]);
     }
     return obj;
   }
@@ -43,8 +43,8 @@ export class MysqlWishListRepository<T> implements IWishListRepository<T> {
     })) as any;
 
     for (let i = 0; i < wishes.length; i++) {
-    console.log(wishes[i].book[0].id);
-    console.log(wish.book[0].id )
+      console.log(wishes[i].book[0].id);
+      console.log(wish.book[0].id);
 
       if (wishes[i].user.id == id && wish.book[0].id == wishes[i].book[0].id) {
         return wishes[i];

@@ -54,7 +54,6 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
     for (let i = 0; i < books.length; i++) {
       findedBooks.push(await this.findBookByPk(books[i].id));
     }
-    console.log(findedBooks);
     return findedBooks;
   }
 
