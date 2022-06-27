@@ -44,7 +44,6 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
   }
 
   async findBookByCategory(categories: string[]): Promise<any[]> {
-    console.log(categories[0]);
     const books = await this._repository.query(`select category.name, book.*
       from ((category
       inner join book_categories on category.name = '${categories[0]}' AND book_categories.categoryId = category.id)
@@ -74,12 +73,11 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
     date.setHours(date.getHours() - dayInterval * 24);
     const treatedDate = date.toLocaleDateString();
     const day = treatedDate.slice(0, 2);
-    const month = treatedDate.slice(4, 5);
+    const month = treatedDate.slice(3, 5);
     const year = treatedDate.slice(6, 10);
 
     const books = await this._repository.query(
-      `SELECT * FROM book WHERE DATE(createdAt) > '${year}-${month}-${day}' AND DATE(createdAt) <
-      '${actualYear}-${actualMonth}-${actualDay}' AND book.status = 'Disponível' ;`
+      `SELECT * FROM book WHERE createdAt between '${year}-${month}-${day}' and '${actualYear}-${actualMonth}-${actualDay}' and status = 'Disponível';`
     );
 
     let findedBooks = [];

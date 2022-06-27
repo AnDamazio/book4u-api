@@ -10,7 +10,7 @@ export class BookServices {
   constructor(
     private bookServices: IDataServices,
     private bookFactoryService: BookFactoryService
-  ) { }
+  ) {}
 
   async getAllBooks(id: any): Promise<Book[]> {
     try {
@@ -73,7 +73,9 @@ export class BookServices {
   }
 
   async findRecentBooks(dayInterval: number, id): Promise<Book[]> {
-    const books = (await this.bookServices.book.findBooksByDate(7)) as any;
+    const books = (await this.bookServices.book.findBooksByDate(
+      dayInterval
+    )) as any;
 
     return books.filter((obj) => {
       return obj.owner.id != id;
