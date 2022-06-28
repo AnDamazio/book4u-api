@@ -32,7 +32,14 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
 
   async findBookByPk(id: number): Promise<T> {
     return await this._repository.findOne(id, {
-      relations: ["bookImages", "owner", "author", "language", "publisher"],
+      relations: [
+        "bookImages",
+        "owner",
+        "author",
+        "language",
+        "publisher",
+        "owner.personalData",
+      ],
     });
   }
 
@@ -95,13 +102,20 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
   }
 
   async findBookByAuthor(name: string): Promise<T[]> {
-    return await this._repository
+    const bookArray = (await this._repository
       .createQueryBuilder("book")
       .leftJoinAndSelect("book.author", "author")
       .leftJoinAndSelect("book.bookImages", "book_images")
       .leftJoinAndSelect("book.owner", "user")
       .where(`author.name LIKE :name `, { name: `%${name}%` })
       .andWhere(`book.status = :status`, { status: "Disponível" })
-      .getMany();
+      .getMany()) as any;
+
+    const returnArray = [];
+    for (let i = 0; i < bookArray.length; i++) {
+      const book = await this.findBookByPk(bookArray[i].id);
+      returnArray.push(book);
+    }
+    return returnArray;
   }
 }
