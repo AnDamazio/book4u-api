@@ -97,7 +97,7 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
   async findBookByName(title: string): Promise<T[]> {
     return await this._repository.find({
       where: [{ name: Like(`%${title}%`), status: "Disponível" }],
-      relations: ["bookImages", "owner", "author", "language", "publisher"],
+      relations: ["bookImages", "owner", "author", "language", "publisher", "owner.personalData"],
     });
   }
 
