@@ -95,10 +95,25 @@ export class MysqlBookRepository<T> implements IBookRepository<T> {
   }
 
   async findBookByName(title: string): Promise<T[]> {
-    return await this._repository.find({
+    const books = (await this._repository.find({
       where: [{ name: Like(`%${title}%`), status: "Disponível" }],
-      relations: ["bookImages", "owner", "author", "language", "publisher", "owner.personalData"],
-    });
+      relations: [
+        "bookImages",
+        "owner",
+        "author",
+        "language",
+        "publisher",
+        "owner.personalData",
+      ],
+    })) as any;
+    const returnArray = [];
+
+    for (let i = 0; i < books.length; i++) {
+      const book = await this.findBookByPk(books[i].id);
+      returnArray.push(book);
+    }
+
+    return returnArray;
   }
 
   async findBookByAuthor(name: string): Promise<T[]> {
